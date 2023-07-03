@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.user.mapper.UserRoleMapper">
+
+    <select id="getUserRoleByUserIds" parameterType="java.util.List"
+              resultType="com.gxa.jbgsw.user.protocol.dto.UserRoleResponse">
+        SELECT
+            a.id,
+            c.id as roleId,
+            group_concat(c.`name`) AS roleNames
+        FROM
+            t_user AS a
+        LEFT JOIN t_user_role AS b ON a.id = b.user_id
+        LEFT JOIN t_role AS c ON c.id = b.role_id
+        WHERE 1 = 1
+           <if test=" list != null and list.size > 0">
+               AND a.id IN
+               <foreach collection="list" item="id" index="index" open="(" close=")" separator=",">
+                   #{id}
+               </foreach>
+           </if>
+
+        GROUP BY a.id
+    </select>
+
+</mapper>

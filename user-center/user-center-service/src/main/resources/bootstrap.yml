@@ -1,0 +1,41 @@
+server:
+  port: 8001
+  tomcat:
+    max-threads: 1000
+    uri-encoding: UTF-8
+    remote-ip-header: x-forward-for
+    max-http-header-size: 8096
+
+spring:
+  application:
+    name: user-center-service
+  profiles:
+    active: local
+
+  jackson:
+    generator:
+      write_numbers_as_strings: true
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+
+
+  management:
+    endpoints:
+      web:
+        exposure:
+          include: "*"
+        cors:
+          allowed-origins: "*"
+          allowed-methods: "*"
+feign:
+  httpclient:
+    enabled: true
+    connection-timeout: 50000
+
+
+ribbon:
+  ReadTimeout: 50000
+  ConnectTimeout: 50000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1

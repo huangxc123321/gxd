@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.user.mapper.UserMapper">
+
+ <select id="pageQuery" parameterType="com.gxa.jbgsw.user.protocol.dto.UserRequest"
+         resultType="com.gxa.jbgsw.user.protocol.dto.UserResponse">
+
+        SELECT
+            a.id,
+            a.avatar,
+            a.mobile,
+            a.nick,
+            a.sex,
+            a.use_stauts AS useStatus,
+            a.create_at AS createAt,
+            a.province_name AS provinceName,
+            a.city_name AS cityName,
+            a.area_name AS areaName
+        FROM
+            t_user AS a
+            <if test="status != null">
+                LEFT JOIN t_authentication AS b ON a.id = b.user_id
+            </if>
+
+        WHERE
+            1 = 1
+
+          <if test="mobile != null and mobile != '' ">
+              AND a.`mobile` = #{mobile}
+          </if>
+
+         <if test="startDate != null and startDate != '' ">
+             AND  a.`create_at` BETWEEN #{startDate} AND #{endDate}
+         </if>
+
+          <if test="status != null">
+              AND b.`status` = #{status}
+          </if>
+
+         <if test="useStauts != null">
+             AND a.`use_stauts` = #{useStauts}
+         </if>
+
+
+
+
+ </select>
+
+</mapper>

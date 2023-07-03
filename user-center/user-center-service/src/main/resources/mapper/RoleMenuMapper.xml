@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.user.mapper.RoleMenuMapper">
+
+    <select id="getUserMenus" resultType="com.gxa.jbgsw.user.entity.Menu">
+        SELECT
+            DISTINCT
+            a.id,
+            a.`name`,
+            a.url,
+            a.pid
+        FROM
+            t_menu AS a
+        LEFT JOIN t_role_menu AS b ON a.id = b.menu_id
+        LEFT JOIN t_user_role AS c on c.role_id = b.role_id
+        WHERE c.user_id = #{userId} and platform = #{platform}
+        order by a.show_inx ASC
+    </select>
+</mapper>

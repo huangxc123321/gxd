@@ -1,0 +1,88 @@
+skip:
+  url:
+    - /admin/login
+    - /admin/file/upload
+    - /admin/user/saveOrUpdate
+
+# Tomcat
+server:
+  port: 9527
+
+# Spring
+spring:
+  application:
+    # 应用名称
+    name: gateway
+  profiles:
+    # 开发环境配置
+    active: local
+
+    # 测试环境
+    #active: dev
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+
+  redis:
+    # Redis数据库默认库索引
+    database: 0
+    # 服务器地址
+    host: localhost
+    # 端口
+    port: 6379
+    # 默认密码为空
+    password: Antan!@#qwe
+    # 连接超时时间
+    timeout: 10000
+    jedis:
+      pool:
+        # 连接池最大的连接数(负值表示没有限制)
+        max-active: 200
+        # 连接池最大的阻塞等待时间(负值表示没有限制)
+        max-wait: -1
+        # 连接池中的最大空闲连接
+        max-idle: 100
+        # 连接池中的最小空闲连接
+        min-idle: 0
+
+  main:
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      discovery:
+        # 服务注册地址
+        #server-addr: 127.0.0.1:8848
+
+        server-addr: 127.0.0.1:8848
+      config:
+        # 配置中心地址
+        server-addr: 127.0.0.1:8848
+        # 配置文件格式
+        file-extension: yml
+
+    gateway:
+      httpclient:
+        connect-timeout: 10000
+        response-timeout: 5s
+
+      routes:
+        - id: admin_route
+          uri: http://localhost:8081
+          predicates:
+            - Path=/admin/**
+          filters:
+            - RewritePath=/admin/(?<path>.*), /$\{path}
+
+        - id: app_route
+          uri: lb://app
+          predicates:
+            - Path=/api/**
+          filters:
+            - RewritePath=/api/(?<path>.*), /$\{path}
+
+          # 在metadata中设置单个路由超时时间
+          metadata:
+            response-timeout: 2000
+            connect-timeout: 2000

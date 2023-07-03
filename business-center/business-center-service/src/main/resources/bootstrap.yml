@@ -1,0 +1,24 @@
+server:
+  port: 8003
+spring:
+  application:
+    name: business-center-service
+  profiles:
+    # 开发环境配置
+    active: local
+
+    # 测试环境
+    #active: dev
+
+feign:
+  httpclient:
+    enabled: true
+    connection-timeout: 50000
+
+ribbon:
+  # 指的是建立连接后从服务器读取到可用资源所用的时间
+  ReadTimeout: 50000
+  # 指的是建立连接所用的时间，适用于网络状况正常的情况下，两端连接所用的时间
+  ConnectTimeout: 50000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1

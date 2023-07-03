@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.business.mapper.NewsMapper">
+
+    <resultMap id="BaseResultMap" type="com.gxa.jbgsw.business.entity.News" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="news_policy" property="newsPolicy" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="region_scope" property="regionScope" jdbcType="VARCHAR" />
+        <result column="from" property="from" jdbcType="VARCHAR" />
+
+        <result column="publish_at" property="publishAt" jdbcType="TIMESTAMP" />
+        <result column="is_fixed" property="isFixed" jdbcType="INTEGER" />
+        <result column="fixed_at" property="fixedAt" jdbcType="TIMESTAMP" />
+
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="INTEGER" />
+        <result column="update_at" property="updateAt" jdbcType="TIMESTAMP" />
+        <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+    </resultMap
+    >
+
+
+
+    <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.NewsRequest" resultMap="BaseResultMap">
+      SELECT
+        a.*
+        FROM
+        t_news AS a
+        WHERE
+        1 = 1
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND a.title like CONCAT('%',#{searchFiled},'%')
+        </if>
+        <if test="startDate != null and startDate != '' ">
+            AND a.publish_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+            AND a.publish_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+        </if>
+        <if test="type != null ">
+            AND a.type = #{type}
+        </if>
+        ORDER BY a.publish_at desc
+    </select>
+
+
+</mapper>

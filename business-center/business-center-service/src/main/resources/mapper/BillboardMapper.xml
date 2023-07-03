@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.business.mapper.BillboardMapper">
+
+
+    <resultMap id="BaseResultMap" type="com.gxa.jbgsw.business.entity.Billboard" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="type" property="type" jdbcType="INTEGER" />
+        <result column="unit_name" property="unitName" jdbcType="VARCHAR" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="categories" property="categories" jdbcType="INTEGER" />
+        <result column="tech_keys" property="techKeys" jdbcType="VARCHAR" />
+        <result column="amount" property="amount" jdbcType="DECIMAL" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="video_url" property="videoUrl" jdbcType="VARCHAR" />
+        <result column="start_at" property="startAt" jdbcType="TIMESTAMP" />
+        <result column="end_at" property="endAt" jdbcType="TIMESTAMP" />
+        <result column="province_id" property="provinceId" jdbcType="INTEGER" />
+        <result column="province_name" property="provinceName" jdbcType="VARCHAR" />
+        <result column="city_id" property="cityId" jdbcType="INTEGER" />
+        <result column="city_name" property="cityName" jdbcType="VARCHAR" />
+        <result column="area_id" property="areaId" jdbcType="INTEGER" />
+        <result column="area_name" property="areaName" jdbcType="VARCHAR" />
+        <result column="seq_no" property="seqNo" jdbcType="INTEGER" />
+        <result column="collect_num" property="collectNum" jdbcType="INTEGER" />
+        <result column="share_num" property="shareNum" jdbcType="INTEGER" />
+        <result column="is_top" property="isTop" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER" />
+        <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    </resultMap>
+
+
+    <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.BillboardRequest"
+            resultMap="BaseResultMap">
+        SELECT
+        a.*
+        FROM
+        t_billboard AS a
+        WHERE
+        1 = 1
+
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND a.title like CONCAT('%',#{searchFiled},'%')
+        </if>
+
+        <if test="addrId != null and addrId != '' ">
+            AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
+        </if>
+
+        <if test="categories != null ">
+            AND a.categories =  #{categories}
+        </if>
+
+        <if test="startAmount != null ">
+            AND (a.amount <![CDATA[ >= ]]> #{startAmount} AND a.amount <![CDATA[ <= ]]> #{endtAmount})
+        </if>
+
+        <if test="startDate != null and startDate != '' ">
+            AND a.start_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+            AND a.end_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+        </if>
+
+        <if test="status != null ">
+            AND a.`status` = #{status}
+        </if>
+
+        <if test="unitName != null and unitName != '' ">
+            AND a.unit_name like CONCAT('%',#{unitName},'%')
+        </if>
+
+        order by a.seq_no asc , a.create_at desc
+        <if test="amountSort != null">
+            <choose>
+                <when test="amountSort == 0">
+                    , a.amount desc
+                </when>
+                <otherwise>
+                    , a.amount asc
+                </otherwise>
+            </choose>
+        </if>
+
+    </select>
+
+
+</mapper>
