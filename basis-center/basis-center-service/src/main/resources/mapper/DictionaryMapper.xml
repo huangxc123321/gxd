@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.basis.mapper.DictionaryMapper">
+
+    <select id="getDictionaryByCodeAndTypeCode" resultType="com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO"
+            parameterType="com.gxa.jbgsw.basis.protocol.dto.DictionaryValueQueryRequest">
+            SELECT
+                a.id,
+                a.dicCode,
+                a.dicValue
+            FROM
+                t_dictionary AS a
+            LEFT JOIN t_dictionary_type AS b ON a.type_id = b.id
+            WHERE 1 = 1
+            <if test="typeCode != null">
+                AND b.`code` = #{typeCode}
+            </if>
+            <if test="code != null">
+                AND a.dicCode = #{code}
+            </if>
+    </select>
+
+</mapper>

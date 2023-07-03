@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: 4a7af41f-f656-4da5-bec8-a98d017eb62c
+
+      config:
+        server-addr: localhost:8848
+        namespace: 4a7af41f-f656-4da5-bec8-a98d017eb62c
+        ext-config:
+          - data-id: common-prod.yml
+            group: DEFAULT_GROUP
+            refresh: true
+          - data-id: basis-center-service-prod.yml
+            group: DEFAULT_GROUP
+            refresh: true
