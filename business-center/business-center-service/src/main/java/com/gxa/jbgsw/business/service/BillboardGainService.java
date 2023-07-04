@@ -3,6 +3,8 @@ package com.gxa.jbgsw.business.service;
 import com.gxa.jbgsw.business.entity.BillboardGain;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.util.List;
+
 /**
  * <p>
  * 接榜 服务类
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface BillboardGainService extends IService<BillboardGain> {
 
+    List<BillboardGain> getBillboardGainByPid(Long id);
 }

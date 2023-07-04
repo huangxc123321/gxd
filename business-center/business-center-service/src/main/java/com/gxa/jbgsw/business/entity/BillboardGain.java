@@ -53,6 +53,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "审核人")
     private String auditingUserId;
 
+    @ApiModelProperty(value = "审核人名称")
+    private String auditingUserName;
+
     @ApiModelProperty(value = "审核不通过的原因")
     private String reason;
 
@@ -61,6 +64,5 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "创建者")
     private Long createBy;
-
 
 }

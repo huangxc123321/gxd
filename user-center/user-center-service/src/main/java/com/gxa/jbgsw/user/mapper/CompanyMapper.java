@@ -2,6 +2,9 @@ package com.gxa.jbgsw.user.mapper;
 
 import com.gxa.jbgsw.user.entity.Company;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.gxa.jbgsw.user.protocol.dto.CompanyRequest;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface CompanyMapper extends BaseMapper<Company> {
 
+    List<Company> pageQuery(CompanyRequest request);
 }

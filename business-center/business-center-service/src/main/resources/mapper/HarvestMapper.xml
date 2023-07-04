@@ -2,4 +2,71 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.HarvestMapper">
 
+    <resultMap id="BaseResultMap" type="com.gxa.jbgsw.business.entity.Harvest" >
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR" />
+        <result column="unit_name" property="unitName" jdbcType="VARCHAR" />
+        <result column="trade_type" property="tradeType" jdbcType="VARCHAR" />
+        <result column="tech_domain" property="techDomain" jdbcType="VARCHAR" />
+        <result column="maturity_level" property="maturityLevel" jdbcType="INTEGER" />
+        <result column="appy_domain" property="appyDomain" jdbcType="VARCHAR" />
+        <result column="remark" property="remark" jdbcType="VARCHAR" />
+        <result column="is_patent" property="isPatent" jdbcType="INTEGER" />
+        <result column="related_patent" property="relatedPatent" jdbcType="VARCHAR" />
+        <result column="holder" property="holder" jdbcType="VARCHAR" />
+        <result column="contacts" property="contacts" jdbcType="VARCHAR" />
+        <result column="innovation_point_url" property="innovationPointUrl" jdbcType="VARCHAR" />
+        <result column="specialist_url" property="specialistUrl" jdbcType="VARCHAR" />
+        <result column="vista_url" property="vistaUrl" jdbcType="VARCHAR" />
+        <result column="benefit_url" property="benefitUrl" jdbcType="VARCHAR" />
+        <result column="case_url" property="caseUrl" jdbcType="VARCHAR" />
+        <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
+        <result column="create_by" property="createBy" jdbcType="INTEGER" />
+    </resultMap>
+
+
+
+    <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.HarvestRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.HarvestResponse" >
+            SELECT
+                a.id,
+                a.NAME,
+                a.maturity_level AS maturityLevel,
+                a.tech_domain AS techDomain,
+                a.holder,
+                a.remark,
+                a.create_at AS createAt,
+                COUNT(1) AS collectNum,
+                COUNT(1) AS shareNum
+            FROM
+                t_harvest a
+            LEFT JOIN t_collection AS b ON a.id = b.pid
+            LEFT JOIN t_my_share AS c ON a.id = c.pid
+            WHERE
+                1 = 1
+                <if test="searchFiled != null and searchFiled != '' ">
+                    AND a.`name` LIKE CONCAT('%',#{searchFiled},'%')
+                </if>
+
+                <if test="tradeType != null ">
+                    AND a.trade_type =  #{tradeType}
+                </if>
+
+                <if test="techDomain != null and techDomain != '' ">
+                    AND a.`tech_domain` LIKE CONCAT('%',#{techDomain},'%')
+                </if>
+
+                <if test="maturityLevel != null ">
+                    AND a.maturity_level = #{maturityLevel}
+                </if>
+
+                <if test="holder != null and holder != '' ">
+                    AND a.holder = '' LIKE CONCAT('%',#{holder},'%')
+                </if>
+
+                ORDER BY
+                    a.create_at DESC
+
+    </select>
+
 </mapper>

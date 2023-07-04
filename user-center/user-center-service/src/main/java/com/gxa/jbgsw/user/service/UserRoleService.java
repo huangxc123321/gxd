@@ -8,14 +8,7 @@ import com.gxa.jbgsw.user.protocol.dto.UserRoleResponse;
 
 import java.util.List;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author huangxc
- * @since 2021-03-26
- */
+
 public interface UserRoleService extends IService<UserRole> {
 
     void insert(UserRoleDTO[] userRoles);

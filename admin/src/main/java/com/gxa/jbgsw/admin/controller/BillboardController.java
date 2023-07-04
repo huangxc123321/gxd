@@ -1,14 +1,11 @@
 package com.gxa.jbgsw.admin.controller;
 
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.admin.feignapi.BillboardFeignApi;
-import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
-import com.gxa.jbgsw.business.protocol.dto.BillboardDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
-import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.DetailInfoDTO;
+import com.gxa.jbgsw.admin.feignapi.*;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
@@ -25,6 +22,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 
 @Api(tags = "榜单管理")
@@ -34,9 +32,16 @@ import javax.annotation.Resource;
 public class BillboardController extends BaseController {
     @Resource
     BillboardFeignApi billboardFeignApi;
+    @Resource
+    BillboardGainFeignApi billboardGainFeignApi;
+    @Resource
+    HavestFeignApi havestFeignApi;
+    @Resource
+    TalentPoolFeignApi talentPoolFeignApi;
 
     @Resource
     StringRedisTemplate stringRedisTemplate;
+
 
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
@@ -46,7 +51,29 @@ public class BillboardController extends BaseController {
     @GetMapping("/billboard/detail")
     public DetailInfoDTO detail(@RequestParam("id")Long id){
         DetailInfoDTO detailInfo = billboardFeignApi.detail(id);
+
         // 获取揭榜
+        List<BillboardGainDTO> billboardGainResponses = billboardGainFeignApi.getBillboardGainByPid(id);
+        detailInfo.setBillboardGains(billboardGainResponses);
+
+        // 成果推荐: 根据揭榜单位
+        List<HavestDTO> havests = havestFeignApi.getHarvesByHolder(detailInfo.getUnitName());
+        detailInfo.setHarvestRecommends(havests);
+
+        // 帅才推荐： 根据技术领域，研究方向确定
+        String techKeys = detailInfo.getTechKeys();
+        if(StrUtil.isNotBlank(techKeys)){
+            String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
+            List<TalentPoolDTO> talentPools = talentPoolFeignApi.getTalentPoolByTech(keys[0]);
+            detailInfo.setTalentRecommends(talentPools);
+        }
+
+        // 技术经纪人推荐: 根据专业标签来推荐
+        if(StrUtil.isNotBlank(techKeys)){
+            String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
+
+
+        }
 
 
         return detailInfo;

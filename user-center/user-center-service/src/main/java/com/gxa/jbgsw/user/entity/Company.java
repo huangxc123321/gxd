@@ -47,10 +47,10 @@ private static final long serialVersionUID=1L;
     private String techLabel;
 
     @ApiModelProperty(value = "状态")
-    private Long status;
+    private Integer status;
 
     @ApiModelProperty(value = "企业类型名称：字典中获取")
-    private Long type;
+    private Integer type;
 
     @ApiModelProperty(value = "经营范围")
     private String scopeBusiness;

@@ -4,6 +4,8 @@ import com.gxa.jbgsw.business.entity.TalentPool;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
 
+import java.util.List;
+
 /**
  * <p>
  * 帅才库 服务类
@@ -19,4 +21,6 @@ public interface TalentPoolService extends IService<TalentPool> {
     void add(TalentPoolDTO talentPoolDTO);
 
     void updateTalentPool(TalentPoolDTO talentPoolDTO) ;
+
+    List<TalentPool> getTalentPoolByTech(String key);
 }

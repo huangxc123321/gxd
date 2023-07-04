@@ -7,14 +7,7 @@ import com.gxa.jbgsw.user.protocol.dto.MenuPO;
 
 import java.util.List;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author huangxc
- * @since 2021-03-26
- */
+
 public interface MenuService extends IService<Menu> {
 
     List<MenuPO> getAllMenu();

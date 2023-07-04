@@ -8,6 +8,9 @@ import com.gxa.jbgsw.common.utils.PageResult;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 public interface TalentPoolApi {
 
@@ -21,5 +24,8 @@ public interface TalentPoolApi {
     void add(@RequestBody TalentPoolDTO talentPoolDTO);
 
     @PostMapping("/business/talent/pool/update")
-    void update(TalentPoolDTO talentPoolDTO);
+    void update(@RequestBody TalentPoolDTO talentPoolDTO);
+
+    @PostMapping("/business/talent/pool/getTalentPoolByTech")
+    List<TalentPoolDTO> getTalentPoolByTech(@RequestParam("key") String key);
 }

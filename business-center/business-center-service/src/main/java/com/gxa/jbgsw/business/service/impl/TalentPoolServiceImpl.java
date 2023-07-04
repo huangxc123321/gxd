@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
@@ -54,5 +55,16 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         BeanUtils.copyProperties(talentPoolDTO, talentPool, CopyPropertionIngoreNull.getNullPropertyNames(talentPool));
 
         talentPoolMapper.updateById(talentPool);
+    }
+
+    @Override
+    public List<TalentPool> getTalentPoolByTech(String key) {
+        LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(TalentPool::getTechDomain, key)
+                .orderByDesc(TalentPool::getAuditDate);
+
+        List<TalentPool> talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+
+        return talentPools;
     }
 }

@@ -7,14 +7,7 @@ import com.gxa.jbgsw.user.protocol.dto.RoleMenuDTO;
 
 import java.util.List;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author huangxc
- * @since 2021-03-26
- */
+
 public interface RoleMenuService extends IService<RoleMenu> {
 
     void insert(RoleMenuDTO[] roleMenus);

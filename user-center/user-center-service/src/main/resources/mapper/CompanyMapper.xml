@@ -2,4 +2,39 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.user.mapper.CompanyMapper">
 
+ <select id="pageQuery" parameterType="com.gxa.jbgsw.user.protocol.dto.CompanyRequest"
+         resultType="com.gxa.jbgsw.user.protocol.dto.CompanyResponse">
+     SELECT
+	  a.id,
+      a.logo,
+      a.`name`,
+      a.trade_type AS tradeType,
+      a.product_label AS productLabel,
+      a.tech_label AS techLabel,
+      a.type,
+      a.scope_business AS scopeBusiness,
+      a.area_name AS areaName,
+      a.province_name AS provinceName,
+      a.city_name AS cityName
+
+    FROM
+        t_company AS a
+    WHERE
+        1 = 1
+     <if test="searchFiled != null and searchFiled != '' ">
+         AND a.`name` LIKE CONCAT('%',#{searchFiled},'%')
+     </if>
+     <if test="tradeType != null ">
+         AND a.trade_type =  #{tradeType}
+     </if>
+     <if test="type != null ">
+         AND a.type =  #{type}
+     </if>
+     <if test="addrId != null and addrId != '' ">
+         AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
+     </if>
+     ORDER BY a.create_at DESC
+
+ </select>
+
 </mapper>

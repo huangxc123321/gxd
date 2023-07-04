@@ -27,7 +27,7 @@ import lombok.experimental.Accessors;
 public class Harvest implements Serializable {
 
 private static final long serialVersionUID=1L;
-
+    @TableId(value = "id", type = IdType.ID_WORKER_STR)
     private Long id;
 
     @ApiModelProperty(value = "成果名称")

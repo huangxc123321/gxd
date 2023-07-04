@@ -56,10 +56,10 @@ public class DetailInfoDTO implements Serializable {
     List<BillboardGainDTO> billboardGains = new ArrayList<>();
 
     @ApiModelProperty(value = "成果推荐")
-    List<BillboardGainDTO> harvestRecommends = new ArrayList<>();
+    List<HavestDTO> harvestRecommends = new ArrayList<>();
 
     @ApiModelProperty(value = "帅才推荐")
-    List<BillboardGainDTO> talentRecommends = new ArrayList<>();
+    List<TalentPoolDTO> talentRecommends = new ArrayList<>();
 
     @ApiModelProperty(value = "技术经纪人推荐")
     List<BillboardGainDTO> techBrokerRecommends = new ArrayList<>();

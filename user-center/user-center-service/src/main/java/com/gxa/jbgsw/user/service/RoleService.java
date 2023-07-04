@@ -7,14 +7,7 @@ import com.gxa.jbgsw.user.protocol.dto.RoleDTO;
 import com.gxa.jbgsw.user.protocol.dto.RolePO;
 import com.gxa.jbgsw.user.protocol.dto.RoleRequest;
 
-/**
- * <p>
- *  服务类
- * </p>
- *
- * @author huangxc
- * @since 2021-03-26
- */
+
 public interface RoleService extends IService<Role> {
 
     void insert(RoleDTO roleDTO);

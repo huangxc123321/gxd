@@ -27,27 +27,34 @@ import lombok.experimental.Accessors;
 public class Patent implements Serializable {
 
 private static final long serialVersionUID=1L;
-
+    @ApiModelProperty(value = "主键")
     private Long id;
 
     @ApiModelProperty(value = "专利号")
     private String no;
 
+    @ApiModelProperty(value = "专利名称")
     private String name;
 
+    @ApiModelProperty(value = "专利申请时间")
     private Date applyDate;
 
+    @ApiModelProperty(value = "专利所属地区")
     private Integer areaId;
 
+    @ApiModelProperty(value = "专利类型: 0 发明专利, 1 实用新型专利, 2 外观设计专利")
     private String type;
 
+    @ApiModelProperty(value = "专利授权时间")
     private Date authorizeDate;
 
     @ApiModelProperty(value = "专利摘要")
     private String summary;
 
+    @ApiModelProperty(value = "创建时间")
     private Date createAt;
 
+    @ApiModelProperty(value = "创建人")
     private Long createBy;
 
 

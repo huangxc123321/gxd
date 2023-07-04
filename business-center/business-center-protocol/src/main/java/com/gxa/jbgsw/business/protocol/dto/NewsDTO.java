@@ -12,8 +12,6 @@ import java.util.Date;
  */
 @Data
 public class NewsDTO implements Serializable {
-
-
     @ApiModelProperty(value = "新闻ID: 新增的時候传null, 编辑传ID")
     private Long id;
 
