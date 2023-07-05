@@ -1,11 +1,10 @@
 package com.gxa.jbgsw.business.client;
 
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.common.utils.PageResult;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -16,10 +15,19 @@ import java.util.List;
  */
 public interface TechEconomicManApi {
 
-    @PostMapping(value = "/harvest/getTechEconomicByLabel",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/tech/broker/getTechEconomicByLabel",consumes = MediaType.APPLICATION_JSON_VALUE)
     List<HavestDTO> getTechEconomicByLabel(@RequestBody String[] labels);
 
-    @PostMapping(value = "/business/talent/pool/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteBatchIds(@RequestBody Long[] ids);
+    @PostMapping(value = "/tech/broker/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    void deleteBatchIds(@RequestBody Long[] ids);
+
+    @PostMapping("/tech/broker/add")
+    void add(@RequestBody TechEconomicManDTO techEconomicManDTO);
+
+    @PostMapping("/tech/broker/update")
+    void update(@RequestBody TechEconomicManDTO techEconomicManDTO);
+
+    @PostMapping("/tech/broker/pageQuery")
+    PageResult<TechEconomicManResponse> pageQuery(@RequestBody TechEconomicManRequest request);
 
 }

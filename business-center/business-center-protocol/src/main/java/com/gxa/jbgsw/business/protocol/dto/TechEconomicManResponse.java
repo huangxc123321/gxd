@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -8,9 +9,9 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
-public class TechEconomicManDTO implements Serializable {
+public class TechEconomicManResponse implements Serializable {
 
-    @ApiModelProperty(value = "ID: 新增的時候传null, 编辑传ID")
+    @ApiModelProperty(value = "主键")
     private Long id;
 
     @ApiModelProperty(value = "姓名")
@@ -52,19 +53,28 @@ public class TechEconomicManDTO implements Serializable {
     @ApiModelProperty(value = "简介")
     private String desc;
 
-    @ApiModelProperty(value = "发布时间", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "发布时间")
     private Date createAt;
 
-    @ApiModelProperty(value = "发布人", hidden = true)
+    @ApiModelProperty(value = "发布人")
     private Long createBy;
 
-    @ApiModelProperty(value = "更新时间", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
-    @ApiModelProperty(value = "更新人", hidden = true)
+    @ApiModelProperty(value = "更新人")
     private Long updateBy;
 
-    @ApiModelProperty(value = "状态： 0 正常， 1 暂没发布" , hidden = true)
+    @ApiModelProperty(value = "状态： 0 正常， 1 暂没发布")
     private Integer status;
+
+    @ApiModelProperty(value = "分数 ")
+    private BigDecimal score;
+
+    @ApiModelProperty(value = "总促成成交数")
+    private Integer successTotal;
+
 
 }

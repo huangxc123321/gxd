@@ -26,6 +26,9 @@ public class Banner implements Serializable {
     @TableId(value = "id", type = IdType.ID_WORKER_STR)
     private Long id;
 
+    @ApiModelProperty(value = "类型： 0 pc , 1 app")
+    private Integer type;
+
     @ApiModelProperty(value = "icon")
     private String icon;
 
@@ -41,7 +44,7 @@ public class Banner implements Serializable {
     @ApiModelProperty(value = "状态")
     private Integer status;
 
-    @ApiModelProperty(value = "备案信息")
+    @ApiModelProperty(value = "生效时间")
     private Date effectAt;
 
     @ApiModelProperty(value = "创建时间")

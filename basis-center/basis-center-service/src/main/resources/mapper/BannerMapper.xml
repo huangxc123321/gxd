@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.basis.mapper.BannerMapper">
+
+    <select id="pageQuery" parameterType="com.gxa.jbgsw.basis.protocol.dto.BannerRequest"
+             resultType="com.gxa.jbgsw.basis.entity.Banner" >
+
+        SELECT
+            a.id,
+            a.type,
+            a.`name`,
+            a.icon,
+            a.links,
+            a.seq_no AS seqNo,
+            a.effect_at AS effetAt,
+            a.`status`
+        FROM
+            t_banner a
+        WHERE
+            1 = 1
+            <if test="status != null">
+                AND a.`status` = #{status}
+            </if>
+
+        ORDER BY a.createAt DESC
+
+
+    </select>
+
+</mapper>

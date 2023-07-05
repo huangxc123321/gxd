@@ -28,13 +28,13 @@ public class TalentPoolFontController extends BaseController {
 
 
     @ApiOperation(value = "批量删除帅才", notes = "批量删除帅才")
-    @PostMapping("/business/talent/pool/deleteBatchIds")
+    @PostMapping("/talent/pool/deleteBatchIds")
     public void deleteBatchIds(@RequestBody Long[] ids){
         talentPoolFeignApi.deleteBatchIds(ids);
     }
 
     @ApiOperation("新增帅才信息")
-    @PostMapping("/business/talent/pool/add")
+    @PostMapping("/talent/pool/add")
     void add(@RequestBody TalentPoolDTO talentPoolDTO) throws BizException {
         talentPoolDTO.setCreateBy(this.getUserId());
 
@@ -42,7 +42,7 @@ public class TalentPoolFontController extends BaseController {
     }
 
     @ApiOperation("编辑帅才信息")
-    @PostMapping("/business/talent/pool/update")
+    @PostMapping("/talent/pool/update")
     void update(@RequestBody TalentPoolDTO talentPoolDTO) throws BizException {
         if(talentPoolDTO == null || talentPoolDTO.getId() == null){
             throw new BizException(BusinessErrorCode.BUSINESS_PARAMS_ERROR);
@@ -53,7 +53,7 @@ public class TalentPoolFontController extends BaseController {
     }
 
     @ApiOperation("查看帅才信息")
-    @PostMapping("/business/talent/pool/detail")
+    @PostMapping("/talent/pool/detail")
     void detail(@RequestParam("id") Long id) throws BizException {
         // talentPoolFeignApi.detail(id);
     }

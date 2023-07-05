@@ -27,13 +27,13 @@ public interface HarvestApi {
     void update(@RequestBody HavestDTO havestDTO);
 
     @PostMapping(value = "/harvest/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteBatchIds(@RequestBody Long[] ids);
+    void deleteBatchIds(@RequestBody Long[] ids);
 
     @GetMapping("/harvest/getHarvesByHolder")
     List<HavestDTO> getHarvesByHolder(@RequestParam("holder") String holder);
 
     @GetMapping("/harvest/detail")
-    public DetailInfoDTO detail(@RequestParam("id") Long id);
+    DetailInfoDTO detail(@RequestParam("id") Long id);
 
     @GetMapping("/harvest/getCompanyById")
     HavestDTO getHavestById(@RequestParam("id")  Long id);

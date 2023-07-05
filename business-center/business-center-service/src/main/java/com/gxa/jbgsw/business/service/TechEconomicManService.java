@@ -2,6 +2,8 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequest;
+import com.gxa.jbgsw.common.utils.PageResult;
 
 /**
  * <p>
@@ -13,4 +15,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface TechEconomicManService extends IService<TechEconomicMan> {
 
+    void deleteBatchIds(Long[] ids);
+
+    PageResult<TechEconomicMan> pageQuery(TechEconomicManRequest request);
 }

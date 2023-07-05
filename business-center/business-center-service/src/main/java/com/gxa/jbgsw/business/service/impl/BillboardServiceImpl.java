@@ -8,6 +8,7 @@ import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
 import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
 import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
+import com.gxa.jbgsw.business.protocol.dto.LastBillboardRequest;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -85,5 +86,17 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
                 .eq(Billboard::getId, id);
 
         billboardMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public PageResult<Billboard> LastBillboardSetData(LastBillboardRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<Billboard> responses = billboardMapper.LastBillboardSetData(request);
+        PageInfo<Billboard> pageInfo = new PageInfo<>(responses);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<Billboard>>() {
+        }.build(), new TypeBuilder<PageResult<Billboard>>() {}.build());
     }
 }

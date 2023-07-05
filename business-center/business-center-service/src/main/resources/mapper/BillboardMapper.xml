@@ -83,5 +83,49 @@
 
     </select>
 
+    <select id="LastBillboardSetData" parameterType="com.gxa.jbgsw.business.protocol.dto.LastBillboardRequest"
+             resultMap="BaseResultMap" >
+       SELECT
+        a.*
+        FROM
+        t_billboard AS a
+
+        order by
+        <if test="createAt != null ">
+            <choose>
+                <when test="createAt == 0">
+                    a.create_at desc
+                </when>
+                <otherwise>
+                    a.create_at asc
+                </otherwise>
+            </choose>
+        </if>
+
+        <if test="amount != null">
+            <choose>
+                <when test="amount == 0">
+                    , a.amount desc
+                </when>
+                <otherwise>
+                    , a.amount asc
+                </otherwise>
+            </choose>
+        </if>
+
+        <if test="status != null">
+            <choose>
+                <when test="status == 0">
+                    , a.status desc
+                </when>
+                <otherwise>
+                    , a.status asc
+                </otherwise>
+            </choose>
+        </if>
+
+
+    </select>
+
 
 </mapper>

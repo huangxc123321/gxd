@@ -2,12 +2,12 @@ spring:
   cloud:
     nacos:
       discovery:
-        server-addr: localhost:8848
-        namespace: 4a7af41f-f656-4da5-bec8-a98d017eb62c
+        server-addr: 139.159.199.99:8848
+        namespace: 093ca1ae-4b63-4d5d-ad91-a025a4a0da61
 
       config:
-        server-addr: localhost:8848
-        namespace: 4a7af41f-f656-4da5-bec8-a98d017eb62c
+        server-addr: 139.159.199.99:8848
+        namespace: 093ca1ae-4b63-4d5d-ad91-a025a4a0da61
         ext-config:
           - data-id: common-dev.yml
             group: DEFAULT_GROUP

@@ -48,29 +48,40 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "经纪人类型：字典中获取")
     private Integer type;
 
+    @ApiModelProperty(value = "邮箱")
     private String email;
 
+    @ApiModelProperty(value = "省ID")
     private Long provinceId;
 
+    @ApiModelProperty(value = "省名称")
     private String provinceName;
 
+    @ApiModelProperty(value = "城市ID")
     private Long cityId;
 
+    @ApiModelProperty(value = "城市名称")
     private String cityName;
 
+    @ApiModelProperty(value = "地区ID")
     private Long areaId;
 
+    @ApiModelProperty(value = "地区名称")
     private String areaName;
 
     @ApiModelProperty(value = "简介")
     private String desc;
 
+    @ApiModelProperty(value = "发布时间")
     private Date createAt;
 
+    @ApiModelProperty(value = "发布人")
     private Long createBy;
 
+    @ApiModelProperty(value = "更新时间")
     private Date updateAt;
 
+    @ApiModelProperty(value = "更新人")
     private Long updateBy;
 
     @ApiModelProperty(value = "状态： 0 正常， 1 暂没发布")

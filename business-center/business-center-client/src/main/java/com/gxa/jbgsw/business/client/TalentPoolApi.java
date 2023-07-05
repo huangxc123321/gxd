@@ -14,18 +14,18 @@ import java.util.List;
 
 public interface TalentPoolApi {
 
-    @PostMapping(value = "/business/talent/pool/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteBatchIds(@RequestBody Long[] ids);
+    @PostMapping(value = "/talent/pool/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    void deleteBatchIds(@RequestBody Long[] ids);
 
-    @PostMapping("/business/talent/pool/pageQuery")
+    @PostMapping("/talent/pool/pageQuery")
     PageResult<TalentPoolResponse> pageQuery(@RequestBody TalentPoolRequest request);
 
-    @PostMapping("/business/talent/pool/add")
+    @PostMapping("/talent/pool/add")
     void add(@RequestBody TalentPoolDTO talentPoolDTO);
 
-    @PostMapping("/business/talent/pool/update")
+    @PostMapping("/talent/pool/update")
     void update(@RequestBody TalentPoolDTO talentPoolDTO);
 
-    @PostMapping("/business/talent/pool/getTalentPoolByTech")
+    @PostMapping("/talent/pool/getTalentPoolByTech")
     List<TalentPoolDTO> getTalentPoolByTech(@RequestParam("key") String key);
 }

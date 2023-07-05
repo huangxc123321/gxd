@@ -10,7 +10,9 @@ spring:
   application:
     name: user-center-service
   profiles:
-    active: local
+    #active: local
+
+    active: dev
 
   jackson:
     generator:
