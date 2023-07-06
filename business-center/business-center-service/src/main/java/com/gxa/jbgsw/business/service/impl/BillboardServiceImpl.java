@@ -1,14 +1,14 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
-import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.LastBillboardRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -98,5 +98,34 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<Billboard>>() {
         }.build(), new TypeBuilder<PageResult<Billboard>>() {}.build());
+    }
+
+    @Override
+    public int getPublishNum(Long userId, Integer type) {
+        LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Billboard::getCreateBy, userId)
+                .eq(Billboard::getType, type);
+        List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
+
+        if(CollectionUtils.isNotEmpty(billboards)){
+            return billboards.size();
+        }
+
+        return 0;
+    }
+
+    @Override
+    public PageResult<MyPublishBillboardInfo> queryMyPublish(MyPublishBillboardRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<MyPublishBillboardInfo> list = billboardMapper.queryMyPublish(request.getUserId(), request.getType());
+        if(CollectionUtils.isNotEmpty(list)){
+            PageInfo<MyPublishBillboardInfo> pageInfo = new PageInfo<>(list);
+
+            return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<MyPublishBillboardInfo>>() {
+            }.build(), new TypeBuilder<PageResult<MyPublishBillboardInfo>>() {}.build());
+        }
+
+        return new PageResult<MyPublishBillboardInfo>();
     }
 }

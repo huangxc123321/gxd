@@ -31,7 +31,7 @@ public class LoginServiceImpl implements LoginService {
         }
         // 1 账号+验证码
         else if(LoginWayEnum.ACCOUNT_VALIDATECODE.getCode().equals(loginRequest.getLoginWay())){
-            // userResponse = userService.getUserByValidateCode(loginRequest.getMobile());
+            userResponse = userService.getUserByValidateCode(loginRequest.getMobile(), loginRequest.getValidateCode());
         }
         // 2 扫描二维码登录
         else if(LoginWayEnum.SCAN_QR_TOKEN.getCode().equals(loginRequest.getLoginWay())){

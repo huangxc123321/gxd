@@ -5,15 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.entity.User;
 import com.gxa.jbgsw.user.mapper.UserMapper;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.user.service.UserService;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +30,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Resource
     UserMapper userMapper;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
     @Resource
     MapperFacade mapperFacade;
 
@@ -108,6 +114,30 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUpdateAt(new Date());
 
         this.updateById(user);
+    }
+
+    @Override
+    public UserResponse getUserByValidateCode(String mobile, String validateCode) {
+        // 从redis中获取验证码,对比
+        String key = RedisKeys.USER_VALIDATE_CODE+mobile;
+        Object value = stringRedisTemplate.opsForValue().get(key);
+        // 验证码为空或者错误，返回错误提示
+        if(value == null || !value.toString().equals(validateCode)){
+            throw new BizException(UserErrorCode.LOGIN_VALIDATECODE_IS_ERROR);
+        }
+        // 通过手机号获取用户信息
+        UserResponse userResponse = this.getUserByCode(mobile);
+
+        return userResponse;
+    }
+
+    @Override
+    public void updatePassword(String mobile, String password) {
+        LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(User::getPassword, password)
+                .eq(User::getMobile, mobile);
+
+        userMapper.update(null, lambdaUpdateWrapper);
     }
 
 }

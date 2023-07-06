@@ -127,5 +127,30 @@
 
     </select>
 
+    <select id="queryMyPublish" resultType="com.gxa.jbgsw.business.protocol.dto.MyPublishBillboardInfo">
 
+        SELECT
+            a.id,
+            a.title,
+            a.type,
+            a.categories,
+            a.tech_keys AS techKeys,
+            a.amount,
+            a.content,
+            a.start_at AS startAt,
+            a.end_at AS endAt,
+            a.create_at AS createAt
+        FROM
+            t_billboard a
+        WHERE
+        <if test="createBy != null and createBy != '' ">
+            a.create_by = #{createBy}#
+        </if>
+        <if test="type != null">
+            a.type = #{type}
+        </if>
+
+        ORDER BY a.create_at DESC
+
+    </select>
 </mapper>

@@ -16,7 +16,7 @@ import java.util.List;
 public class AuthProperties {
 
     /**
-     * 放行API集合
+     * 放行API集合(在gateway项目下的bootstrap.yml文件中配置)
      */
     private final List<String> url = new ArrayList<>();
 

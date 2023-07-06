@@ -32,5 +32,8 @@ public interface UserApi {
 
     @PostMapping("/user/update")
     void update(@RequestBody UserDTO userDTO);
+
+    @PostMapping("/user/update/password")
+    void updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO);
 }
 

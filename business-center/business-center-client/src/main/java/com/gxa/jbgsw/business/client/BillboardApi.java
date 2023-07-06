@@ -1,10 +1,7 @@
 package com.gxa.jbgsw.business.client;
 
 
-import com.gxa.jbgsw.business.protocol.dto.BillboardDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
-import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.DetailInfoDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -37,4 +34,7 @@ public interface BillboardApi {
 
     @GetMapping("/billboard/detail")
     DetailInfoDTO detail(@RequestParam("id") Long id);
+
+    @PostMapping("/billboard/queryMyPublish")
+    MyPublishBillboardResponse queryMyPublish(@RequestBody MyPublishBillboardRequest request);
 }

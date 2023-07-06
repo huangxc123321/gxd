@@ -1,0 +1,17 @@
+spring:
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 139.159.199.99:8848
+        namespace: 093ca1ae-4b63-4d5d-ad91-a025a4a0da61
+
+      config:
+        server-addr: 139.159.199.99:8848
+        namespace: 093ca1ae-4b63-4d5d-ad91-a025a4a0da61
+        ext-config:
+          - data-id: common-dev.yml
+            group: DEFAULT_GROUP
+            refresh: true
+          - data-id: website-dev.yml
+            group: DEFAULT_GROUP
+            refresh: true

@@ -6,11 +6,9 @@ import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.BillboardApi;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
-import com.gxa.jbgsw.business.protocol.dto.BillboardDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
-import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.DetailInfoDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -102,6 +100,50 @@ public class BillboardController implements BillboardApi {
     @Override
     public DetailInfoDTO detail(Long id) {
         return null;
+    }
+
+    @Override
+    public MyPublishBillboardResponse queryMyPublish(MyPublishBillboardRequest request) {
+        MyPublishBillboardResponse response = new MyPublishBillboardResponse();
+
+        // 先统计另外类型的总数
+        Integer trueType = BillboardTypeEnum.GOV_BILLBOARD.getCode();
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
+            trueType = BillboardTypeEnum.BUS_BILLBOARD.getCode();
+        }
+        int num = billboardService.getPublishNum(request.getUserId(), trueType);
+
+        // 政府榜
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
+            // 获取我发布的政府榜列表
+            PageResult<MyPublishBillboardInfo> pageResult = billboardService.queryMyPublish(request);
+
+            response.setBillboards(pageResult.getList());
+            response.setPageNum(pageResult.getPageNum());
+            response.setPageSize(pageResult.getPageSize());
+            response.setSize(pageResult.getSize());
+            response.setTotal(pageResult.getTotal());
+            response.setPages(pageResult.getPages());
+
+            response.setBusBillboardsNum(num);
+        }else{
+            // 获取我发布的企业榜列表
+            PageResult<MyPublishBillboardInfo> pageResult = billboardService.queryMyPublish(request);
+
+            response.setBillboards(pageResult.getList());
+            response.setPageNum(pageResult.getPageNum());
+            response.setPageSize(pageResult.getPageSize());
+            response.setSize(pageResult.getSize());
+            response.setTotal(pageResult.getTotal());
+            response.setPages(pageResult.getPages());
+
+            response.setBusBillboardsNum(num);
+
+
+            response.setGovBillboardsNum(num);
+        }
+
+        return response;
     }
 }
 

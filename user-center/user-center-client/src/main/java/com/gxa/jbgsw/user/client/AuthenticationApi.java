@@ -1,8 +1,13 @@
 package com.gxa.jbgsw.user.client;
 
+import com.gxa.jbgsw.user.protocol.dto.AuthenticationDTO;
+import com.gxa.jbgsw.user.protocol.dto.UserDTO;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Author Mr. huang
@@ -11,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
  */
 public interface AuthenticationApi {
 
-    @PostMapping(value = "/auth/info/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
-    public void deleteBatchIds(@RequestBody Long[] ids);
+    @PostMapping("/authentication/add")
+    void add(@RequestBody AuthenticationDTO authenticationDTO);
 
+    @GetMapping("/authentication/getAuthInfoByUserId")
+    AuthenticationDTO getAuthInfoByUserId(@RequestParam("userId") Long userId);
 
 }

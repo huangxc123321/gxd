@@ -1,0 +1,42 @@
+server:
+  port: 8080
+  tomcat:
+    max-threads: 1000
+    uri-encoding: UTF-8
+    remote-ip-header: x-forward-for
+    max-http-header-size: 8096
+  servlet:
+    session:
+      timeout: 43200m
+spring:
+  application:
+    name: admin
+  profiles:
+    # 开发环境配置
+    active: local
+
+    # 测试环境
+    #active: dev
+
+
+
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 50MB
+      max-request-size: 100MB
+
+
+
+feign:
+  httpclient:
+    enabled: true
+    connection-timeout: 90000
+
+ribbon:
+  # 指的是建立连接后从服务器读取到可用资源所用的时间
+  ReadTimeout: 90000
+  # 指的是建立连接所用的时间，适用于网络状况正常的情况下，两端连接所用的时间
+  ConnectTimeout: 90000
+  MaxAutoRetries: 0
+  MaxAutoRetriesNextServer: 1

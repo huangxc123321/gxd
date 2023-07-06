@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -26,6 +27,7 @@ public class BillboardGainResponse implements Serializable {
     @ApiModelProperty(value = "揭榜单位")
     private String acceptBillboard;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "申请时间")
     private Date applyAt;
 
@@ -38,6 +40,7 @@ public class BillboardGainResponse implements Serializable {
     @ApiModelProperty(value = "审核人名称")
     private String auditingUserName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "记录创建时间")
     private Date createAt;
 

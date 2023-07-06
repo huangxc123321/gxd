@@ -31,6 +31,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "主键")
     private Long id;
 
+    @ApiModelProperty(value = "用户ID")
     private Long userId;
 
     @ApiModelProperty(value = "认证类型：0：个人认证 1：企业认证 2：机构认证")

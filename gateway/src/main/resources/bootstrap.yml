@@ -3,6 +3,11 @@ skip:
     - /admin/login
     - /admin/file/upload
     - /admin/user/saveOrUpdate
+    - /admin/get/validate/code
+    - /web/login
+    - /web/file/upload
+    - /web/user/saveOrUpdate
+    - /web/get/validate/code
 
 # Tomcat
 server:
@@ -76,11 +81,18 @@ spring:
             - RewritePath=/admin/(?<path>.*), /$\{path}
 
         - id: app_route
-          uri: lb://app
+          uri: http://localhost:8082
           predicates:
-            - Path=/api/**
+            - Path=/app/**
           filters:
-            - RewritePath=/api/(?<path>.*), /$\{path}
+            - RewritePath=/app/(?<path>.*), /$\{path}
+
+        - id: web_route
+          uri: http://localhost:8080
+          predicates:
+            - Path=/web/**
+          filters:
+            - RewritePath=/web/(?<path>.*), /$\{path}
 
           # 在metadata中设置单个路由超时时间
           metadata:

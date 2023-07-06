@@ -2,9 +2,7 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
-import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.LastBillboardRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
 /**
@@ -28,4 +26,8 @@ public interface BillboardService extends IService<Billboard> {
     void updateSeqNo(Long id, Integer seqNo);
 
     PageResult<Billboard> LastBillboardSetData(LastBillboardRequest request);
+
+    int getPublishNum(Long userId, Integer type);
+
+    PageResult<MyPublishBillboardInfo> queryMyPublish(MyPublishBillboardRequest request);
 }
