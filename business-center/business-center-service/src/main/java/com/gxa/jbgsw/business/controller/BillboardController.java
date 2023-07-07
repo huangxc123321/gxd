@@ -124,7 +124,6 @@ public class BillboardController implements BillboardApi {
             response.setSize(pageResult.getSize());
             response.setTotal(pageResult.getTotal());
             response.setPages(pageResult.getPages());
-
             response.setBusBillboardsNum(num);
         }else{
             // 获取我发布的企业榜列表
@@ -136,10 +135,52 @@ public class BillboardController implements BillboardApi {
             response.setSize(pageResult.getSize());
             response.setTotal(pageResult.getTotal());
             response.setPages(pageResult.getPages());
-
             response.setBusBillboardsNum(num);
+            response.setGovBillboardsNum(num);
+        }
 
+        return response;
+    }
 
+    @Override
+    public void updateMyBillboard(BillboardDTO billboardDTO) {
+        billboardService.updateMyBillboard(billboardDTO);
+    }
+
+    @Override
+    public MyReceiveBillboardResponse queryMyReceiveBillboard(MyReceiveBillboardRequest request) {
+        MyReceiveBillboardResponse response = new MyReceiveBillboardResponse();
+
+        // 先统计另外类型的总数
+        Integer trueType = BillboardTypeEnum.GOV_BILLBOARD.getCode();
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
+            trueType = BillboardTypeEnum.BUS_BILLBOARD.getCode();
+        }
+        int num = billboardService.getMyReceiveBillboard(request.getUserId(), trueType);
+
+        // 政府榜
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
+            // 获取我发布的政府榜列表
+            PageResult<MyReceiveBillboardInfo> pageResult = billboardService.queryMyReceiveBillboard(request);
+
+            response.setBillboards(pageResult.getList());
+            response.setPageNum(pageResult.getPageNum());
+            response.setPageSize(pageResult.getPageSize());
+            response.setSize(pageResult.getSize());
+            response.setTotal(pageResult.getTotal());
+            response.setPages(pageResult.getPages());
+            response.setBusBillboardsNum(num);
+        }else{
+            // 获取我发布的企业榜列表
+            PageResult<MyReceiveBillboardInfo> pageResult = billboardService.queryMyReceiveBillboard(request);
+
+            response.setBillboards(pageResult.getList());
+            response.setPageNum(pageResult.getPageNum());
+            response.setPageSize(pageResult.getPageSize());
+            response.setSize(pageResult.getSize());
+            response.setTotal(pageResult.getTotal());
+            response.setPages(pageResult.getPages());
+            response.setBusBillboardsNum(num);
             response.setGovBillboardsNum(num);
         }
 

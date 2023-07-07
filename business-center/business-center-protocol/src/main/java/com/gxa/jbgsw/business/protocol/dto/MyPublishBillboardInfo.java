@@ -47,4 +47,11 @@ public class MyPublishBillboardInfo implements Serializable {
     @ApiModelProperty(value = "企业logo")
     private String logo;
 
+    @ApiModelProperty(value = "发榜状态：0 待揭榜、1 已签约、2 解决中、3 已解决")
+    private Integer status;
+
+    @ApiModelProperty(value = "发榜状态名称：待揭榜、已签约、解决中、已解决")
+    private String statusName;
+
+
 }

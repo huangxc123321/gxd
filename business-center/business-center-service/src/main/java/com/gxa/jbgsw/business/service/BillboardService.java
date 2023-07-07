@@ -30,4 +30,10 @@ public interface BillboardService extends IService<Billboard> {
     int getPublishNum(Long userId, Integer type);
 
     PageResult<MyPublishBillboardInfo> queryMyPublish(MyPublishBillboardRequest request);
+
+    void updateMyBillboard(BillboardDTO billboardDTO);
+
+    int getMyReceiveBillboard(Long userId, Integer trueType);
+
+    PageResult<MyReceiveBillboardInfo> queryMyReceiveBillboard(MyReceiveBillboardRequest request);
 }

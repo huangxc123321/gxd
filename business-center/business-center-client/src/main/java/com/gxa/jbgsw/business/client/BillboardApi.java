@@ -35,6 +35,12 @@ public interface BillboardApi {
     @GetMapping("/billboard/detail")
     DetailInfoDTO detail(@RequestParam("id") Long id);
 
-    @PostMapping("/billboard/queryMyPublish")
+    @PostMapping("/user/center/queryMyPublish/")
     MyPublishBillboardResponse queryMyPublish(@RequestBody MyPublishBillboardRequest request);
+
+    @PostMapping("/user/center/updateMyBillboard")
+    void updateMyBillboard(BillboardDTO billboardDTO);
+
+    @PostMapping("/user/center/queryMyReceiveBillboard/")
+    MyReceiveBillboardResponse queryMyReceiveBillboard(MyReceiveBillboardRequest request);
 }

@@ -47,7 +47,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "申请时间")
     private Date applyAt;
 
-    @ApiModelProperty(value = "揭榜审核状态：0 审核不通过  1 审核通过")
+    @ApiModelProperty(value = "揭榜审核状态：0 待评审  1 已评审 2 未通过")
     private Integer auditingStatus;
 
     @ApiModelProperty(value = "审核人")

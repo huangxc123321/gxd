@@ -31,5 +31,7 @@ public class HarvestRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "所属人")
     private String holder;
 
+    @ApiModelProperty(value = "所有者", hidden = true)
+    private Long createBy;
 
 }

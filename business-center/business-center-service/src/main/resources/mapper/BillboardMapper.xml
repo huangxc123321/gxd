@@ -153,4 +153,38 @@
         ORDER BY a.create_at DESC
 
     </select>
+
+    <select id="getMyReceiveBillboard" resultType="int">
+        SELECT
+            count(1) AS num
+        FROM
+            t_billboard_gain AS a
+        LEFT JOIN t_billboard AS b ON a.pid = b.id
+        WHERE
+            a.create_by = #{userId}
+            AND b.type = #{type}
+    </select>
+
+    <select id="queryMyReceiveBillboard" parameterType="com.gxa.jbgsw.business.protocol.dto.MyReceiveBillboardRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MyReceiveBillboardInfo">
+            SELECT
+                a.id,
+                a.pid,
+                b.title,
+                a.auditing_status AS auditingStatus,
+                a.apply_at applyAt,
+                a.attachment,
+                a.auditing_user_name AS auditingUserName,
+                a.reason,
+                a.create_at createAt
+            FROM
+                t_billboard_gain AS a
+            LEFT JOIN t_billboard AS b ON a.pid = b.id
+            WHERE
+                a.create_by = #{userId}
+                AND b.type = #{type}
+                ORDER BY a.create_at DESC
+    </select>
+
+
 </mapper>

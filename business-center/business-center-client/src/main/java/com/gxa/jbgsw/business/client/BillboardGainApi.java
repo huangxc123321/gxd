@@ -21,8 +21,6 @@ public interface BillboardGainApi {
     @GetMapping("/billboard/gain/getBillboardGainByPid")
     List<BillboardGainDTO> getBillboardGainByPid(@RequestParam("id") Long id);
 
-
-
-
-
+    @GetMapping("/user/center/myReceiveBillboardDetail")
+    BillboardGainDTO getBillboardGainById(Long id);
 }

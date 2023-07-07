@@ -35,5 +35,11 @@ public class BillboardGainController implements BillboardGainApi {
 
         return responses;
     }
+
+    @Override
+    public BillboardGainDTO getBillboardGainById(Long id) {
+        BillboardGain billboardGain = billboardGainService.getById(id);
+        return mapperFacade.map(billboardGain, BillboardGainDTO.class);
+    }
 }
 

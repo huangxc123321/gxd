@@ -5,16 +5,20 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
+import com.gxa.jbgsw.business.entity.BillboardGain;
+import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -127,5 +131,35 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         }
 
         return new PageResult<MyPublishBillboardInfo>();
+    }
+
+    @Override
+    public void updateMyBillboard(BillboardDTO billboardDTO) {
+        Billboard billboard = billboardMapper.selectById(billboardDTO.getId());
+        // BillboardDTO有null就不需要替换billboard
+        BeanUtils.copyProperties(billboardDTO, billboard, CopyPropertionIngoreNull.getNullPropertyNames(billboard));
+
+        billboardMapper.updateById(billboard);
+    }
+
+    @Override
+    public int getMyReceiveBillboard(Long userId, Integer trueType) {
+        int num = billboardMapper.getMyReceiveBillboard(userId, trueType);
+        return num;
+    }
+
+    @Override
+    public PageResult<MyReceiveBillboardInfo> queryMyReceiveBillboard(MyReceiveBillboardRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<MyReceiveBillboardInfo> responses = billboardMapper.queryMyReceiveBillboard(request);
+        if(CollectionUtils.isNotEmpty(responses)){
+            PageInfo<MyReceiveBillboardInfo> pageInfo = new PageInfo<>(responses);
+
+            return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<MyReceiveBillboardInfo>>() {
+            }.build(), new TypeBuilder<PageResult<MyReceiveBillboardInfo>>() {}.build());
+        }
+
+        return new PageResult<MyReceiveBillboardInfo>();
     }
 }

@@ -34,7 +34,8 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "关注者ID")
     private Long userId;
-
+    
+    @ApiModelProperty(value = "关注类型： 0 政府 1 企业 2 帅才")
     private Integer boardType;
 
     @ApiModelProperty(value = "关联ID（政府版/企业榜ID或者）")
