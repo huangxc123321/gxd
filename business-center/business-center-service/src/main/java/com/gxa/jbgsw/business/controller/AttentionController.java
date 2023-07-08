@@ -22,10 +22,9 @@ public class AttentionController implements AttentionApi {
 
     @Override
     public MyAttentionResponse queryMyAttentions(MyAttentionRequest myAttentionRequest) {
+        MyAttentionResponse response = attentionService.queryMyAttentions(myAttentionRequest);
 
-
-
-        return null;
+        return response;
     }
 }
 

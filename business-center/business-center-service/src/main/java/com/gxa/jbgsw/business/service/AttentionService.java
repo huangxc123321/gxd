@@ -2,6 +2,8 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.Attention;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
+import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
 
 /**
  * <p>
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface AttentionService extends IService<Attention> {
 
+    MyAttentionResponse queryMyAttentions(MyAttentionRequest myAttentionRequest);
 }

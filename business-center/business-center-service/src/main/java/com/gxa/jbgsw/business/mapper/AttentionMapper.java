@@ -2,6 +2,10 @@ package com.gxa.jbgsw.business.mapper;
 
 import com.gxa.jbgsw.business.entity.Attention;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo;
+import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface AttentionMapper extends BaseMapper<Attention> {
 
+    List<MyAttentionInfo> getMyAttentionInfos(MyAttentionRequest myAttentionRequest);
 }

@@ -16,7 +16,7 @@ public class MyAttentionResponse implements Serializable {
     Integer govNum;
 
     @ApiModelProperty(value = "我关注的企业总数")
-    Integer busBillboardsNum;
+    Integer busBuzNum;
 
     @ApiModelProperty(value = "我关注的帅才总数")
     Integer talentNum;
