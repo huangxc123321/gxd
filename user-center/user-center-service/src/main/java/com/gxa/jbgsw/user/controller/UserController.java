@@ -19,7 +19,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "用户管理")
 @RestController
@@ -84,5 +87,13 @@ public class UserController implements UserApi {
         }
 
         userService.updatePassword(updatePasswordDTO.getMobile(), updatePasswordDTO.getPassword());
+    }
+
+    @Override
+    public List<UserResponse> getUserByIds(Long[] ids) {
+        List<Long> userIds = Arrays.stream(ids).collect(Collectors.toList());
+
+        List<User> users = userService.listByIds(userIds);
+        return mapperFacade.mapAsList(users, UserResponse.class);
     }
 }

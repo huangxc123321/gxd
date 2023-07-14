@@ -7,7 +7,6 @@ import com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
 import com.gxa.jbgsw.business.protocol.enums.AttentionTypeEnum;
-import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.service.AttentionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;

@@ -14,8 +14,8 @@ import java.util.Date;
  */
 @Data
 public class UserRequest extends PageRequest implements Serializable {
-    @ApiModelProperty(value = "手机号码")
-    private String mobile;
+    @ApiModelProperty(value = "搜索字段")
+    private String searchFiled;
 
     @ApiModelProperty(value = "创建开始时间")
     private Date startDate;

@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.basis.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
@@ -8,6 +9,7 @@ import com.gxa.jbgsw.basis.entity.Banner;
 import com.gxa.jbgsw.basis.mapper.BannerMapper;
 import com.gxa.jbgsw.basis.protocol.dto.BannerDTO;
 import com.gxa.jbgsw.basis.protocol.dto.BannerRequest;
+import com.gxa.jbgsw.basis.protocol.enums.BannerStatusEnum;
 import com.gxa.jbgsw.basis.service.BannerService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -70,6 +72,22 @@ public class BannerServiceImpl  extends ServiceImpl<BannerMapper, Banner> implem
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<Banner>>() {
         }.build(), new TypeBuilder<PageResult<Banner>>() {}.build());
+    }
+
+    @Override
+    public List<Banner> getIndexBanners(Integer type) {
+        LambdaQueryWrapper<Banner> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 生效
+        lambdaQueryWrapper.eq(Banner::getStatus, BannerStatusEnum.EFFECTIVE.getCode());
+        if(type != null){
+            lambdaQueryWrapper.eq(Banner::getType, type);
+        }
+
+        lambdaQueryWrapper.orderByDesc(Banner::getCreateAt);
+        lambdaQueryWrapper.last("LIMIT 4");
+
+        List<Banner> banners = bannerMapper.selectList(lambdaQueryWrapper);
+        return banners;
     }
 
 

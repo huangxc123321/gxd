@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * @Author Mr. huang
  * @Date 2023/7/4 0004 16:37
@@ -40,4 +42,6 @@ public interface BannerApi {
     @PostMapping("/banner/pageQuery")
     PageResult<BannerResponse> pageQuery(@RequestBody BannerRequest request);
 
+    @GetMapping("/banner/getIndexBanners")
+    List<BannerResponse> getIndexBanners(Integer type);
 }

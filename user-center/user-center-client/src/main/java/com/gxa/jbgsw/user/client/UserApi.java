@@ -18,7 +18,7 @@ public interface UserApi {
     @GetMapping("/user/getUserByCode")
     UserResponse getUserByCode(@RequestParam("code") String code);
 
-    @PostMapping(value = "/device/alarm/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/user/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     public void deleteBatchIds(@RequestBody Long[] ids);
 
     @PostMapping("/user/pageQuery")
@@ -35,5 +35,8 @@ public interface UserApi {
 
     @PostMapping("/user/update/password")
     void updatePassword(@RequestBody UpdatePasswordDTO updatePasswordDTO);
+
+    @PostMapping(value = "/user/getUserByIds")
+    List<UserResponse> getUserByIds(@RequestBody Long[]  ids);
 }
 

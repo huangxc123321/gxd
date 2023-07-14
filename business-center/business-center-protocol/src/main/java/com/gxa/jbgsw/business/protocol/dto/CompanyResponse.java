@@ -1,10 +1,9 @@
-package com.gxa.jbgsw.user.protocol.dto;
+package com.gxa.jbgsw.business.protocol.dto;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * @author huangxc

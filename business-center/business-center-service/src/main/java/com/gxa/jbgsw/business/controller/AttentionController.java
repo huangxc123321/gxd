@@ -7,7 +7,6 @@ import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
 import com.gxa.jbgsw.business.service.AttentionService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 

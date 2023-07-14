@@ -30,6 +30,4 @@ public interface NewsApi {
     @GetMapping("/new/detail")
     NewsDTO detail(@RequestParam("id") Long id);
 
-
-
 }

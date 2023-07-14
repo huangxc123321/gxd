@@ -28,4 +28,8 @@ public interface TalentPoolApi {
 
     @PostMapping("/talent/pool/getTalentPoolByTech")
     List<TalentPoolDTO> getTalentPoolByTech(@RequestParam("key") String key);
+
+    @PostMapping("/talent/pool/getTalentPoolById")
+    TalentPoolDTO getTalentPoolById(@RequestParam("id") Long id);
+
 }

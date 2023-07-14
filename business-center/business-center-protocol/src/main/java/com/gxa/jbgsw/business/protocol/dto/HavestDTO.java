@@ -29,6 +29,9 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "成熟度：字典中获取")
     private Integer maturityLevel;
 
+    @ApiModelProperty(value = "成熟度名称：字典中获取")
+    private String maturityLevelName;
+
     @ApiModelProperty(value = "应用领域： 手工输入")
     private String appyDomain;
 

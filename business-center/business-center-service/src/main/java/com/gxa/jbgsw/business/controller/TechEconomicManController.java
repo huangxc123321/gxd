@@ -82,5 +82,10 @@ public class TechEconomicManController implements TechEconomicManApi {
 
         return pages;
     }
+
+    @Override
+    public TechEconomicManResponse getTechEconomicManById(Long id) {
+        return null;
+    }
 }
 

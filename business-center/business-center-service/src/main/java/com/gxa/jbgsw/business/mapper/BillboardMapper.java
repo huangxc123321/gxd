@@ -26,4 +26,8 @@ public interface BillboardMapper extends BaseMapper<Billboard> {
     int getMyReceiveBillboard(@Param("userId")Long userId,  @Param("type") Integer trueType);
 
     List<MyReceiveBillboardInfo> queryMyReceiveBillboard(MyReceiveBillboardRequest request);
+
+    List<BillboardIndexDTO> queryGovBillborads(SearchGovRequest searchGovRequest);
+
+    List<BillboardIndexDTO> queryBizBillborads(SearchBizRequest searchGovRequest);
 }

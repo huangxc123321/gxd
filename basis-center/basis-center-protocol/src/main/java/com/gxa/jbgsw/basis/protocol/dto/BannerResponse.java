@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.basis.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -26,8 +27,23 @@ public class BannerResponse implements Serializable {
 
     @ApiModelProperty(value = "图片链接地址")
     private String links;
-
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "生效时间")
     private Date effectAt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "生效时间")
+    private Date createAt;
+
+    @ApiModelProperty(value = "状态: 0 生效  1 失效")
+    private Integer status;
+
+    @ApiModelProperty(value = "状态名称: 0 已生效  1 失效")
+    private String statusName;
+
+    @ApiModelProperty(value = "创建人ID", hidden = true)
+    private Long createBy;
+
+    @ApiModelProperty(value = "上传者")
+    private String createName;
 }

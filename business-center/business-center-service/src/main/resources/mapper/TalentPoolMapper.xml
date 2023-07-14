@@ -2,4 +2,43 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.TalentPoolMapper">
 
+    <select id="queryTalents" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchTalentsRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.SearchTalentsResponse">
+        SELECT
+          a.id,
+          a.`name`,
+          a.professional,
+          a.photo,
+          a.highest_edu AS highestEdu,
+          a.unit_name AS unitName,
+          a.research_direction AS researchDirection,
+          a.tech_domain AS techDomain
+        FROM
+            t_talent_pool a
+        WHERE 1 = 1
+
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND (a.`name` like CONCAT('%',#{searchFiled},'%') OR a.graduate_school like CONCAT('%',#{searchFiled},'%') OR a.tech_domain like '' OR a.research_direction like CONCAT('%',#{searchFiled},'%'))
+        </if>
+
+        <if test="addrId != null and addrId != '' ">
+            AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
+        </if>
+
+        <if test="techDomain != null and techDomain != '' ">
+            AND a.tech_domain like #{techDomain}
+        </if>
+
+        <if test="highestEdu != null and highestEdu != '' ">
+            AND a.highest_edu = #{highestEdu}
+        </if>
+
+        <if test="sex != null ">
+            AND a.sex = #{sex}
+        </if>
+
+        order by create_at desc
+
+    </select>
+
 </mapper>

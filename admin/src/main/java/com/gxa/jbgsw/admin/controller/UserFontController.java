@@ -59,7 +59,7 @@ public class UserFontController extends BaseController {
 
         // 判断手机号码是否注册
         UserRequest userRequest = new UserRequest();
-        userRequest.setMobile(userDTO.getMobile());
+        userRequest.setSearchFiled(userDTO.getMobile());
         PageResult<UserResponse> pageResult = userFeignApi.pageQuery(userRequest);
         if(pageResult.getTotal()>0){
             throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);

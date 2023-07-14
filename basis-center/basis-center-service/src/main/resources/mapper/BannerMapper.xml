@@ -12,7 +12,9 @@
             a.icon,
             a.links,
             a.seq_no AS seqNo,
-            a.effect_at AS effetAt,
+            a.effect_at AS effectAt,
+            a.create_at AS createAt,
+            a.create_by AS createBy,
             a.`status`
         FROM
             t_banner a
@@ -22,7 +24,7 @@
                 AND a.`status` = #{status}
             </if>
 
-        ORDER BY a.createAt DESC
+        ORDER BY a.create_at DESC
 
 
     </select>

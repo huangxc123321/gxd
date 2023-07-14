@@ -35,7 +35,7 @@ public class BillboardGainResponse implements Serializable {
     private Integer auditingStatus;
 
     @ApiModelProperty(value = "审核人")
-    private String auditingUserId;
+    private Long auditingUserId;
 
     @ApiModelProperty(value = "审核人名称")
     private String auditingUserName;

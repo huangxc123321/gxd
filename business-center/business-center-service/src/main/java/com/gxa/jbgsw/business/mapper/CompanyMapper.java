@@ -1,8 +1,8 @@
-package com.gxa.jbgsw.user.mapper;
+package com.gxa.jbgsw.business.mapper;
 
-import com.gxa.jbgsw.user.entity.Company;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.gxa.jbgsw.user.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.entity.Company;
+import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
 
 import java.util.List;
 

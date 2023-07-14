@@ -31,6 +31,54 @@
     </resultMap>
 
 
+    <select id="queryGovBillborads" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchGovRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.BillboardIndexDTO">
+        SELECT
+            a.id,
+            a.tech_keys AS techKeys,
+            a.type,
+            a.`status`,
+            a.title,
+            a.amount,
+            a.content,
+            a.create_at AS createAt,
+            a.unit_logo AS unitLogo,
+            a.unit_name AS unitName,
+            a.categories
+        FROM
+        t_billboard AS a
+        WHERE
+        1 = 1
+
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND a.title like CONCAT('%',#{searchFiled},'%')
+        </if>
+
+        <if test="addrId != null and addrId != '' ">
+            AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
+        </if>
+
+        <if test="categories != null ">
+            AND a.categories =  #{categories}
+        </if>
+
+        <if test="startAmount != null ">
+            AND (a.amount <![CDATA[ >= ]]> #{startAmount} AND a.amount <![CDATA[ <= ]]> #{endtAmount})
+        </if>
+
+        <if test="startDate != null and startDate != '' ">
+            AND a.start_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+            AND a.end_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+        </if>
+
+        <if test="status != null ">
+            AND a.`status` = #{status}
+        </if>
+        ORDER BY a.seq_no ASC , a.create_at DESC
+    </select>
+
+
+
     <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.BillboardRequest"
             resultMap="BaseResultMap">
         SELECT
@@ -69,14 +117,14 @@
             AND a.unit_name like CONCAT('%',#{unitName},'%')
         </if>
 
-        order by a.seq_no asc , a.create_at desc
+        ORDER BY a.seq_no ASC , a.create_at DESC
         <if test="amountSort != null">
             <choose>
                 <when test="amountSort == 0">
-                    , a.amount desc
+                    , a.amount DESC
                 </when>
                 <otherwise>
-                    , a.amount asc
+                    , a.amount ASC
                 </otherwise>
             </choose>
         </if>
@@ -84,31 +132,43 @@
     </select>
 
     <select id="LastBillboardSetData" parameterType="com.gxa.jbgsw.business.protocol.dto.LastBillboardRequest"
-             resultMap="BaseResultMap" >
+             resultType="com.gxa.jbgsw.business.entity.Billboard" >
        SELECT
-        a.*
+        a.id,
+        a.tech_keys AS techKeys,
+        a.type,
+        a.`status`,
+        a.title,
+        a.amount,
+        a.content,
+        a.create_at AS createAt,
+        a.unit_logo AS unitLogo,
+        a.unit_name AS unitName,
+        a.categories,
+        a.is_top AS isTop
         FROM
         t_billboard AS a
 
-        order by
+        ORDER BY
         <if test="createAt != null ">
             <choose>
                 <when test="createAt == 0">
-                    a.create_at desc
+                    a.create_at DESC
                 </when>
                 <otherwise>
-                    a.create_at asc
+                    a.create_at ASC
                 </otherwise>
             </choose>
         </if>
 
+
         <if test="amount != null">
             <choose>
                 <when test="amount == 0">
-                    , a.amount desc
+                    ,a.amount DESC
                 </when>
                 <otherwise>
-                    , a.amount asc
+                    ,a.amount ASC
                 </otherwise>
             </choose>
         </if>
@@ -116,10 +176,10 @@
         <if test="status != null">
             <choose>
                 <when test="status == 0">
-                    , a.status desc
+                    , a.status DESC
                 </when>
                 <otherwise>
-                    , a.status asc
+                    , a.status ASC
                 </otherwise>
             </choose>
         </if>
@@ -185,6 +245,62 @@
                 AND b.type = #{type}
                 ORDER BY a.create_at DESC
     </select>
+
+    <select id="queryBizBillborads" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchBizRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.BillboardIndexDTO">
+        SELECT
+            a.id,
+            a.tech_keys AS techKeys,
+            a.type,
+            a.`status`,
+            a.title,
+            a.amount,
+            a.content,
+            a.create_at AS createAt,
+            b.logo AS unitLogo,
+            a.unit_name AS unitName,
+            a.categories
+            FROM
+                t_billboard a LEFT JOIN t_company b ON a.unit_name = b.`name`
+            WHERE
+            1 = 1
+
+            <if test="searchFiled != null and searchFiled != '' ">
+                AND a.title like CONCAT('%',#{searchFiled},'%')
+            </if>
+
+            <if test="addrId != null and addrId != '' ">
+                AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
+            </if>
+
+            <if test="categories != null ">
+                AND a.categories =  #{categories}
+            </if>
+
+            <if test="startAmount != null ">
+                AND (a.amount <![CDATA[ >= ]]> #{startAmount} AND a.amount <![CDATA[ <= ]]> #{endtAmount})
+            </if>
+
+            <if test="startDate != null and startDate != '' ">
+                AND a.start_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+                AND a.end_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+            </if>
+
+            <if test="status != null ">
+                AND a.`status` = #{status}
+            </if>
+            <if test="star != null ">
+                AND b.star = #{star}
+            </if>
+            <if test="type != null ">
+                AND b.type = #{type}
+            </if>
+
+            order by a.seq_no asc , a.create_at desc
+    </select>
+
+
+
 
 
 </mapper>

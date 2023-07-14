@@ -10,6 +10,7 @@ public enum DictionaryTypeCodeEnum {
     tech_domain,
     categories,
     billboard_status,
+    maturity_level,
     ;
 
 }

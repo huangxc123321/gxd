@@ -1,7 +1,9 @@
-package com.gxa.jbgsw.user.client;
+package com.gxa.jbgsw.business.client;
 
+import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
+import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
 import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.user.protocol.dto.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;

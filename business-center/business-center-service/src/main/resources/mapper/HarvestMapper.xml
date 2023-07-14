@@ -69,4 +69,42 @@
 
     </select>
 
+    <select id="queryHarvests" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchHarvestsRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.SearchHavestResponse">
+        SELECT
+            a.id,
+            a. NAME,
+            a.maturity_level AS maturityLevel,
+            a.tech_domain AS techDomain,
+            a.holder,
+            a.remark,
+            a.create_at AS createAt,
+            b.`name`,
+            b.logo
+        FROM
+        t_harvest a LEFT JOIN t_company b on a.unit_name = b.`name`
+        WHERE
+        1 = 1
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND a.`name` LIKE CONCAT('%',#{searchFiled},'%')
+        </if>
+
+        <if test="tradeType != null ">
+            AND a.trade_type =  #{tradeType}
+        </if>
+
+        <if test="techDomain != null and techDomain != '' ">
+            AND a.`tech_domain` LIKE CONCAT('%',#{techDomain},'%')
+        </if>
+
+        <if test="maturityLevel != null ">
+            AND a.maturity_level = #{maturityLevel}
+        </if>
+
+
+        ORDER BY
+        a.create_at DESC
+    </select>
+
+
 </mapper>

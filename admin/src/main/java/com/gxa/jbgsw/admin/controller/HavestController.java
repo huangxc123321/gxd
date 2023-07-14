@@ -8,7 +8,6 @@ import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.user.protocol.dto.CompanyDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

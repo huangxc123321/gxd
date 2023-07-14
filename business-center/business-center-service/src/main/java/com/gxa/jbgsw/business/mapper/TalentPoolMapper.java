@@ -2,6 +2,10 @@ package com.gxa.jbgsw.business.mapper;
 
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.gxa.jbgsw.business.protocol.dto.SearchTalentsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchTalentsResponse;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +17,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface TalentPoolMapper extends BaseMapper<TalentPool> {
 
+    List<SearchTalentsResponse> queryTalents(SearchTalentsRequest searchTalentsRequest);
 }

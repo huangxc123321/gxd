@@ -2,9 +2,7 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.News;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gxa.jbgsw.business.protocol.dto.DetailInfoDTO;
-import com.gxa.jbgsw.business.protocol.dto.NewsDTO;
-import com.gxa.jbgsw.business.protocol.dto.NewsRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
 /**
@@ -26,4 +24,6 @@ public interface NewsService extends IService<News> {
     void updateStatus(String id, Integer code);
 
     PageResult<News> pageQuery(NewsRequest request);
+
+    PageResult<SearchNewsResponse> queryNews(SearchNewsRequest searchNewsRequest);
 }

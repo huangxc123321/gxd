@@ -93,5 +93,6 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "总促成成交数")
     private Integer successTotal;
 
-
+    @ApiModelProperty(value = "人物照片")
+    private String picture;
 }

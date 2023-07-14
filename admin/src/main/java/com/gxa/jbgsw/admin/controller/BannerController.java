@@ -1,10 +1,18 @@
 package com.gxa.jbgsw.admin.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.BannerFeignApi;
+import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.basis.protocol.dto.BannerDTO;
+import com.gxa.jbgsw.basis.protocol.dto.BannerRequest;
+import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
 import com.gxa.jbgsw.business.protocol.dto.BillboardDTO;
+import com.gxa.jbgsw.business.protocol.dto.BillboardRequest;
+import com.gxa.jbgsw.business.protocol.dto.BillboardResponse;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -14,7 +22,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "广告位管理")
 @RestController
@@ -23,6 +34,38 @@ import java.util.Date;
 public class BannerController extends BaseController {
     @Resource
     BannerFeignApi bannerFeignApi;
+    @Resource
+    UserFeignApi userFeignApi;
+
+    @ApiOperation("获取广告位列表")
+    @PostMapping("/banner/pageQuery")
+    PageResult<BannerResponse> pageQuery(@RequestBody BannerRequest request){
+        PageResult<BannerResponse> pageResult = bannerFeignApi.pageQuery(request);
+        List<BannerResponse> response = pageResult.getList();
+
+        List<Long> ids = new ArrayList<>();
+        List<Long> finalIds = ids;
+        response.stream().forEach(s->{
+            finalIds.add(s.getCreateBy());
+        });
+
+        // 去重
+        ids = finalIds.stream().distinct().collect(Collectors.toList());
+        Long[] userIds = new Long[ids.size()];
+        ids.toArray(userIds);
+        List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
+        response.forEach(s->{
+            UserResponse u = userResponses.stream()
+                    .filter(user -> s.getCreateBy().equals(user.getId()))
+                    .findAny()
+                    .orElse(null);
+            if(u != null){
+                s.setCreateName(u.getNick());
+            }
+        });
+
+        return pageResult;
+    }
 
     @ApiOperation(value = "修改排序", notes = "修改排序")
     @ApiImplicitParams({
@@ -37,10 +80,11 @@ public class BannerController extends BaseController {
     @ApiOperation("新增广告位信息")
     @PostMapping("/banner/add")
     void add(@RequestBody BannerDTO[] bannerDTO) throws BizException {
+        Long userId = this.getUserId();
         if(bannerDTO.length > 0){
             for(int i=0; i<bannerDTO.length; i++){
                 bannerDTO[i].setCreateAt(new Date());
-                bannerDTO[i].setCreateBy(this.getDepartmentId());
+                bannerDTO[i].setCreateBy(userId);
             }
         }
         bannerFeignApi.add(bannerDTO);

@@ -3,6 +3,8 @@ package com.gxa.jbgsw.business.mapper;
 import com.gxa.jbgsw.business.entity.Harvest;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gxa.jbgsw.business.protocol.dto.HarvestRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchHarvestsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchHavestResponse;
 
 import java.util.List;
 
@@ -17,4 +19,6 @@ import java.util.List;
 public interface HarvestMapper extends BaseMapper<Harvest> {
 
     List<Harvest> pageQuery(HarvestRequest request);
+
+    List<SearchHavestResponse> queryHarvests(SearchHarvestsRequest searchHarvestsRequest);
 }

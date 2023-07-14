@@ -24,24 +24,24 @@
 
         WHERE
             1 = 1
-
-          <if test="mobile != null and mobile != '' ">
-              AND a.`mobile` = #{mobile}
-          </if>
-
-         <if test="startDate != null and startDate != '' ">
-             AND  a.`create_at` BETWEEN #{startDate} AND #{endDate}
-         </if>
-
-          <if test="status != null">
-              AND b.`status` = #{status}
-          </if>
-
-         <if test="useStauts != null">
-             AND a.`use_stauts` = #{useStauts}
-         </if>
+             <if test="searchFiled != null and searchFiled != '' ">
+                 AND ( a.`mobile` like CONCAT('%',#{searchFiled},'%') OR a.nick like CONCAT('%',#{searchFiled},'%') )
+             </if>
 
 
+             <if test="startDate != null and startDate != '' ">
+                 AND  a.`create_at` BETWEEN #{startDate} AND #{endDate}
+             </if>
+
+              <if test="status != null">
+                  AND b.`status` = #{status}
+              </if>
+
+             <if test="useStauts != null">
+                 AND a.`use_stauts` = #{useStauts}
+             </if>
+
+             ORDER BY a.`create_at` DESC
 
 
  </select>

@@ -10,6 +10,8 @@ import com.gxa.jbgsw.business.entity.News;
 import com.gxa.jbgsw.business.mapper.NewsMapper;
 import com.gxa.jbgsw.business.protocol.dto.NewsDTO;
 import com.gxa.jbgsw.business.protocol.dto.NewsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchNewsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchNewsResponse;
 import com.gxa.jbgsw.business.protocol.enums.IsFixedEnum;
 import com.gxa.jbgsw.business.service.NewsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -97,6 +99,18 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<News>>() {
         }.build(), new TypeBuilder<PageResult<News>>() {}.build());
+    }
+
+    @Override
+    public PageResult<SearchNewsResponse> queryNews(SearchNewsRequest searchNewsRequest) {
+        PageHelper.startPage(searchNewsRequest.getPageNum(), searchNewsRequest.getPageSize());
+
+        List<SearchNewsResponse> responses = newsMapper.queryNews(searchNewsRequest.getType());
+        PageInfo<SearchNewsResponse> pageInfo = new PageInfo<>(responses);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchNewsResponse>>() {
+        }.build(), new TypeBuilder<PageResult<SearchNewsResponse>>() {}.build());
     }
 
 }

@@ -1,15 +1,15 @@
-package com.gxa.jbgsw.user.service.impl;
+package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.business.entity.Company;
+import com.gxa.jbgsw.business.mapper.CompanyMapper;
+import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
+import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.user.entity.Company;
-import com.gxa.jbgsw.user.mapper.CompanyMapper;
-import com.gxa.jbgsw.user.protocol.dto.CompanyDTO;
-import com.gxa.jbgsw.user.protocol.dto.CompanyRequest;
-import com.gxa.jbgsw.user.service.CompanyService;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.springframework.beans.BeanUtils;

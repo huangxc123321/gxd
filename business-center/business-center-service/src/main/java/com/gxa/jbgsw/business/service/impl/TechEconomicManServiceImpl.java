@@ -5,6 +5,8 @@ import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.gxa.jbgsw.business.mapper.TechEconomicManMapper;
+import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansResponse;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequest;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -49,5 +51,16 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<TechEconomicMan>>() {
         }.build(), new TypeBuilder<PageResult<TechEconomicMan>>() {}.build());
+    }
+
+    @Override
+    public PageResult<SearchEconomicMansResponse> queryEconomicMans(SearchEconomicMansRequest searchTalentsRequest) {
+        PageHelper.startPage(searchTalentsRequest.getPageNum(), searchTalentsRequest.getPageSize());
+
+        List<SearchEconomicMansResponse> responses = techEconomicManMapper.queryEconomicMans(searchTalentsRequest);
+        PageInfo<SearchEconomicMansResponse> pageInfo = new PageInfo<>(responses);
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchEconomicMansResponse>>() {
+        }.build(), new TypeBuilder<PageResult<SearchEconomicMansResponse>>() {}.build());
     }
 }

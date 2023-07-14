@@ -37,16 +37,16 @@ public class WebsiteBottomDTO implements Serializable {
     @ApiModelProperty(value = "links，友情链接，")
     private List<FriendlyLinkDTO> friendlyLinks;
 
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(value = "创建时间", hidden = true)
     private Date createAt;
 
-    @ApiModelProperty(value = "创建人")
+    @ApiModelProperty(value = "创建人", hidden = true)
     private Long createBy;
 
-    @ApiModelProperty(value = "更新时间")
+    @ApiModelProperty(value = "更新时间", hidden = true)
     private Date updateAt;
 
-    @ApiModelProperty(value = "更新人")
+    @ApiModelProperty(value = "更新人", hidden = true)
     private Long updateBy;
 
 }

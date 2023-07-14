@@ -29,7 +29,7 @@ import java.util.List;
 @RestController
 @Slf4j
 @ResponseBody
-public class BillboardController extends BaseController {
+public class BillboardFontController extends BaseController {
     @Resource
     BillboardFeignApi billboardFeignApi;
     @Resource

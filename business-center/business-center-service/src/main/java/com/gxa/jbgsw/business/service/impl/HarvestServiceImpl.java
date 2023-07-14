@@ -7,6 +7,8 @@ import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.Harvest;
 import com.gxa.jbgsw.business.mapper.HarvestMapper;
 import com.gxa.jbgsw.business.protocol.dto.HarvestRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchHarvestsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchHavestResponse;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -60,5 +62,17 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<Harvest>>() {
         }.build(), new TypeBuilder<PageResult<Harvest>>() {}.build());
+    }
+
+    @Override
+    public PageResult<SearchHavestResponse> queryHarvests(SearchHarvestsRequest searchHarvestsRequest) {
+        PageHelper.startPage(searchHarvestsRequest.getPageNum(), searchHarvestsRequest.getPageSize());
+
+        List<SearchHavestResponse> harvests = harvestMapper.queryHarvests(searchHarvestsRequest);
+        PageInfo<SearchHavestResponse> pageInfo = new PageInfo<>(harvests);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchHavestResponse>>() {
+        }.build(), new TypeBuilder<PageResult<SearchHavestResponse>>() {}.build());
     }
 }

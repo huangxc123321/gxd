@@ -9,14 +9,17 @@ import com.gxa.jbgsw.business.protocol.dto.DetailInfoDTO;
 import com.gxa.jbgsw.business.protocol.dto.LastBillboardRequest;
 import com.gxa.jbgsw.business.protocol.dto.LastBillboardResponse;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.protocol.enums.IsTopEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
+import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -38,8 +41,6 @@ public class LastBillboardSetController implements LastBillboardSetApi {
 
     @Override
     public PageResult<LastBillboardResponse> pageQuery(LastBillboardRequest request) {
-        // PageResult<Billboard> pageResult = billboardService.LastBillboardSetData(request);
-
         PageResult<LastBillboardResponse> pages = new PageResult<>();
 
         PageResult<Billboard> pageResult = billboardService.LastBillboardSetData(request);
@@ -54,6 +55,8 @@ public class LastBillboardSetController implements LastBillboardSetApi {
                 }
                 // 状态名称
                 s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
+                // 榜单类型名称
+                s.setTypeName(BillboardTypeEnum.getNameByIndex(s.getType()));
             });
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());
@@ -85,6 +88,10 @@ public class LastBillboardSetController implements LastBillboardSetApi {
 
     @Override
     public DetailInfoDTO detail(Long id) {
-        return null;
+        Billboard billboard = billboardService.getById(id);
+        DetailInfoDTO detailInfoDTO = new DetailInfoDTO();
+        BeanUtils.copyProperties(billboard,detailInfoDTO,CopyPropertionIngoreNull.getNullPropertyNames(billboard));
+
+        return detailInfoDTO;
     }
 }

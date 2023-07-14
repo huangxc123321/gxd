@@ -36,4 +36,10 @@ public interface BillboardService extends IService<Billboard> {
     int getMyReceiveBillboard(Long userId, Integer trueType);
 
     PageResult<MyReceiveBillboardInfo> queryMyReceiveBillboard(MyReceiveBillboardRequest request);
+
+    IndexResponse getIndex();
+
+    PageResult<BillboardIndexDTO> queryGovBillborads(SearchGovRequest searchGovRequest);
+
+    PageResult<BillboardIndexDTO> queryBizBillborads(SearchBizRequest searchGovRequest);
 }

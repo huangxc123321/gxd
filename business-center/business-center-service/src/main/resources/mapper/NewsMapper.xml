@@ -46,5 +46,21 @@
         ORDER BY a.publish_at desc
     </select>
 
+    <select id="queryNews"  resultType="com.gxa.jbgsw.business.protocol.dto.SearchNewsResponse">
+        SELECT
+            a.content,
+            a.id,
+            a.publish_at AS publishAt,
+            a.picture,
+            a.type,
+            a.title
+        FROM
+            t_news a
+        WHERE
+            a.`status` = 0
+            AND type = #{type}
+    </select>
+
+
 
 </mapper>

@@ -86,4 +86,8 @@ public class BillboardResponse implements Serializable {
     @ApiModelProperty(value = "排序")
     private Integer seqNo;
 
+    @ApiModelProperty(value = "是否置顶： 0 不置顶 1 置顶")
+    private Integer isTop;
+
+
 }

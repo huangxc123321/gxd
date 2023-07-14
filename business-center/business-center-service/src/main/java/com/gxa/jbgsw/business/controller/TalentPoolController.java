@@ -62,5 +62,10 @@ public class TalentPoolController implements TalentPoolApi {
         }
         return new ArrayList<>();
     }
+
+    @Override
+    public TalentPoolDTO getTalentPoolById(Long id) {
+        return null;
+    }
 }
 

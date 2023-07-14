@@ -38,4 +38,43 @@
             ORDER BY a.create_at DESC
     </select>
 
+    <select id="queryEconomicMans" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansResponse">
+        SELECT
+            a.id,
+            a.`name`,
+            a.`level`,
+            a.label,
+            a.score,
+            a.success_total AS successTotal,
+            a.picture
+        FROM
+        t_tech_economic_man AS a
+        WHERE
+        1 = 1
+
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND ( a.`name` like CONCAT('%',#{searchFiled},'%') OR a.`label` like CONCAT('%',#{searchFiled},'%') )
+        </if>
+
+        <if test="addrId != null and addrId != '' ">
+            AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
+        </if>
+
+        <if test="label != null and label != '' ">
+            AND a.label like CONCAT('%',#{label},'%')
+        </if>
+
+        <if test="level != null ">
+            AND a.`level`  = #{level}
+        </if>
+
+        <if test="type != null ">
+            AND a.`type`  = #{type}
+        </if>
+
+        ORDER BY a.create_at DESC
+    </select>
+
+
 </mapper>

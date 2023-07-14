@@ -101,5 +101,4 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "发布人")
     private Long createBy;
 
-
 }

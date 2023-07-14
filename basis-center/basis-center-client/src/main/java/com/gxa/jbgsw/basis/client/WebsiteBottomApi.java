@@ -16,7 +16,7 @@ public interface WebsiteBottomApi {
     @PostMapping("/website/bottom/update")
     public void update(@RequestBody WebsiteBottomDTO websiteBottomDTO) throws BizException;
 
-    @GetMapping("/website/bottom/getWebsiteBottomById")
-    public WebsiteBottomDTO getWebsiteBottomById(@RequestParam("id") Long id) throws BizException;
+    @GetMapping("/website/bottom/getWebsiteBottomInfo")
+    public WebsiteBottomDTO getWebsiteBottomInfo() throws BizException;
 
 }

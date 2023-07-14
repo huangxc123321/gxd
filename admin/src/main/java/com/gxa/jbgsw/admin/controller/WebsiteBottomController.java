@@ -38,10 +38,10 @@ public class WebsiteBottomController extends BaseController {
         websiteBottomFeignApi.update(websiteBottomDTO);
     }
 
-    @GetMapping("/website/bottom/getWebsiteBottomById")
+    @GetMapping("/website/bottom/getWebsiteBottomInfo")
     @ApiOperation("获取网站底部信息")
-    public WebsiteBottomDTO getWebsiteBottomById(@RequestParam("id") Long id) throws BizException{
-        return websiteBottomFeignApi.getWebsiteBottomById(id);
+    public WebsiteBottomDTO getWebsiteBottomInfo() throws BizException{
+        return websiteBottomFeignApi.getWebsiteBottomInfo();
     }
 
 

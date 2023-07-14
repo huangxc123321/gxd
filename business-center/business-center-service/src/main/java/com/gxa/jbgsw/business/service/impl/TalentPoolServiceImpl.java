@@ -1,14 +1,22 @@
 package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
+import com.gxa.jbgsw.business.protocol.dto.BillboardIndexDTO;
+import com.gxa.jbgsw.business.protocol.dto.SearchTalentsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchTalentsResponse;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
+import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -66,5 +74,20 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         List<TalentPool> talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
 
         return talentPools;
+    }
+
+    @Override
+    public PageResult<SearchTalentsResponse> queryTalents(SearchTalentsRequest searchTalentsRequest) {
+        PageHelper.startPage(searchTalentsRequest.getPageNum(), searchTalentsRequest.getPageSize());
+
+        List<SearchTalentsResponse> talents = talentPoolMapper.queryTalents(searchTalentsRequest);
+        if(CollectionUtils.isNotEmpty(talents)){
+            PageInfo<SearchTalentsResponse> pageInfo = new PageInfo<>(talents);
+
+            return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchTalentsResponse>>() {
+            }.build(), new TypeBuilder<PageResult<SearchTalentsResponse>>() {}.build());
+        }
+
+        return null;
     }
 }

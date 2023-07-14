@@ -17,6 +17,9 @@ public class LastBillboardResponse implements Serializable {
     @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜")
     private Integer type;
 
+    @ApiModelProperty(value = "榜单类型名称： 0 政府榜 1 企业榜")
+    private String typeName;
+
     @ApiModelProperty(value = "发榜状态：0 待揭榜、1 已签约、2 解决中、3 已解决")
     private Integer status;
 
@@ -47,5 +50,9 @@ public class LastBillboardResponse implements Serializable {
 
     @ApiModelProperty(value = "排序")
     private Integer seqNo;
+
+    @ApiModelProperty(value = "是否置顶： 0 不置顶 1 置顶")
+    private Integer isTop;
+
 
 }

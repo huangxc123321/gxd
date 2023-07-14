@@ -1,22 +1,19 @@
-package com.gxa.jbgsw.user.controller;
+package com.gxa.jbgsw.business.controller;
 
+import com.gxa.jbgsw.business.client.CompanyApi;
+import com.gxa.jbgsw.business.entity.Company;
+import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
+import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
+import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.user.client.CompanyApi;
-import com.gxa.jbgsw.user.entity.Company;
-import com.gxa.jbgsw.user.protocol.dto.CompanyDTO;
-import com.gxa.jbgsw.user.protocol.dto.CompanyRequest;
-import com.gxa.jbgsw.user.protocol.dto.CompanyResponse;
-import com.gxa.jbgsw.user.protocol.dto.UserResponse;
-import com.gxa.jbgsw.user.service.CompanyService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
-import java.beans.beancontext.BeanContext;
 import java.util.Date;
 import java.util.List;
 

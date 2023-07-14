@@ -2,13 +2,17 @@ package com.gxa.jbgsw.basis.controller;
 
 import com.gxa.jbgsw.basis.client.BannerApi;
 import com.gxa.jbgsw.basis.entity.Banner;
+import com.gxa.jbgsw.basis.feignapi.UserFeignApi;
 import com.gxa.jbgsw.basis.protocol.dto.BannerDTO;
 import com.gxa.jbgsw.basis.protocol.dto.BannerRequest;
 import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
+import com.gxa.jbgsw.basis.protocol.enums.BannerStatusEnum;
+import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.basis.service.BannerService;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -17,7 +21,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @Slf4j
@@ -27,6 +33,8 @@ public class BannerController implements BannerApi {
     BannerService bannerService;
     @Resource
     MapperFacade mapperFacade;
+    @Resource
+    UserFeignApi userFeignApi;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -68,9 +76,14 @@ public class BannerController implements BannerApi {
         PageResult<BannerResponse> pages = new PageResult<>();
 
         PageResult<Banner> pageResult = bannerService.pageQuery(request);
-        List<Banner> harvests = pageResult.getList();
-        if(CollectionUtils.isNotEmpty(harvests)){
-            List<BannerResponse> responses = mapperFacade.mapAsList(harvests, BannerResponse.class);
+        List<Banner> banners = pageResult.getList();
+
+        List<Long> ids = new ArrayList<>();
+        if(CollectionUtils.isNotEmpty(banners)){
+            List<BannerResponse> responses = mapperFacade.mapAsList(banners, BannerResponse.class);
+            responses.forEach(s->{
+                s.setStatusName(BannerStatusEnum.getNameByIndex(s.getStatus()));
+            });
 
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());
@@ -81,5 +94,11 @@ public class BannerController implements BannerApi {
         }
 
         return pages;
+    }
+
+    @Override
+    public List<BannerResponse> getIndexBanners(Integer type) {
+        List<Banner> banners = bannerService.getIndexBanners(type);
+        return mapperFacade.mapAsList(banners, BannerResponse.class);
     }
 }

@@ -3,8 +3,10 @@ package com.gxa.jbgsw.business.client;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
@@ -30,4 +32,6 @@ public interface TechEconomicManApi {
     @PostMapping("/tech/broker/pageQuery")
     PageResult<TechEconomicManResponse> pageQuery(@RequestBody TechEconomicManRequest request);
 
+    @GetMapping("/tech/broker/getTechEconomicManById")
+    TechEconomicManResponse getTechEconomicManById(@RequestParam(value = "id") Long id);
 }

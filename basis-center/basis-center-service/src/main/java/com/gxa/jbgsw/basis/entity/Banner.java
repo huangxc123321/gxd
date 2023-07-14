@@ -41,7 +41,7 @@ public class Banner implements Serializable {
     @ApiModelProperty(value = "图片链接地址")
     private String links;
 
-    @ApiModelProperty(value = "状态")
+    @ApiModelProperty(value = "状态: 0 生效  1 失效")
     private Integer status;
 
     @ApiModelProperty(value = "生效时间")

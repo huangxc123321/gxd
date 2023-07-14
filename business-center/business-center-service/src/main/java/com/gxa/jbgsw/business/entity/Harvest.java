@@ -84,5 +84,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "创建人")
     private Long createBy;
 
+    @ApiModelProperty(value = "展示图：从详情中获取第一张图片，记录下来")
+    private String guidePicture;
 
 }

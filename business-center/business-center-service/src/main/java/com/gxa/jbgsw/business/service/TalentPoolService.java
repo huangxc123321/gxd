@@ -2,7 +2,10 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gxa.jbgsw.business.protocol.dto.SearchTalentsRequest;
+import com.gxa.jbgsw.business.protocol.dto.SearchTalentsResponse;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
+import com.gxa.jbgsw.common.utils.PageResult;
 
 import java.util.List;
 
@@ -23,4 +26,6 @@ public interface TalentPoolService extends IService<TalentPool> {
     void updateTalentPool(TalentPoolDTO talentPoolDTO) ;
 
     List<TalentPool> getTalentPoolByTech(String key);
+
+    PageResult<SearchTalentsResponse> queryTalents(SearchTalentsRequest searchTalentsRequest);
 }

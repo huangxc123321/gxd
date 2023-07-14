@@ -2,7 +2,7 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.Harvest;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gxa.jbgsw.business.protocol.dto.HarvestRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
 import java.util.List;
@@ -22,4 +22,7 @@ public interface HarvestService extends IService<Harvest> {
     void deleteBatchIds(Long[] ids);
 
     PageResult<Harvest> pageQuery(HarvestRequest request);
+
+    PageResult<SearchHavestResponse> queryHarvests(SearchHarvestsRequest searchHarvestsRequest);
+
 }
