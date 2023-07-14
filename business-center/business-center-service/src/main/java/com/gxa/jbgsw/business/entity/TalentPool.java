@@ -97,7 +97,7 @@ private static final long serialVersionUID=1L;
     private Long professional;
 
     @ApiModelProperty(value = "技术领域：字典")
-    private Long techDomain;
+    private String techDomain;
 
     @ApiModelProperty(value = "研究方向")
     private String researchDirection;
