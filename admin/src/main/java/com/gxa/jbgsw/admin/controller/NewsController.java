@@ -1,10 +1,13 @@
 package com.gxa.jbgsw.admin.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.NewsFeignApi;
+import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -21,6 +24,8 @@ import javax.annotation.Resource;
 public class NewsController extends BaseController {
     @Resource
     NewsFeignApi newsFeignApi;
+    @Resource
+    UserFeignApi userFeignApi;
 
     @ApiOperation(value = "新增新闻", notes = "新增新闻")
     @PostMapping("/new/add")
@@ -41,7 +46,16 @@ public class NewsController extends BaseController {
     })
     @GetMapping("/news/detail")
     public NewsDTO detail(@RequestParam("id")Long id){
-        return newsFeignApi.detail(id);
+        NewsDTO newsDTO = newsFeignApi.detail(id);
+        UserResponse userResponse = userFeignApi.getUserById(newsDTO.getCreateBy());
+        if(userResponse != null){
+            if(StrUtil.isNotBlank(userResponse.getUnitName())){
+                newsDTO.setCreateName(userResponse.getUnitName());
+            }else{
+                newsDTO.setCreateName(userResponse.getNick());
+            }
+        }
+        return newsDTO;
     }
 
     @ApiOperation("获取新闻列表")

@@ -31,7 +31,7 @@ public class NewsDTO implements Serializable {
     private String regionScope;
 
     @ApiModelProperty(value = "来源于")
-    private String from;
+    private String origin;
 
     @ApiModelProperty(value = "发布时间")
     private Date publishAt;

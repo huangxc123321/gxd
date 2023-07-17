@@ -53,9 +53,16 @@ public class LoginController implements LoginApi {
         smsMessageDTO.setType(0);
 
         long code = this.rand();
+        System.out.println("code: "+code);
 
         smsMessageDTO.setContent(String.valueOf(code));
-        int status = smsService.send(smsMessageDTO);
+
+        // TODO: 2023/7/17 0017 暂时屏蔽，调试的时候放开
+        // int status = smsService.send(smsMessageDTO);
+
+        int status = 200;
+
+
         log.info("status is: {}", status);
         if(status == 200){
             // 返回成果: 验证码10分钟有效

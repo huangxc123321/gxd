@@ -37,8 +37,6 @@ public class NewsController implements NewsApi {
 
     @Override
     public void add(NewsDTO newsDTO) {
-        News news = mapperFacade.map(newsDTO, News.class);
-        news.setCreateAt(new Date());
         newsService.add(newsDTO);
     }
 
@@ -80,9 +78,6 @@ public class NewsController implements NewsApi {
         News news = newsService.getById(id);
 
         NewsDTO newsDTO = mapperFacade.map(news, NewsDTO.class);
-        UserResponse userResponse = userFeignApi.getUserById(newsDTO.getCreateBy());
-        newsDTO.setCreateName(userResponse.getUnitName());
-
         return newsDTO;
     }
 }

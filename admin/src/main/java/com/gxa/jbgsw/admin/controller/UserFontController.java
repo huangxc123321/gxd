@@ -42,12 +42,14 @@ public class UserFontController extends BaseController {
         userFeignApi.deleteBatchIds(ids);
     }
 
-    @ApiOperation("新增或修改用户信息")
+    @ApiOperation("新增用户信息")
     @PostMapping("/user/add")
     void add(@RequestBody UserDTO userDTO) throws BizException {
         boolean isValidate = false;
         // 判断验证码是否正确
+        System.out.println("key:>"+RedisKeys.USER_VALIDATE_CODE+userDTO.getMobile());
         Object value = stringRedisTemplate.opsForValue().get(RedisKeys.USER_VALIDATE_CODE+userDTO.getMobile());
+        System.out.println("value: "+value);
         if(value != null){
             if(userDTO.getValidateCode() != null && userDTO.getValidateCode().equals(value.toString())){
                 isValidate = true;

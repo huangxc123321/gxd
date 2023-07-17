@@ -2,9 +2,10 @@ skip:
   url:
     - /admin/login
     - /admin/file/upload
-    - /admin/user/saveOrUpdate
     - /admin/get/validate/code
     - /web/login
+    - /app/user/add
+    - /web/user/add
     - /web/file/upload
     - /web/user/saveOrUpdate
     - /web/get/validate/code

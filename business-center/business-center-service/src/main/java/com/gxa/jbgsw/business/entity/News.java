@@ -50,7 +50,7 @@ private static final long serialVersionUID=1L;
     private String regionScope;
 
     @ApiModelProperty(value = "来源于")
-    private String from;
+    private String origin;
 
     @ApiModelProperty(value = "发布时间")
     private Date publishAt;
