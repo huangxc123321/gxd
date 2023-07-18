@@ -2,9 +2,14 @@ package com.gxa.jbgsw.website.controller;
 
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.business.client.TechEconomicManAppraiseApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.BillboardFeignApi;
 import com.gxa.jbgsw.website.feignapi.BillboardGainFeignApi;
 import com.gxa.jbgsw.website.feignapi.HavestFeignApi;
@@ -14,6 +19,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -33,6 +39,10 @@ public class MyPublishBillboardController extends BaseController {
     HavestFeignApi havestFeignApi;
     @Resource
     TalentPoolFeignApi talentPoolFeignApi;
+    @Resource
+    TechEconomicManAppraiseApi techEconomicManAppraiseApi;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
 
     @ApiOperation("获取我发布的榜单列表")
@@ -106,6 +116,34 @@ public class MyPublishBillboardController extends BaseController {
 
         }
         return detailInfo;
+    }
+
+    @ApiOperation("我的技术经纪人评分")
+    @PostMapping("/user/center/addAppraise")
+    void addAppraise(@RequestBody TechEconomicManAppraiseDTO techEconomicManAppraiseDTO) throws BizException {
+        techEconomicManAppraiseDTO.setCreateAt(new Date());
+        techEconomicManAppraiseDTO.setCreateBy(this.getUserId());
+        if(techEconomicManAppraiseDTO.isAnonymous()){
+            // 匿名发表评价
+            techEconomicManAppraiseDTO.setName(null);
+        }else{
+            UserResponse userResponse = getUser();
+            if(userResponse != null){
+                techEconomicManAppraiseDTO.setName(userResponse.getNick());
+            }
+        }
+
+        techEconomicManAppraiseApi.add(techEconomicManAppraiseDTO);
+    }
+
+    private UserResponse getUser(){
+        Long userId = this.getUserId();
+        String userInfo = stringRedisTemplate.opsForValue().get(RedisKeys.USER_INFO+userId);
+        if(StrUtil.isBlank(userInfo)){
+            throw new BizException(UserErrorCode.LOGIN_CODE_ERROR);
+        }
+        UserResponse userResponse = JSONObject.parseObject(userInfo, UserResponse.class);
+        return userResponse;
     }
 
 

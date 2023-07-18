@@ -16,6 +16,9 @@ public class TechEconomicManDTO implements Serializable {
     @ApiModelProperty(value = "姓名")
     private String name;
 
+    @ApiModelProperty(value = "头像")
+    private String avatar;
+
     @ApiModelProperty(value = "专业标签，多个用英文逗号分开(生物与新医药、新材料、保鲜技术、智能终端、IC芯片技术、纳米技术、精细化工)")
     private String label;
 
@@ -25,7 +28,7 @@ public class TechEconomicManDTO implements Serializable {
     @ApiModelProperty(value = "电话")
     private String mobile;
 
-    @ApiModelProperty(value = "经纪人类型：字典中获取")
+    @ApiModelProperty(value = "经纪人类型：字典中获取, type: broker_type")
     private Integer type;
 
     @ApiModelProperty(value = "邮箱")
@@ -50,7 +53,7 @@ public class TechEconomicManDTO implements Serializable {
     private String areaName;
 
     @ApiModelProperty(value = "简介")
-    private String desc;
+    private String remark;
 
     @ApiModelProperty(value = "发布时间", hidden = true)
     private Date createAt;
@@ -66,5 +69,11 @@ public class TechEconomicManDTO implements Serializable {
 
     @ApiModelProperty(value = "状态： 0 正常， 1 暂没发布" , hidden = true)
     private Integer status;
+
+    @ApiModelProperty(value = "单位名称")
+    private String unitName;
+
+    @ApiModelProperty(value = "或者协议")
+    private String agreements;
 
 }

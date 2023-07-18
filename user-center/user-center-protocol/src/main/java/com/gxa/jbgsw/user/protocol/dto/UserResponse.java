@@ -77,16 +77,25 @@ public class UserResponse implements Serializable {
     @ApiModelProperty(value = "用户级别： 0 政府用户  1 企业  2 个人" )
     private Integer level;
 
-    /**
+/*    *//**
      * 通过认证来确定认证信息：比如：政府部门，企业单位名称
-     */
+     *//*
     @ApiModelProperty(value = "认证信息" )
     private String authInfo;
 
     @ApiModelProperty(value = "单位ID")
-    private Long companyId;
+    private Long companyId;*/
 
     @ApiModelProperty(value = "单位名称")
     private String unitName;
+
+    @ApiModelProperty(value = "单位性质: 字典中获取， type: unit_nature")
+    private Integer unitNature;
+
+    @ApiModelProperty(value = "行业: 字典中获取, type: trade_type")
+    private Integer tradeType;
+
+    @ApiModelProperty(value = "职务")
+    private String job;
 
 }

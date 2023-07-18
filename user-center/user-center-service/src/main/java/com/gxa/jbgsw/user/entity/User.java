@@ -80,5 +80,16 @@ public class User implements Serializable {
     @ApiModelProperty(value = "更新人")
     private Long updateBy;
 
+    @ApiModelProperty(value = "单位名称")
+    private String unitName;
+
+    @ApiModelProperty(value = "单位性质: 字典中获取")
+    private Integer unitNature;
+
+    @ApiModelProperty(value = "行业: 字典中获取")
+    private Integer tradeType;
+
+    @ApiModelProperty(value = "职务")
+    private String job;
 
 }

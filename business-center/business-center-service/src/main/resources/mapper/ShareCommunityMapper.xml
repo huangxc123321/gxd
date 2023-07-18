@@ -2,4 +2,48 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.ShareCommunityMapper">
 
+    <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.ShareCommunityRequest"
+            resultType="com.gxa.jbgsw.business.entity.ShareCommunity">
+            SELECT
+              a.id,
+              a.type,
+              a.`status`,
+              a.title,
+              a.nick,
+              a.origin,
+              a.create_at createAt,
+              a.comments,
+              a.likes,
+              a.views,
+              a.audit_at AS auditAt,
+              a.audit_user_name AS auditUserName,
+              a.reason
+            FROM
+                t_share_community AS a
+            WHERE 1 = 1
+
+            <if test="searchFiled != null and searchFiled != '' ">
+                AND a.title LIKE CONCAT('',#{searchFiled},'%') OR a.content LIKE CONCAT('%',#{searchFiled},'%')
+            </if>
+
+            <if test="type != null ">
+                AND a.type =  #{type}
+            </if>
+
+            <if test="startDate != null and startDate != '' ">
+                AND a.create_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+                AND a.create_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+            </if>
+
+            <if test="status != null ">
+                AND a.status =  #{status}
+            </if>
+
+            ORDER BY a.create_at DESC
+
+
+    </select>
+
+
+
 </mapper>

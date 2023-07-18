@@ -1,38 +1,23 @@
-package com.gxa.jbgsw.business.entity;
+package com.gxa.jbgsw.business.protocol.dto;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
-import io.swagger.annotations.ApiModel;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.experimental.Accessors;
 
-/**
- * <p>
- * 分享社区
- * </p>
- *
- * @author huangxc
- * @since 2023-06-26
- */
+import java.io.Serializable;
+import java.util.Date;
+
 @Data
-@EqualsAndHashCode(callSuper = false)
-@Accessors(chain = true)
-@TableName("t_share_community")
-@ApiModel(value="ShareCommunity对象", description="分享社区")
-public class ShareCommunity implements Serializable {
+public class ShareCommunityResponse implements Serializable {
 
-private static final long serialVersionUID=1L;
-
-    @TableId(value = "id", type = IdType.ID_WORKER_STR)
+    @ApiModelProperty(value = "分享ID: 新增的時候传null, 编辑传用户ID")
     private Long id;
 
     @ApiModelProperty(value = "类型：0 文章  1 视频")
     private Integer type;
+
+    @ApiModelProperty(value = "类型名称：0 文章  1 视频")
+    private String typeName;
 
     @ApiModelProperty(value = "分享标题")
     private String title;
@@ -43,6 +28,10 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "状态：  0 待审核  1 已审核  2 未通过")
     private Integer status;
 
+    @ApiModelProperty(value = "状态名称")
+    private String statusName;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "分享时间")
     private Date createAt;
 
@@ -68,14 +57,16 @@ private static final long serialVersionUID=1L;
     private Integer comments;
 
     @ApiModelProperty(value = "审核人ID")
-    private Long auditUserId;
+    private Integer auditUserId;
 
     @ApiModelProperty(value = "审核人名称")
     private String auditUserName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "审核时间")
     private Date auditAt;
 
     @ApiModelProperty(value = "是否审核通过原因")
     private String reason;
+
 }

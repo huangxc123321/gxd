@@ -70,7 +70,7 @@ private static final long serialVersionUID=1L;
     private String areaName;
 
     @ApiModelProperty(value = "简介")
-    private String desc;
+    private String remark;
 
     @ApiModelProperty(value = "发布时间")
     private Date createAt;
@@ -94,5 +94,13 @@ private static final long serialVersionUID=1L;
     private Integer successTotal;
 
     @ApiModelProperty(value = "人物照片")
-    private String picture;
+    private String avatar;
+
+    @ApiModelProperty(value = "单位名称")
+    private String unitName;
+
+    @ApiModelProperty(value = "或者协议")
+    private String agreements;
+
+
 }

@@ -2,6 +2,9 @@ package com.gxa.jbgsw.business.mapper;
 
 import com.gxa.jbgsw.business.entity.ShareCommunity;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.gxa.jbgsw.business.protocol.dto.ShareCommunityRequest;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface ShareCommunityMapper extends BaseMapper<ShareCommunity> {
 
+    List<ShareCommunity> pageQuery(ShareCommunityRequest request);
 }

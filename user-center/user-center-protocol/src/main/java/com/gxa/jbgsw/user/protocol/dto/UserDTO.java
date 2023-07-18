@@ -53,5 +53,15 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "密码" , hidden = true)
     private String password;
 
+    @ApiModelProperty(value = "单位名称")
+    private String unitName;
 
+    @ApiModelProperty(value = "单位性质: 字典中获取， type: unit_nature")
+    private Integer unitNature;
+
+    @ApiModelProperty(value = "行业: 字典中获取, type: trade_type")
+    private Integer tradeType;
+
+    @ApiModelProperty(value = "职务")
+    private String job;
 }

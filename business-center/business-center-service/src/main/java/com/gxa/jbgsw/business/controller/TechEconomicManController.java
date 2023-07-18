@@ -8,6 +8,7 @@ import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.protocol.enums.TechEconomicManLevelEnum;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -70,7 +71,7 @@ public class TechEconomicManController implements TechEconomicManApi {
         if(CollectionUtils.isNotEmpty(techEconomics)){
             List<TechEconomicManResponse> responses = mapperFacade.mapAsList(techEconomics, TechEconomicManResponse.class);
             responses.forEach(s->{
-
+                s.setLevelName(TechEconomicManLevelEnum.getNameByIndex(s.getLevel()));
             });
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());

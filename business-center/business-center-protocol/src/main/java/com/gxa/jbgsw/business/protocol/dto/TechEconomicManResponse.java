@@ -21,7 +21,10 @@ public class TechEconomicManResponse implements Serializable {
     private String label;
 
     @ApiModelProperty(value = "等级：0 无， 1 金  2 银  3 铜")
-    private Long level;
+    private Integer level;
+
+    @ApiModelProperty(value = "等级名称")
+    private String levelName;
 
     @ApiModelProperty(value = "电话")
     private String mobile;
@@ -51,13 +54,13 @@ public class TechEconomicManResponse implements Serializable {
     private String areaName;
 
     @ApiModelProperty(value = "简介")
-    private String desc;
+    private String remark;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @ApiModelProperty(value = "发布时间")
+    @ApiModelProperty(value = "授权时间")
     private Date createAt;
 
-    @ApiModelProperty(value = "发布人")
+    @ApiModelProperty(value = "创建人")
     private Long createBy;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
@@ -76,5 +79,13 @@ public class TechEconomicManResponse implements Serializable {
     @ApiModelProperty(value = "总促成成交数")
     private Integer successTotal;
 
+    @ApiModelProperty(value = "人物照片")
+    private String avatar;
+
+    @ApiModelProperty(value = "单位名称")
+    private String unitName;
+
+    @ApiModelProperty(value = "或者协议")
+    private String agreements;
 
 }
