@@ -24,7 +24,7 @@ public interface BillboardApi {
     void cancelTop(@RequestParam("id") Long id);
 
     @PostMapping(value = "/billboard/batchIdsTop",consumes = MediaType.APPLICATION_JSON_VALUE)
-    void batchIdsTop(Long[] ids);
+    void batchIdsTop(@RequestBody Long[] ids);
 
     @PostMapping("/billboard/pageQuery")
     PageResult<BillboardResponse> pageQuery(@RequestBody BillboardRequest request);
@@ -39,7 +39,7 @@ public interface BillboardApi {
     MyPublishBillboardResponse queryMyPublish(@RequestBody MyPublishBillboardRequest request);
 
     @PostMapping("/user/center/updateMyBillboard")
-    void updateMyBillboard(BillboardDTO billboardDTO);
+    void updateMyBillboard(@RequestBody BillboardDTO billboardDTO);
 
     @PostMapping("/user/center/queryMyReceiveBillboard/")
     MyReceiveBillboardResponse queryMyReceiveBillboard(MyReceiveBillboardRequest request);

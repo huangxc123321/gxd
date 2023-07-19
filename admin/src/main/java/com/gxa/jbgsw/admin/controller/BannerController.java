@@ -109,4 +109,11 @@ public class BannerController extends BaseController {
     }
 
 
+    @ApiOperation("修改广告位使用状态: 状态: 0 生效  1 失效")
+    @GetMapping("/banner/update/status")
+    void updateStatus(@RequestParam("id")Long id, @RequestParam("status")Integer status) throws BizException {
+        bannerFeignApi.updateStatus(id, status);
+    }
+
+
 }

@@ -88,7 +88,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     @Override
     public void updateSeqNo(Long id, Integer seqNo) {
         LambdaUpdateWrapper<Billboard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.set(Billboard::getSeqNo, seqNo)
+        lambdaUpdateWrapper.setSql("seq_no = seq_no + "+seqNo)
                 .eq(Billboard::getId, id);
 
         billboardMapper.update(null, lambdaUpdateWrapper);

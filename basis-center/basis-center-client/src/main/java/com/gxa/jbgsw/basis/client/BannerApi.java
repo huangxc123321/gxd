@@ -43,5 +43,6 @@ public interface BannerApi {
     PageResult<BannerResponse> pageQuery(@RequestBody BannerRequest request);
 
     @GetMapping("/banner/getIndexBanners")
-    List<BannerResponse> getIndexBanners(Integer type);
+    List<BannerResponse> getIndexBanners(@RequestParam("type") Integer type);
+
 }

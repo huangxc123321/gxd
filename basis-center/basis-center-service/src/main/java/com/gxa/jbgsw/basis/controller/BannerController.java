@@ -101,4 +101,6 @@ public class BannerController implements BannerApi {
         List<Banner> banners = bannerService.getIndexBanners(type);
         return mapperFacade.mapAsList(banners, BannerResponse.class);
     }
+
+
 }

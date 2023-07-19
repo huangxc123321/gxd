@@ -33,9 +33,6 @@ public class LoginController extends BaseController {
     UserResponse login(@RequestBody LoginRequest request) throws BizException, IllegalAccessException {
         HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpServletResponse servletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-
-        log.info("------用户登录------- sessionId:{}", servletRequest.getSession().getId());
-
         UserResponse response = loginFeignApi.login(request);
         if(response != null){
             servletResponse.setHeader("token", response.getToken());

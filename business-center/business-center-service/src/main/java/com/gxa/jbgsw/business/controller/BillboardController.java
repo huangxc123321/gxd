@@ -99,7 +99,18 @@ public class BillboardController implements BillboardApi {
 
     @Override
     public DetailInfoDTO detail(Long id) {
-        return null;
+        Billboard billboard = billboardService.getById(id);
+        DetailInfoDTO detailInfoDTO = mapperFacade.map(billboard, DetailInfoDTO.class);
+        if(detailInfoDTO != null && detailInfoDTO.getCategories() != null){
+            // 行业名称
+            DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(detailInfoDTO.getCategories()));
+            if(dictionaryDTO != null){
+                // 工信大类名称
+                detailInfoDTO.setCategoriesName(dictionaryDTO.getDicValue());
+            }
+        }
+
+        return detailInfoDTO;
     }
 
     @Override

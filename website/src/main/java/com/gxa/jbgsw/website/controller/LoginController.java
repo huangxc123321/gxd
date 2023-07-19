@@ -8,7 +8,6 @@ import com.gxa.jbgsw.website.feignapi.LoginFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,17 +24,13 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends BaseController {
     @Resource
     LoginFeignApi loginFeignApi;
-    @Resource
-    MapperFacade mapperFacade;
+
 
     @ApiOperation("用户登录")
     @PostMapping("/login")
     UserResponse login(@RequestBody LoginRequest request) throws BizException, IllegalAccessException {
         HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpServletResponse servletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-
-        log.info("------用户登录------- sessionId:{}", servletRequest.getSession().getId());
-
         UserResponse response = loginFeignApi.login(request);
         if(response != null){
             servletResponse.setHeader("token", response.getToken());

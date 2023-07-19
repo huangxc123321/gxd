@@ -19,6 +19,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -90,6 +91,9 @@ public class HarvestController implements HarvestApi {
     @Override
     public List<HavestDTO> getHarvesByHolder(String holder) {
         List<Harvest> harvests = harvestService.getHarvesByHolder(holder);
+        if(harvests == null){
+            return new ArrayList<>();
+        }
 
         return mapperFacade.mapAsList(harvests, HavestDTO.class);
     }

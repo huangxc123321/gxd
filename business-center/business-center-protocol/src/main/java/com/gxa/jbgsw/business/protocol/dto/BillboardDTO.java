@@ -22,7 +22,7 @@ public class BillboardDTO implements Serializable {
     @ApiModelProperty(value = "榜单标题")
     private String title;
 
-    @ApiModelProperty(value = "工信大类：字典中获取")
+    @ApiModelProperty(value = "工信大类：字典中获取, type: categories")
     private Integer categories;
 
     @ApiModelProperty(value = "技术关键词，用逗号分隔")

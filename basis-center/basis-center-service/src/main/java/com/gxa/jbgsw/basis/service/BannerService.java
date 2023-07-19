@@ -26,4 +26,5 @@ public interface BannerService extends IService<Banner> {
     PageResult<Banner> pageQuery(BannerRequest request);
 
     List<Banner> getIndexBanners(Integer type);
+
 }

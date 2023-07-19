@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.client;
 
+import com.gxa.jbgsw.business.protocol.dto.BillboardGainAddDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainAuditDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainResponse;
@@ -32,6 +33,6 @@ public interface BillboardGainApi {
     @PostMapping(value = "/billboard/updateadd")
     public void update(@RequestBody BillboardGainAuditDTO billboardGainAuditDTO) throws BizException;
 
-
-
+    @PostMapping(value = "/billboard/gain/add")
+    void addBillboardGain(@RequestBody BillboardGainAddDTO billboardGainAddDTO);
 }

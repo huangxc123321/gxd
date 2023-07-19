@@ -6,6 +6,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
@@ -18,6 +19,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -54,6 +56,11 @@ public class BillboardFontController extends BaseController {
 
         // 获取揭榜
         List<BillboardGainDTO> billboardGainResponses = billboardGainFeignApi.getBillboardGainByPid(id);
+        if(CollectionUtils.isNotEmpty(billboardGainResponses)){
+            billboardGainResponses.stream().forEach(s->{
+                s.setAuditingStatusName(AuditingStatusEnum.getNameByIndex(s.getAuditingStatus()));
+            });
+        }
         detailInfo.setBillboardGains(billboardGainResponses);
 
         // 成果推荐: 根据揭榜单位
@@ -71,10 +78,7 @@ public class BillboardFontController extends BaseController {
         // 技术经纪人推荐: 根据专业标签来推荐
         if(StrUtil.isNotBlank(techKeys)){
             String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
-
-
         }
-
 
         return detailInfo;
     }
@@ -93,7 +97,7 @@ public class BillboardFontController extends BaseController {
     @ApiOperation(value = "修改排序", notes = "修改排序")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
-            @ApiImplicitParam(value = "当前序列号，每上下一次增加或者减少1", name = "seqNo", dataType = "Integer", paramType = "query")
+            @ApiImplicitParam(value = "在当前的序号基础上是增加或者减少1", name = "seqNo", dataType = "Integer", paramType = "query")
     })
     @GetMapping("/billboard/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
@@ -107,8 +111,8 @@ public class BillboardFontController extends BaseController {
     }
 
     @ApiOperation(value = "取消置顶", notes = "取消置顶")
-    @PostMapping("/billboard/cancel/top")
-    public void cancelTop(@RequestBody Long id){
+    @GetMapping("/billboard/cancel/top")
+    public void cancelTop(@RequestParam("id") Long id){
         billboardFeignApi.cancelTop(id);
     }
 
@@ -133,6 +137,10 @@ public class BillboardFontController extends BaseController {
             throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
         }
         */
+        if(userResponse != null){
+            billboardDTO.setUnitName(userResponse.getUnitName());
+        }
+
         
         billboardFeignApi.add(billboardDTO);
     }

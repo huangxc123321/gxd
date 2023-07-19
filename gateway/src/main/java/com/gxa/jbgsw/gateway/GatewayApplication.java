@@ -1,9 +1,11 @@
 package com.gxa.jbgsw.gateway;
 
 
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.gxa.jbgsw.common.utils.RedisUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
@@ -34,5 +36,21 @@ public class GatewayApplication {
     public RedisUtils getRedisUtils(){
         return new RedisUtils();
     }
+
+
+    /**
+     * 解决Jackson导致Long型数据精度丢失问题
+     *
+     * @return
+     */
+    @Bean("jackson2ObjectMapperBuilderCustomizer")
+    public Jackson2ObjectMapperBuilderCustomizer jackson2ObjectMapperBuilderCustomizer() {
+        Jackson2ObjectMapperBuilderCustomizer customizer =
+                jacksonObjectMapperBuilder -> jacksonObjectMapperBuilder
+                        .serializerByType(Long.class, ToStringSerializer.instance)
+                        .serializerByType(Long.TYPE, ToStringSerializer.instance);
+        return customizer;
+    }
+
 
 }

@@ -1,17 +1,26 @@
 package com.gxa.jbgsw.website.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
+import com.gxa.jbgsw.basis.protocol.dto.WebsiteBottomDTO;
 import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Api(tags = "首页管理")
@@ -32,7 +41,13 @@ public class IndexController extends BaseController {
     @Resource
     TechEconomicManFeignApi techEconomicManFeignApi;
     @Resource
+    BillboardGainFeignApi billboardGainFeignApi;
+    @Resource
     NewsFeignApi newsFeignApi;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
+    @Resource
+    WebsiteBottomFeignApi websiteBottomFeignApi;
 
 
     @ApiOperation("获取首页榜单信息")
@@ -42,7 +57,7 @@ public class IndexController extends BaseController {
     }
 
     @ApiOperation("获取首页轮播图")
-    @PostMapping("/index/getIndexBanners")
+    @GetMapping("/index/getIndexBanners")
     List<BannerResponse> getIndexBanners() {
         return bannerFeignApi.getIndexBanners(BannerTypeEnum.PC.getCode());
     }
@@ -109,8 +124,35 @@ public class IndexController extends BaseController {
         return newsFeignApi.detail(id);
     }
 
+    @ApiOperation("立即揭榜")
+    @PostMapping("/index/addBillboardGain")
+    void addBillboardGain(@RequestBody BillboardGainAddDTO billboardGainAddDTO) throws BizException {
+        billboardGainAddDTO.setApplyAt(new Date());
+        UserResponse userResponse = getUser();
+        if(userResponse != null){
+            billboardGainAddDTO.setCreateByName(userResponse.getNick());
+            billboardGainAddDTO.setAcceptBillboard(userResponse.getUnitName());
+            billboardGainAddDTO.setCreateBy(userResponse.getCreateBy());
+            billboardGainAddDTO.setCreateAt(new Date());
+        }
+        billboardGainFeignApi.addBillboardGain(billboardGainAddDTO);
+    }
+
+    @ApiOperation("获取网站底部信息")
+    @GetMapping("/website/bottom/getWebsiteBottomInfo")
+    WebsiteBottomDTO getWebsiteBottomInfo() {
+        return websiteBottomFeignApi.getWebsiteBottomInfo();
+    }
 
 
-
+    private UserResponse getUser(){
+        Long userId = this.getUserId();
+        String userInfo = stringRedisTemplate.opsForValue().get(RedisKeys.USER_INFO+userId);
+        if(StrUtil.isBlank(userInfo)){
+            throw new BizException(UserErrorCode.LOGIN_CODE_ERROR);
+        }
+        UserResponse userResponse = JSONObject.parseObject(userInfo, UserResponse.class);
+        return userResponse;
+    }
 
 }

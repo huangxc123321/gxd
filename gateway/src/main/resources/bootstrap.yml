@@ -3,8 +3,9 @@ skip:
     - /admin/login
     - /admin/file/upload
     - /admin/get/validate/code
-    - /web/login
     - /app/user/add
+    - /app/login
+    - /web/login
     - /web/user/add
     - /web/file/upload
     - /web/user/saveOrUpdate
