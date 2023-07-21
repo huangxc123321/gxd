@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.business.mapper.BillboardEconomicRelatedMapper">
+
+    <select id="getEconomicRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse">
+            SELECT
+              a.id,
+              c.avatar,
+              c.`name`,
+              c.`level`,
+              c.score,
+              c.label,
+              c.success_total AS successTotal,
+              a.s_star AS sStar
+            FROM
+               t_billboard_economic_related AS a
+               LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+               LEFT JOIN t_tech_economic_man AS c ON a.economic_id = c.id
+            WHERE
+                a.billboard_id = #{billboardId}
+                ORDER BY a.create_at DESC
+
+    </select>
+</mapper>

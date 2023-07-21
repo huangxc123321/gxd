@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.business.mapper.BillboardHarvestRelatedMapper">
+   <select id="getHarvestRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse">
+        SELECT
+            a.id,
+            c.`name`,
+            c.tech_domain AS techDomain,
+            c.unit_name AS unitName,
+            c.maturity_level AS maturityLevel,
+            a.s_star AS sStar,
+            a.h_start AS hStart,
+            a.user_name AS userName,
+            a.recommend_at AS recommendAt,
+            a.remark
+        FROM
+             t_billboard_harvest_related AS a
+           LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+           LEFT JOIN t_harvest AS c ON a.harvest_id = c.id
+        WHERE
+            a.billboard_id = #{billboardId}
+            ORDER BY a.create_at DESC
+   </select>
+</mapper>

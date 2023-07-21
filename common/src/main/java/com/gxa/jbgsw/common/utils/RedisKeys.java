@@ -15,6 +15,9 @@ public class RedisKeys {
     /** 新闻发布时间 **/
     public static final String NEWS_PUBLIS_TIME = BASE_RSS + "news:publish:time:";
 
+    /** 新增榜单生成对应的成果推荐，帅才推荐，经纪人推荐 的关联关系**/
+    public static final String BILLBOARD_RELATED_RECOMMEND_TASK = BASE_RSS + "billboard:related:recommend:";
+
     /** 属性类型信息 **/
     public static final String DICTIONARY_TYPE_VALUE = BASE_RSS + "dictionary:type:";
 }

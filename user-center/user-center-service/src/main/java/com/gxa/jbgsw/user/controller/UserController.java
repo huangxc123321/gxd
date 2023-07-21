@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.user.controller;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
@@ -93,7 +94,9 @@ public class UserController implements UserApi {
     public List<UserResponse> getUserByIds(Long[] ids) {
         List<Long> userIds = Arrays.stream(ids).collect(Collectors.toList());
 
-        List<User> users = userService.listByIds(userIds);
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(User::getId, ids);
+        List<User> users = userService.list(lambdaQueryWrapper);
         return mapperFacade.mapAsList(users, UserResponse.class);
     }
 }

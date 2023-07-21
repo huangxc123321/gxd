@@ -14,6 +14,9 @@ public class SearchTalentsResponse implements Serializable {
     @ApiModelProperty(value = "名称")
     private String name;
 
+    @ApiModelProperty(value = "照片")
+    private String photo;
+
     @ApiModelProperty(value = "职称：字典中获取")
     private Integer professional;
 

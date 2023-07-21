@@ -92,30 +92,14 @@ public class LastBillboardSetController extends BaseController {
         detailInfo.setBillboardGains(billboardGainResponses);
 
         // 成果推荐: 根据揭榜单位
-        List<HavestDTO> havests = havestFeignApi.getHarvesByHolder(detailInfo.getUnitName());
-        if(CollectionUtils.isNotEmpty(havests)){
-            havests.stream().forEach(s->{
-                DictionaryDTO dictionary = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(s.getMaturityLevel()));
-                if(dictionary != null){
-                    // 工信大类名称
-                    s.setMaturityLevelName(dictionary.getDicValue());
-                }
-            });
-        }
-        detailInfo.setHarvestRecommends(havests);
+
+        // TODO: 2023/7/21 0021
 
         // 帅才推荐： 根据技术领域，研究方向确定
-        String techKeys = detailInfo.getTechKeys();
-        if(StrUtil.isNotBlank(techKeys)){
-            String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
-            List<TalentPoolDTO> talentPools = talentPoolFeignApi.getTalentPoolByTech(keys[0]);
-            detailInfo.setTalentRecommends(talentPools);
-        }
+
 
         // 技术经纪人推荐: 根据专业标签来推荐
-        if(StrUtil.isNotBlank(techKeys)){
-            String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
-        }
+
 
         return detailInfo;
     }

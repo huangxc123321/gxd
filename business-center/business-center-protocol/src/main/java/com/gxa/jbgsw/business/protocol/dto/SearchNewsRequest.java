@@ -12,4 +12,7 @@ public class SearchNewsRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "新闻或者政策新闻： 0 新闻 1 政策")
     private Integer type = 0;
 
+    @ApiModelProperty(value = "搜索字段")
+    private String searchFiled;
+
 }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.business.mapper.BillboardTalentRelatedMapper">
+
+    <select id="getTalentRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse">
+
+        SELECT
+          a.id,
+          c.`name`,
+          c.unit_name AS unitName,
+          c.highest_edu AS highestEdu,
+          c.research_direction AS researchDirection,
+          c.project,
+          a.s_star AS sStar
+        FROM
+             t_billboard_talent_related AS a
+             LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+             LEFT JOIN t_talent_pool AS c ON a.talent_id = c.id
+        WHERE
+            a.billboard_id = #{billboardId}
+            ORDER BY a.create_at DESC
+
+    </select>
+
+</mapper>

@@ -1,6 +1,8 @@
 package com.gxa.jbgsw.business.controller;
 
 
+import cn.hutool.core.date.DateUnit;
+import cn.hutool.core.date.DateUtil;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.BillboardApi;
@@ -12,11 +14,13 @@ import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.RedisKeys;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author huangxc
@@ -38,6 +43,8 @@ public class BillboardController implements BillboardApi {
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
     MapperFacade mapperFacade;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void add(BillboardDTO billboardDTO) {
@@ -45,6 +52,12 @@ public class BillboardController implements BillboardApi {
         billboard.setCreateAt(new Date());
 
         billboardService.save(billboard);
+
+        // 发布过后生成成果推荐，帅才推荐，经纪人推荐相关数据, 写定时任务
+        String key = RedisKeys.BILLBOARD_RELATED_RECOMMEND_TASK + billboard.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(billboard.getId()), 1, TimeUnit.MINUTES);
+
     }
 
     @Override

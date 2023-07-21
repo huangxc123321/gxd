@@ -37,14 +37,13 @@ public class BillboardFontController extends BaseController {
     @Resource
     BillboardGainFeignApi billboardGainFeignApi;
     @Resource
-    HavestFeignApi havestFeignApi;
+    BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
     @Resource
-    TalentPoolFeignApi talentPoolFeignApi;
-
+    BillboardTalentRelatedFeignApi billboardTalentRelatedFeignApi;
+    @Resource
+    BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
-
-
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
     @ApiImplicitParams({
@@ -64,21 +63,16 @@ public class BillboardFontController extends BaseController {
         detailInfo.setBillboardGains(billboardGainResponses);
 
         // 成果推荐: 根据揭榜单位
-        List<HavestDTO> havests = havestFeignApi.getHarvesByHolder(detailInfo.getUnitName());
+        List<BillboardHarvestRelatedResponse> havests = billboardHarvestRelatedFeignApi.getHarvestRecommend(id);
         detailInfo.setHarvestRecommends(havests);
 
         // 帅才推荐： 根据技术领域，研究方向确定
-        String techKeys = detailInfo.getTechKeys();
-        if(StrUtil.isNotBlank(techKeys)){
-            String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
-            List<TalentPoolDTO> talentPools = talentPoolFeignApi.getTalentPoolByTech(keys[0]);
-            detailInfo.setTalentRecommends(talentPools);
-        }
+        List<BillboardTalentRelatedResponse> talentRecommends = billboardTalentRelatedFeignApi.getTalentRecommend(id);
+        detailInfo.setTalentRecommends(talentRecommends);
 
         // 技术经纪人推荐: 根据专业标签来推荐
-        if(StrUtil.isNotBlank(techKeys)){
-            String[] keys = techKeys.split(String.valueOf(CharUtil.COLON));
-        }
+        List<BillboardEconomicRelatedResponse> techBrokerRecommends = billboardEconomicRelatedFeignApi.getEconomicRecommend(id);
+        detailInfo.setTechBrokerRecommends(techBrokerRecommends);
 
         return detailInfo;
     }
@@ -141,8 +135,8 @@ public class BillboardFontController extends BaseController {
             billboardDTO.setUnitName(userResponse.getUnitName());
         }
 
-        
         billboardFeignApi.add(billboardDTO);
+
     }
 
     private UserResponse getUser(){

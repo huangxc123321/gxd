@@ -1,9 +1,10 @@
 package com.gxa.jbgsw.business.listener;
 
 import cn.hutool.core.util.StrUtil;
+import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.mapper.NewsMapper;
 import com.gxa.jbgsw.business.protocol.enums.NewsStatusEnum;
-import com.gxa.jbgsw.business.service.NewsService;
+import com.gxa.jbgsw.business.service.*;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.listener.KeyExpirationEventMessageListener;
@@ -21,6 +22,14 @@ import javax.annotation.Resource;
 public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
     @Resource
     NewsService newsService;
+    @Resource
+    BillboardService billboardService;
+    @Resource
+    BillboardHarvestRelatedService billboardHarvestRelatedService;
+    @Resource
+    BillboardEconomicRelatedService billboardEconomicRelatedService;
+    @Resource
+    BillboardTalentRelatedService billboardTalentRelatedService;
 
 
     public RedisKeyExpiration(RedisMessageListenerContainer listenerContainer) {
@@ -41,6 +50,8 @@ public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
 
         // 新闻定时执行的前缀
         String newsPublishTimePrefixKey = RedisKeys.NEWS_PUBLIS_TIME;
+        // 榜单成果、帅才、经纪人匹配推荐处理
+        String billboardRelatedRecommendPrefixKey = RedisKeys.BILLBOARD_RELATED_RECOMMEND_TASK;
 
         if(expiredKey != null && StrUtil.startWithIgnoreCase(expiredKey, newsPublishTimePrefixKey)){
             // 新闻定时发布
@@ -48,6 +59,17 @@ public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
             String id = strs[strs.length-1];
             // 状态：0 发布， 1 待发布
             newsService.updateStatus(id, NewsStatusEnum.PUBLISHED.getCode());
+        }else if(expiredKey != null && StrUtil.startWithIgnoreCase(expiredKey, billboardRelatedRecommendPrefixKey)){
+            // 榜单成果、帅才、经纪人匹配推荐处理
+            String[] strs = StrUtil.splitToArray(expiredKey, StrUtil.C_COLON);
+            // 榜单ID
+            String id = strs[strs.length-1];
+            // 根据匹配规则，生成成果、帅才、经纪人与榜单的关联关系表
+            System.out.println("开始定时任务");
+            billboardHarvestRelatedService.addHarvestRelated(Long.valueOf(id));
+            billboardTalentRelatedService.addTalentRelated(Long.valueOf(id));
+            billboardEconomicRelatedService.addEconomicRelated(Long.valueOf(id));
+            System.out.println("结束定时任务");
         }
 
 

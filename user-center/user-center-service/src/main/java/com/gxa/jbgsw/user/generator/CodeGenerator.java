@@ -3,8 +3,8 @@ package com.gxa.jbgsw.user.generator;
 
 
 
-/**
 
+/*
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.annotation.IdType;

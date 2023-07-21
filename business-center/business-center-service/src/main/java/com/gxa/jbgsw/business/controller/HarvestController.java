@@ -10,6 +10,7 @@ import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.RedisKeys;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -22,6 +23,7 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author huangxc

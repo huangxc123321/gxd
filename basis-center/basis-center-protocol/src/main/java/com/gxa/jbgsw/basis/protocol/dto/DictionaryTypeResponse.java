@@ -14,10 +14,10 @@ public class DictionaryTypeResponse   {
     @ApiModelProperty(value = "字典类型ID")
     private Long id;
 
-    @ApiModelProperty(value = "部门名称")
+    @ApiModelProperty(value = "字典类型名称")
     private String name;
 
-    @ApiModelProperty(value = "用户ID, 前端不需要看到这个字段")
+    @ApiModelProperty(value = "字典类型的代码")
     private String code;
 
 }
