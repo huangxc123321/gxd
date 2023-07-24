@@ -11,6 +11,12 @@ public enum DictionaryTypeCodeEnum {
     categories,
     billboard_status,
     maturity_level,
+    broker_type,
+    trade_type,
+    unit_nature,
+    highest_edu,
+    professional,
+
     ;
 
 }

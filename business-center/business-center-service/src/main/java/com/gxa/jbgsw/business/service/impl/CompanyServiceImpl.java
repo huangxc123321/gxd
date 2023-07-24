@@ -4,9 +4,12 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Company;
+import com.gxa.jbgsw.business.entity.Harvest;
+import com.gxa.jbgsw.business.entity.News;
 import com.gxa.jbgsw.business.mapper.CompanyMapper;
 import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
 import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
 import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -49,11 +52,17 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     public PageResult<Company> pageQuery(CompanyRequest request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
 
-        List<Company> companies = companyMapper.pageQuery(request);
-        PageInfo<Company> pageInfo = new PageInfo<>(companies);
-
+        List<Company> responses = companyMapper.pageQuery(request);
+        PageInfo<Company> pageInfo = new PageInfo<>(responses);
         //类型转换
-        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<Company>>() {
-        }.build(), new TypeBuilder<PageResult<Company>>() {}.build());
+        PageResult pageResult = new PageResult<Company>();
+        pageResult.setTotal(pageInfo.getTotal());
+        pageResult.setSize(pageInfo.getSize());
+        pageResult.setPageSize(pageInfo.getPageSize());
+        pageResult.setPages(pageInfo.getPages());
+        pageResult.setPageNum(pageInfo.getPageNum());
+        pageResult.setList(responses);
+
+        return pageResult;
     }
 }

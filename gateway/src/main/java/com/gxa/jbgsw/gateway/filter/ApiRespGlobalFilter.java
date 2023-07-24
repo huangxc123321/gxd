@@ -108,7 +108,12 @@ public class ApiRespGlobalFilter implements GlobalFilter, Ordered {
 
                                 if(jsonObject.size() != 3){
                                     apiResult.setData(jsonObject);
-                                }else {
+                                }else if(jsonObject.size() == 3){
+                                    apiResult.setMessage(jsonObject.getString("message"));
+                                    apiResult.setCode(jsonObject.getInteger("code"));
+                                    apiResult.setData(jsonObject.get("data"));
+                                }
+                                else {
                                     apiResult.setMessage(jsonObject.getString("message"));
                                     apiResult.setCode(jsonObject.getInteger("code"));
                                 }

@@ -5,10 +5,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
-import com.gxa.jbgsw.business.protocol.dto.BillboardIndexDTO;
-import com.gxa.jbgsw.business.protocol.dto.SearchTalentsRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchTalentsResponse;
-import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.exception.BizException;
@@ -90,4 +87,20 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
 
         return null;
     }
+
+    @Override
+    public PageResult<TalentPoolResponse> pageQuery(TalentPoolRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<TalentPoolResponse> talents = talentPoolMapper.pageQuery(request);
+        if(CollectionUtils.isNotEmpty(talents)){
+            PageInfo<TalentPoolResponse> pageInfo = new PageInfo<>(talents);
+
+            return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<TalentPoolResponse>>() {
+            }.build(), new TypeBuilder<PageResult<TalentPoolResponse>>() {}.build());
+        }
+
+        return null;
+    }
+
 }

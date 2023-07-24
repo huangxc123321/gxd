@@ -47,10 +47,6 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "毕业院校")
     private String graduateSchool;
 
-    @ApiModelProperty(value = "逻辑已删除值(默认为 1), 0 未删除")
-    @TableLogic
-    private Integer isDelete;
-
     @ApiModelProperty(value = "状态：0 正常， 1-注销")
     private Integer status;
 
@@ -126,5 +122,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "更新者")
     private Long updateBy;
 
+    @ApiModelProperty(value = "审核是否通过原因")
+    private String auditReason;
 
+    @ApiModelProperty(value = "审核是否通过原因")
+    private String auditUserName;
 }

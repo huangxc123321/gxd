@@ -4,7 +4,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class TalentPoolDTO implements Serializable {
@@ -95,4 +97,11 @@ public class TalentPoolDTO implements Serializable {
 
     @ApiModelProperty(value = "更新人", hidden = true)
     private Long updateBy;
+
+    @ApiModelProperty(value = "榜单推荐")
+    private List<HarvestBillboardRelatedDTO> billboardRecommends = new ArrayList<>();
+
+    @ApiModelProperty(value = "合作发起")
+    private List<HavestCollaborateDTO> collaborates = new ArrayList<>();
+
 }

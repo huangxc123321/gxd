@@ -56,5 +56,8 @@ private static final long serialVersionUID=1L;
 
     private String tech;
 
+    @ApiModelProperty(value = "合作发起人名字")
+    private String launchUserName;
+
 
 }

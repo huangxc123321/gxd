@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.entity.Company;
 import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
 import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
 import com.gxa.jbgsw.common.utils.PageResult;
 
 

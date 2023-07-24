@@ -12,6 +12,8 @@ import com.gxa.jbgsw.business.entity.Harvest;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardHarvestRelatedMapper;
 import com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse;
+import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
+import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
 import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
@@ -147,6 +149,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
     @Override
     public List<BillboardHarvestRelatedResponse> getHarvestRecommend(Long billboardId) {
         return billboardHarvestRelatedMapper.getHarvestRecommend(billboardId);
+    }
+
+    @Override
+    public List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(Long harvestId) {
+        return billboardHarvestRelatedMapper.getHarvestRecommendByHarvestId(harvestId);
     }
 
 

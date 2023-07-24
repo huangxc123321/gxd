@@ -21,4 +21,26 @@
             a.billboard_id = #{billboardId}
             ORDER BY a.create_at DESC
    </select>
+
+   <select id="getHarvestRecommendByHarvestId"
+            resultType="com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO">
+       SELECT
+            b.id,
+            b.title,
+            b.unit_name AS  nitName ,
+            b.start_at AS startAt,
+            b.end_at AS endAt,
+            b.categories,
+            b.tech_keys techKeys,
+            a.s_star AS sStar,
+            b.content
+        FROM
+             t_billboard_harvest_related AS a
+             LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+             LEFT JOIN t_harvest AS c ON a.harvest_id = c.id
+        WHERE
+            a.harvest_id = #{harvestId}
+
+            ORDER BY a.create_at DESC
+    </select>
 </mapper>

@@ -1,8 +1,6 @@
 package com.gxa.jbgsw.business.client;
 
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,4 +24,9 @@ public interface BillboardTalentRelatedApi {
     @GetMapping("/billboard/talent/getTalentRecommend")
     List<BillboardTalentRelatedResponse> getTalentRecommend(@RequestParam("id") Long billboardId);
 
+    @GetMapping("/billboard/talent/getBillboardRecommendByTalentIdd")
+    List<HarvestBillboardRelatedDTO> getBillboardRecommendByTalentId(@RequestParam("id")Long id);
+
+    @GetMapping("/billboard/talent/getCollaborateByTalentId")
+    List<HavestCollaborateDTO> getCollaborateByTalentId(@RequestParam("id")Long id);
 }

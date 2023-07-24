@@ -22,4 +22,17 @@
 
     </select>
 
+    <select id="getBillboardRecommendByTalentId"
+            resultType="com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO">
+
+
+
+
+    </select>
+
+    <select id="getCollaborateByTalentId" resultType="com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO">
+
+
+
+    </select>
 </mapper>

@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.basis.controller;
 
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.basis.client.DictionaryApi;
@@ -76,17 +77,19 @@ public class DictionaryController implements DictionaryApi {
 
         String keys = RedisKeys.DICTIONARY_TYPE_VALUE + typeCode;
         String json = stringRedisTemplate.opsForValue().get(keys);
-        JSONArray array = JSONArray.parseArray(json);
-        for(int i=0; i<array.size(); i++){
-            JSONObject jsonObject = (JSONObject)array.get(i);
-            DictionaryResponse response = JSONObject.toJavaObject(jsonObject, DictionaryResponse.class);
-            if(response.getDicCode().equals(String.valueOf(code))){
-                dictionary.setDicCode(response.getDicCode());
-                dictionary.setDicValue(response.getDicValue());
-                dictionary.setId(response.getId());
-                dictionary.setTypeId(Long.valueOf(response.getTypeId()));
+        if(StrUtil.isNotBlank(json)){
+            JSONArray array = JSONArray.parseArray(json);
+            for(int i=0; i<array.size(); i++){
+                JSONObject jsonObject = (JSONObject)array.get(i);
+                DictionaryResponse response = JSONObject.toJavaObject(jsonObject, DictionaryResponse.class);
+                if(response.getDicCode().equals(String.valueOf(code))){
+                    dictionary.setDicCode(response.getDicCode());
+                    dictionary.setDicValue(response.getDicValue());
+                    dictionary.setId(response.getId());
+                    dictionary.setTypeId(Long.valueOf(response.getTypeId()));
 
-                break;
+                    break;
+                }
             }
         }
 

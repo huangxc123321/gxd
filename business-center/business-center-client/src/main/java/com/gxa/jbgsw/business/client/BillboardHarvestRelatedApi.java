@@ -1,9 +1,6 @@
 package com.gxa.jbgsw.business.client;
 
-import com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,4 +24,6 @@ public interface BillboardHarvestRelatedApi {
     @GetMapping("/billboard/harvest/getHarvestRecommend")
     List<BillboardHarvestRelatedResponse> getHarvestRecommend(@RequestParam("id") Long billboardId);
 
+    @GetMapping("/billboard/harvest/getHarvestRecommendByHarvestId")
+    List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(@RequestParam("harvestId") Long harvestId);
 }

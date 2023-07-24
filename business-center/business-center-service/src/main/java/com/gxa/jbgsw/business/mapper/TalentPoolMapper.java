@@ -4,6 +4,8 @@ import com.gxa.jbgsw.business.entity.TalentPool;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gxa.jbgsw.business.protocol.dto.SearchTalentsRequest;
 import com.gxa.jbgsw.business.protocol.dto.SearchTalentsResponse;
+import com.gxa.jbgsw.business.protocol.dto.TalentPoolRequest;
+import com.gxa.jbgsw.business.protocol.dto.TalentPoolResponse;
 
 import java.util.List;
 
@@ -18,4 +20,6 @@ import java.util.List;
 public interface TalentPoolMapper extends BaseMapper<TalentPool> {
 
     List<SearchTalentsResponse> queryTalents(SearchTalentsRequest searchTalentsRequest);
+
+    List<TalentPoolResponse> pageQuery(TalentPoolRequest request);
 }

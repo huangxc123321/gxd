@@ -1,11 +1,13 @@
 package com.gxa.jbgsw.business.client;
 
 
+import com.gxa.jbgsw.business.protocol.dto.TalentPoolAuditingDTO;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolRequest;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolResponse;
 import com.gxa.jbgsw.common.utils.PageResult;
 import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,5 +33,8 @@ public interface TalentPoolApi {
 
     @PostMapping("/talent/pool/getTalentPoolById")
     TalentPoolDTO getTalentPoolById(@RequestParam("id") Long id);
+
+    @PostMapping("/talent/pool/updateStatus")
+    void updateStatus(@RequestBody TalentPoolAuditingDTO talentPoolAuditingDTO);
 
 }

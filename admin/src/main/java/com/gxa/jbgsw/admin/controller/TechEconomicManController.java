@@ -3,6 +3,7 @@ package com.gxa.jbgsw.admin.controller;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.admin.feignapi.BillboardEconomicRelatedFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TechEconomicManFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.exception.BizException;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -25,6 +27,10 @@ import java.util.Date;
 public class TechEconomicManController extends BaseController {
     @Resource
     TechEconomicManFeignApi techEconomicManFeignApi;
+    @Resource
+    BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
+    @Resource
+    MapperFacade mapperFacade;
 
 
     @ApiOperation(value = "批量删除技术经纪人", notes = "批量删除技术经纪人")
@@ -65,8 +71,17 @@ public class TechEconomicManController extends BaseController {
             @ApiImplicitParam(value = "技术经纪人ID", name = "id", dataType = "Long", paramType = "query"),
     })
     @GetMapping("/tech/broker/detail")
-    public void detail(@RequestParam("id")Long id){
-        // TODO: 2023/7/5 0005 暂时不完成，稍后
+    public TechEconomicManDTO detail(@RequestParam("id")Long id){
+        TechEconomicManResponse techEconomicManResponse = techEconomicManFeignApi.getTechEconomicManById(id);
+        TechEconomicManDTO techEconomicManDTO = mapperFacade.map(techEconomicManResponse, TechEconomicManDTO.class);
+
+        //评价
+
+        // 需求派单: 根据经纪人，找到分配的需求
+         // billboardEconomicRelatedFeignApi.getRelatedByTechManId(id);
+
+
+        return techEconomicManDTO;
     }
 
 

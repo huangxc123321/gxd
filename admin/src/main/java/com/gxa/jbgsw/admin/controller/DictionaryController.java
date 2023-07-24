@@ -4,9 +4,12 @@ import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.admin.feignapi.DictionaryTypeFeignApi;
 import com.gxa.jbgsw.basis.protocol.dto.*;
 import com.gxa.jbgsw.common.exception.BizException;
+import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,17 +27,43 @@ public class DictionaryController extends BaseController {
     @Autowired
     DictionaryFeignApi dictionaryFeignApi;
 
+    @ApiOperation("根据字典类型获取")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "字典类型", name = "typeCode", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(value = "字典值", name = "code", dataType = "String", paramType = "query")
+    })
+    @GetMapping("/dictionary/getByCache")
+    public DictionaryDTO getByCache(@RequestParam("typeCode") String typeCode, @RequestParam("code") String code){
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(typeCode, code);
+        return dictionaryDTO;
+    }
+
 
     @ApiOperation("获取分类下的所有字典值")
     @PostMapping("/dictionary/getDictionaryByCode")
-    public List<DictionaryResponse> getDictionaryByCode(@RequestBody DictionaryCodeRequest request){
-        return dictionaryTypeFeignApi.getDictionaryByCode(request);
+    public ApiResult<DictionaryResponse> getDictionaryByCode(@RequestBody DictionaryCodeRequest request){
+        List<DictionaryResponse> dictionaryResponses = dictionaryTypeFeignApi.getDictionaryByCode(request);
+        System.out.println("获取分类下的所有字典值: "+dictionaryResponses.size());
+
+        ApiResult apiResult = new ApiResult();
+        apiResult.setData(dictionaryResponses);
+
+        return apiResult;
     }
 
     @ApiOperation("获取字典分类")
     @PostMapping("/dictionary/getAllDictionaryType")
-    public List<DictionaryTypeResponse> list(@RequestBody DictionaryTypeRequest request){
-        return dictionaryTypeFeignApi.list(request);
+    public ApiResult<DictionaryTypeResponse> getAllDictionaryType(@RequestBody DictionaryTypeRequest request){
+        List<DictionaryTypeResponse> dictionaryTypeResponses = dictionaryTypeFeignApi.list(request);
+        dictionaryTypeResponses.stream().forEach(s->{
+            System.out.println(s.getCode()+"  -- "+s.getName()+" -- "+s.getId());
+        });
+        System.out.println("获取字典分类: "+dictionaryTypeResponses.size());
+
+        ApiResult apiResult = new ApiResult();
+        apiResult.setData(dictionaryTypeResponses);
+
+        return  apiResult;
     }
 
     @ApiOperation("新增或修改字典值")

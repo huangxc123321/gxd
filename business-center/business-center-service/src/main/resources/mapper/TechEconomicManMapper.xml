@@ -6,11 +6,17 @@
             resultType="com.gxa.jbgsw.business.entity.TechEconomicMan">
             SELECT
                 a.id,
-                a.picture,
+                a.avatar,
                 a.`name`,
                 a.`level`,
                 a.score,
                 a.label,
+                a.area_name AS areaName,
+                a.mobile,
+                a.email,
+                a.unit_name AS unitName,
+                a.agreements,
+                a.createAt,
                 a.success_total AS successTotal
             FROM
                 t_tech_economic_man AS a

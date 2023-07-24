@@ -40,7 +40,6 @@ public class CompanyController extends BaseController {
     @PostMapping("/company/add")
     void add(@RequestBody CompanyDTO companyDTO) throws BizException {
         companyDTO.setCreateBy(this.getUserId());
-        // 设置默认的待揭榜
         companyDTO.setStatus(0);
         companyFeignApi.add(companyDTO);
     }

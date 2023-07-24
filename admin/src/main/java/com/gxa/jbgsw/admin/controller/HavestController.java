@@ -1,10 +1,12 @@
 package com.gxa.jbgsw.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.admin.feignapi.BillboardHarvestRelatedFeignApi;
+import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.admin.feignapi.HavestFeignApi;
-import com.gxa.jbgsw.business.protocol.dto.HarvestRequest;
-import com.gxa.jbgsw.business.protocol.dto.HarvestResponse;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Api(tags = "成果管理")
 @RestController
@@ -26,6 +29,10 @@ public class HavestController extends BaseController {
 
     @Resource
     HavestFeignApi havestFeignApi;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
 
     @ApiOperation("新增成果信息")
     @PostMapping("/havest/add")
@@ -63,7 +70,22 @@ public class HavestController extends BaseController {
     })
     @GetMapping("/havest/getHavestById")
     public HavestDTO getHavestById(@RequestParam("id")Long id){
-        return havestFeignApi.getHavestById(id);
+        HavestDTO havestDTO = havestFeignApi.getHavestById(id);
+        // maturity_level
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(havestDTO.getMaturityLevel()));
+        if(dictionaryDTO != null){
+            havestDTO.setMaturityLevelName(dictionaryDTO.getDicValue());
+        }
+
+        // 成果推荐: 根据揭榜单位
+        List<BillboardHarvestRelatedResponse> havests = billboardHarvestRelatedFeignApi.getHarvestRecommend(id);
+        havestDTO.setHarvestRecommends(havests);
+
+        // 合作发起
+        List<HavestCollaborateDTO> vals = billboardHarvestRelatedFeignApi.getHarvestRecommendByHarvestId(id);
+        havestDTO.setHavestCollaborates(vals);
+
+        return havestDTO;
     }
 
 

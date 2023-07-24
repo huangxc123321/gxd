@@ -7,12 +7,12 @@ import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.website.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.website.feignapi.DictionaryTypeFeignApi;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +25,17 @@ public class DictionaryController extends BaseController {
     DictionaryTypeFeignApi dictionaryTypeFeignApi;
     @Autowired
     DictionaryFeignApi dictionaryFeignApi;
+
+    @ApiOperation("根据字典类型获取")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "字典类型", name = "typeCode", dataType = "String", paramType = "query"),
+            @ApiImplicitParam(value = "字典值", name = "code", dataType = "String", paramType = "query")
+    })
+    @GetMapping("/dictionary/getByCache")
+    public DictionaryDTO getByCache(@RequestParam("typeCode") String typeCode, @RequestParam("code") String code){
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(typeCode, code);
+        return dictionaryDTO;
+    }
 
 
     @ApiOperation("获取分类下的所有字典值")

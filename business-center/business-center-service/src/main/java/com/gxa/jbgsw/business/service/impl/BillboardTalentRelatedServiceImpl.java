@@ -8,6 +8,8 @@ import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
 import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.mapper.BillboardTalentRelatedMapper;
 import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
+import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
+import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
@@ -159,6 +161,16 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
     @Override
     public List<BillboardTalentRelatedResponse> getTalentRecommend(Long billboardId) {
         return billboardTalentRelatedMapper.getTalentRecommend(billboardId);
+    }
+
+    @Override
+    public List<HarvestBillboardRelatedDTO> getBillboardRecommendByTalentId(Long id) {
+        return billboardTalentRelatedMapper.getBillboardRecommendByTalentId(id);
+    }
+
+    @Override
+    public List<HavestCollaborateDTO> getCollaborateByTalentId(Long id) {
+        return billboardTalentRelatedMapper.getCollaborateByTalentId(id);
     }
 
 

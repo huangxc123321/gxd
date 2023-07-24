@@ -3,6 +3,7 @@ package com.gxa.jbgsw.business.controller;
 
 import com.gxa.jbgsw.business.client.TalentPoolApi;
 import com.gxa.jbgsw.business.entity.TalentPool;
+import com.gxa.jbgsw.business.protocol.dto.TalentPoolAuditingDTO;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolRequest;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolResponse;
@@ -40,7 +41,7 @@ public class TalentPoolController implements TalentPoolApi {
 
     @Override
     public PageResult<TalentPoolResponse> pageQuery(TalentPoolRequest request) {
-        return null;
+        return talentPoolService.pageQuery(request);
     }
 
     @Override
@@ -65,7 +66,25 @@ public class TalentPoolController implements TalentPoolApi {
 
     @Override
     public TalentPoolDTO getTalentPoolById(Long id) {
+
+
+
         return null;
     }
+
+    @Override
+    public void updateStatus(TalentPoolAuditingDTO talentPoolAuditingDTO) {
+        TalentPool talentPool = talentPoolService.getById(talentPoolAuditingDTO.getId());
+        if(talentPool != null){
+            talentPool.setStatus(talentPoolAuditingDTO.getStatus());
+            talentPool.setAuditDate(talentPoolAuditingDTO.getAuditDate());
+            talentPool.setAuditReason(talentPoolAuditingDTO.getAuditReason());
+            talentPool.setAuditUserId(talentPoolAuditingDTO.getAuditUserId());
+            talentPool.setAuditUserName(talentPoolAuditingDTO.getAuditUserName());
+
+            talentPoolService.updateById(talentPool);
+        }
+    }
+
 }
 

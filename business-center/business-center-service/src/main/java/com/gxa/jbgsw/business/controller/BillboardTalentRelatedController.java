@@ -3,9 +3,7 @@ package com.gxa.jbgsw.business.controller;
 import com.gxa.jbgsw.business.client.BillboardTalentRelatedApi;
 import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.gxa.jbgsw.business.entity.BillboardTalentRelated;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
 import io.swagger.annotations.Api;
@@ -57,6 +55,16 @@ public class BillboardTalentRelatedController implements BillboardTalentRelatedA
     @Override
     public List<BillboardTalentRelatedResponse> getTalentRecommend(Long billboardId) {
         return billboardTalentRelatedService.getTalentRecommend(billboardId);
+    }
+
+    @Override
+    public List<HarvestBillboardRelatedDTO> getBillboardRecommendByTalentId(Long id) {
+        return billboardTalentRelatedService.getBillboardRecommendByTalentId(id);
+    }
+
+    @Override
+    public List<HavestCollaborateDTO> getCollaborateByTalentId(Long id) {
+        return billboardTalentRelatedService.getCollaborateByTalentId(id);
     }
 }
 

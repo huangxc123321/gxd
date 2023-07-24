@@ -113,6 +113,10 @@
             AND a.`status` = #{status}
         </if>
 
+        <if test="type != null ">
+            AND a.type = #{type}
+        </if>
+
         <if test="unitName != null and unitName != '' ">
             AND a.unit_name like CONCAT('%',#{unitName},'%')
         </if>

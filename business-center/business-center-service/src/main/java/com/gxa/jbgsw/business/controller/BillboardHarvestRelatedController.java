@@ -3,10 +3,7 @@ package com.gxa.jbgsw.business.controller;
 
 import com.gxa.jbgsw.business.client.BillboardHarvestRelatedApi;
 import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
-import com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +52,11 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
     @Override
     public List<BillboardHarvestRelatedResponse> getHarvestRecommend(Long billboardId) {
         return billboardHarvestRelatedService.getHarvestRecommend(billboardId);
+    }
+
+    @Override
+    public List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(Long harvestId) {
+        return billboardHarvestRelatedService.getHarvestRecommendByHarvestId(harvestId);
     }
 }
 

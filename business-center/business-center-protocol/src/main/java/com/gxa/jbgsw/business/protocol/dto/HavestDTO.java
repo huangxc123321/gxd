@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -73,5 +74,14 @@ public class HavestDTO implements Serializable {
 
     @ApiModelProperty(value = "创建人")
     private Long createBy;
+
+
+    List<BillboardHarvestRelatedResponse> harvestRecommends = new ArrayList<>();
+
+    @ApiModelProperty(value = "合作状态")
+    List<HavestCollaborateDTO> havestCollaborates = new ArrayList<>();
+
+
+
 
 }
