@@ -1,21 +1,33 @@
 package com.gxa.jbgsw.business.controller;
 
 
+import com.gxa.jbgsw.business.client.CollectionApi;
+import com.gxa.jbgsw.business.entity.Collection;
+import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
+import com.gxa.jbgsw.business.service.CollectionService;
+import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * <p>
- * 我的收藏 前端控制器
- * </p>
- *
- * @author huangxc
- * @since 2023-06-26
- */
-@RestController
-@RequestMapping("/collection")
-public class CollectionController {
+import javax.annotation.Resource;
 
+@RestController
+@Slf4j
+@Api(tags = "收藏管理")
+public class CollectionController implements CollectionApi {
+    @Resource
+    CollectionService collectionService;
+    @Resource
+    MapperFacade mapperFacade;
+
+    @Override
+    public void add(CollectionDTO collectionDTO) {
+        Collection collection = mapperFacade.map(collectionDTO, Collection.class);
+
+        collectionService.save(collection);
+    }
 }
 

@@ -58,6 +58,8 @@ public class IndexController extends BaseController {
     WebsiteBottomFeignApi websiteBottomFeignApi;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    CollectionFeignApi collectionFeignApi;
 
 
     @ApiOperation("获取首页榜单信息")
@@ -224,6 +226,17 @@ public class IndexController extends BaseController {
     WebsiteBottomDTO getWebsiteBottomInfo() {
         return websiteBottomFeignApi.getWebsiteBottomInfo();
     }
+
+    @ApiOperation("榜单收藏")
+    @PostMapping("/collection/add")
+    void addCollection(CollectionDTO collectionDTO){
+        collectionDTO.setCreateAt(new Date());
+        collectionDTO.setUserId(this.getUserId());
+
+        collectionFeignApi.add(collectionDTO);
+    }
+
+
 
 
     private UserResponse getUser(){

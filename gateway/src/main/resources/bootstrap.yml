@@ -9,6 +9,7 @@ skip:
 webauth:
   url:
     - /web/index/addBillboardGain
+    - /web/collection/add
 
 
 # Tomcat
