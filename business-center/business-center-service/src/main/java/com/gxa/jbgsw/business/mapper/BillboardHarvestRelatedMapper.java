@@ -2,10 +2,7 @@ package com.gxa.jbgsw.business.mapper;
 
 import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -23,4 +20,6 @@ public interface BillboardHarvestRelatedMapper extends BaseMapper<BillboardHarve
     List<BillboardHarvestRelatedResponse> getHarvestRecommend(@Param("billboardId") Long billboardId);
 
     List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(@Param("harvestId") Long harvestId);
+
+    List<BillboardResponse> getHarvestByHarvestId(@Param("harvestId") Long harvestId);
 }

@@ -75,7 +75,7 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "创建人")
     private Long createBy;
 
-
+    @ApiModelProperty(value = "榜单成果推荐")
     List<BillboardHarvestRelatedResponse> harvestRecommends = new ArrayList<>();
 
     @ApiModelProperty(value = "合作状态")

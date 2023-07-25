@@ -37,4 +37,7 @@ public class SearchGovRequest extends PageRequest implements Serializable {
 
     @ApiModelProperty(value = "工信大类：字典中获取")
     private Integer categories;
+
+    @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜", hidden = true)
+    private Integer type;
 }

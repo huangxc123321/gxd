@@ -5,11 +5,11 @@ skip:
     - /admin/get/validate/code
     - /app/user/add
     - /app/login
-    - /web/login
-    - /web/user/add
-    - /web/file/upload
-    - /web/user/saveOrUpdate
-    - /web/get/validate/code
+
+webauth:
+  url:
+    - /web/index/addBillboardGain
+
 
 # Tomcat
 server:

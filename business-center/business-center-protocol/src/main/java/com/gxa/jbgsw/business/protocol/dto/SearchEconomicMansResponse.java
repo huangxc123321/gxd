@@ -27,4 +27,8 @@ public class SearchEconomicMansResponse implements Serializable {
     @ApiModelProperty(value = "总促成成交数")
     private Integer successTotal;
 
+    @ApiModelProperty(value = "头像")
+    private String avatar;
+
+
 }

@@ -25,4 +25,6 @@ public interface HarvestService extends IService<Harvest> {
 
     PageResult<SearchHavestResponse> queryHarvests(SearchHarvestsRequest searchHarvestsRequest);
 
+    List<Harvest> getHarvesByTechDomain(String techDomain);
+
 }

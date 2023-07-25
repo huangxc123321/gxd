@@ -35,10 +35,11 @@ public class SearchBizRequest extends PageRequest implements Serializable {
     private Integer categories;
 
     @ApiModelProperty(value = "企业类型：字典中获取")
-    private Integer type;
+    private Integer companyType;
 
     @ApiModelProperty(value = "星级指数")
     private Integer star;
 
-
+    @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜", hidden = true)
+    private Integer type;
 }

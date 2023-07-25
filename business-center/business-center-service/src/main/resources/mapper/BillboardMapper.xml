@@ -49,6 +49,9 @@
         t_billboard AS a
         WHERE
         1 = 1
+        <if test="type != null ">
+            AND a.type =  #{type}
+        </if>
 
         <if test="searchFiled != null and searchFiled != '' ">
             AND a.title like CONCAT('%',#{searchFiled},'%')
@@ -263,11 +266,16 @@
             a.create_at AS createAt,
             b.logo AS unitLogo,
             a.unit_name AS unitName,
+            b.star,
             a.categories
             FROM
                 t_billboard a LEFT JOIN t_company b ON a.unit_name = b.`name`
             WHERE
             1 = 1
+
+            <if test="type != null ">
+                AND a.type =  #{type}
+            </if>
 
             <if test="searchFiled != null and searchFiled != '' ">
                 AND a.title like CONCAT('%',#{searchFiled},'%')
@@ -296,8 +304,8 @@
             <if test="star != null ">
                 AND b.star = #{star}
             </if>
-            <if test="type != null ">
-                AND b.type = #{type}
+            <if test="companyType != null ">
+                AND b.type = #{companyType}
             </if>
 
             order by a.seq_no asc , a.create_at desc

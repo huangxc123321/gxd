@@ -1,9 +1,11 @@
 package com.gxa.jbgsw.gateway.filter;
 
+import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.common.utils.RedisUtils;
 import com.gxa.jbgsw.gateway.props.AuthProperties;
+import com.gxa.jbgsw.gateway.props.WebAuthProperties;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -31,6 +33,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     AuthProperties authProperties;
     @Resource
+    WebAuthProperties webAuthProperties;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     private static final String REQUEST_TIME_BEGIN = "requestTimeBegin";
@@ -46,6 +50,13 @@ public class AuthFilter implements GlobalFilter, Ordered {
         if(authProperties != null && authProperties.getUrl().contains(path)){
             return chain.filter(exchange);
         }
+
+        // web URL 是否需要登录判断
+        if(StrUtil.isNotBlank(path) && !webAuthProperties.getUrl().contains(path)){
+            return chain.filter(exchange);
+        }
+
+
 
         if(request != null){
             HttpHeaders headers = request.getHeaders();

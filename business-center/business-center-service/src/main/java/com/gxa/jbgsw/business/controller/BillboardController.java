@@ -111,6 +111,7 @@ public class BillboardController implements BillboardApi {
     }
 
     @Override
+
     public DetailInfoDTO detail(Long id) {
         Billboard billboard = billboardService.getById(id);
         DetailInfoDTO detailInfoDTO = mapperFacade.map(billboard, DetailInfoDTO.class);

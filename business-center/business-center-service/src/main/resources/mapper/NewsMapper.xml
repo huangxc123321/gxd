@@ -58,7 +58,7 @@
             t_news a
         WHERE
             a.`status` = 0
-            AND type = #{type}
+            AND news_policy = #{type}
     </select>
 
 

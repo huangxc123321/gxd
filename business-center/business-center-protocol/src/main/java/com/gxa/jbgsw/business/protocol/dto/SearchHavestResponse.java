@@ -18,6 +18,9 @@ public class SearchHavestResponse implements Serializable {
     @ApiModelProperty(value = "成熟度：字典中获取")
     private Integer maturityLevel;
 
+    @ApiModelProperty(value = "成熟度名称")
+    private String maturityLevelName;
+
     @ApiModelProperty(value = "所属单位")
     private String unitName;
 

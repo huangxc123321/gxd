@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardGain;
 import com.gxa.jbgsw.business.entity.TalentPool;
@@ -12,6 +13,8 @@ import com.gxa.jbgsw.business.mapper.BillboardMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
@@ -24,6 +27,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -40,6 +44,10 @@ import java.util.stream.Collectors;
 public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard> implements BillboardService {
     @Resource
     BillboardMapper billboardMapper;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    BillboardHarvestRelatedService billboardHarvestRelatedService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -174,15 +182,39 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         // 最新的四条记录
         List<Billboard> billboards = getLast();
         List<BillboardIndexDTO> lasts = mapperFacade.mapAsList(billboards, BillboardIndexDTO.class);
-        indexResponse.setGovs(lasts);
+        if(CollectionUtils.isNotEmpty(lasts)){
+            lasts.stream().forEach(s->{
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    s.setCategoriesName(dictionaryDTO.getDicValue());
+                }
+            });
+        }
+        indexResponse.setLasts(lasts);
         // 政府榜
         List<Billboard> govs = getGovs();
         List<BillboardIndexDTO> govList = mapperFacade.mapAsList(govs, BillboardIndexDTO.class);
+        if(CollectionUtils.isNotEmpty(govList)){
+            govList.stream().forEach(s->{
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    s.setCategoriesName(dictionaryDTO.getDicValue());
+                }
+            });
+        }
         indexResponse.setGovs(govList);
 
         // 企业榜
         List<Billboard> bizs = getBizs();
         List<BillboardIndexDTO> bizsList = mapperFacade.mapAsList(bizs, BillboardIndexDTO.class);
+        if(CollectionUtils.isNotEmpty(bizsList)){
+            bizsList.stream().forEach(s->{
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    s.setCategoriesName(dictionaryDTO.getDicValue());
+                }
+            });
+        }
         indexResponse.setBizs(bizsList);
 
         return indexResponse;
@@ -218,6 +250,36 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         return null;
     }
 
+    @Override
+    public List<RelateHavestDTO> getRelatedHavestByBillboardId(Long id, int i) {
+        List<RelateHavestDTO> relateHavests = new ArrayList<>();
+
+        List<BillboardHarvestRelatedResponse> relatedResponses = billboardHarvestRelatedService.getHarvestRecommend(id);
+        if(relatedResponses != null && relatedResponses.size() >3){
+            List<BillboardHarvestRelatedResponse> n1 = relatedResponses.subList(0, 2);
+            relateHavests = mapperFacade.mapAsList(n1, RelateHavestDTO.class);
+        }else if(relatedResponses != null && relatedResponses.size() <3){
+            relateHavests = mapperFacade.mapAsList(relatedResponses, RelateHavestDTO.class);
+        }
+        return relateHavests;
+    }
+
+    @Override
+    public List<Billboard> getRelateBillboardByCategories(Integer categories, Integer type) {
+        LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(type)){
+            lambdaQueryWrapper.eq(Billboard::getType, BillboardTypeEnum.GOV_BILLBOARD.getCode());
+        }else if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(type)){
+            lambdaQueryWrapper.eq(Billboard::getType, BillboardTypeEnum.BUS_BILLBOARD.getCode());
+        }
+        lambdaQueryWrapper.eq(Billboard::getCategories, categories);
+        lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt);
+        lambdaQueryWrapper.last("LIMIT 5");
+        List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
+
+        return billboards;
+    }
+
     private List<Billboard> getBizs() {
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
@@ -246,6 +308,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
         lambdaQueryWrapper.orderByDesc(Billboard::getIsTop, Billboard::getCreateAt);
+        lambdaQueryWrapper.last("limit 4");
         List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
 
         return billboards;

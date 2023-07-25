@@ -43,4 +43,16 @@
 
             ORDER BY a.create_at DESC
     </select>
+
+   <select id="getHarvestByHarvestId" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardResponse">
+       SELECT
+        b. NAME,
+        b.id,
+        b.amount
+    FROM
+        t_billboard_harvest_related a
+       LEFT JOIN t_billboard b ON a.billboard_id = b.id
+       where a.billboard_id = #{harvestId}
+       ORDER BY a.create_at DESC
+    </select>
 </mapper>

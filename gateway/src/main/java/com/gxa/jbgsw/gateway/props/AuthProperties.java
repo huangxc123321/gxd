@@ -11,7 +11,6 @@ import java.util.List;
 // 权限过滤
 @Data
 @RefreshScope
-// @ConfigurationProperties("skip.url")
 @ConfigurationProperties(prefix = "skip")
 public class AuthProperties {
 

@@ -3,6 +3,7 @@ package com.gxa.jbgsw.business.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryValueQueryRequest;
@@ -11,10 +12,7 @@ import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.gxa.jbgsw.business.entity.Harvest;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardHarvestRelatedMapper;
-import com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -154,6 +152,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
     @Override
     public List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(Long harvestId) {
         return billboardHarvestRelatedMapper.getHarvestRecommendByHarvestId(harvestId);
+    }
+
+    @Override
+    public List<BillboardResponse> getHarvestByHarvestId(Long harvestId) {
+        return billboardHarvestRelatedMapper.getHarvestByHarvestId(harvestId);
     }
 
 

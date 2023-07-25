@@ -16,6 +16,7 @@ public enum DictionaryTypeCodeEnum {
     unit_nature,
     highest_edu,
     professional,
+    company_type,
 
     ;
 

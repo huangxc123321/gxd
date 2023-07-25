@@ -28,7 +28,7 @@ public class MyReceiveBillboardController extends BaseController {
 
 
     @ApiOperation("获取我揭榜的榜单列表")
-    @PostMapping("/user/center/queryMyReceiveBillboard/")
+    @PostMapping("/user/center/queryMyReceiveBillboard")
     MyReceiveBillboardResponse queryMyReceiveBillboard(@RequestBody MyReceiveBillboardRequest request){
         request.setUserId(this.getUserId());
         MyReceiveBillboardResponse response = billboardFeignApi.queryMyReceiveBillboard(request);

@@ -2,10 +2,7 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 
 import java.util.List;
 
@@ -24,4 +21,6 @@ public interface BillboardHarvestRelatedService extends IService<BillboardHarves
     List<BillboardHarvestRelatedResponse> getHarvestRecommend(Long billboardId);
 
     List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(Long harvestId);
+
+    List<BillboardResponse> getHarvestByHarvestId(Long harvestId);
 }

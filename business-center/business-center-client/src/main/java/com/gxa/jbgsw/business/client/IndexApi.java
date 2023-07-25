@@ -34,5 +34,12 @@ public interface IndexApi {
     @PostMapping("/index/queryNews")
     PageResult<SearchNewsResponse> queryNews(@RequestBody SearchNewsRequest searchNewsRequest);
 
+    @GetMapping("/index/getRelatedByBillboardId")
+    RelateDTO getRelatedByBillboardId(@RequestParam("id") Long id);
 
+    @GetMapping("/index/getRelatedByHarvestId")
+    RelateDTO getRelatedByHarvestId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedByTalentId")
+    RelateDTO getRelatedByTalentId(@RequestParam("id") Long id);
 }

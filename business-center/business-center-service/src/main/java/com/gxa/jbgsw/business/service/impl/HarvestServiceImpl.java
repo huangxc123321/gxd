@@ -75,4 +75,14 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchHavestResponse>>() {
         }.build(), new TypeBuilder<PageResult<SearchHavestResponse>>() {}.build());
     }
+
+    @Override
+    public List<Harvest> getHarvesByTechDomain(String techDomain) {
+        LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(Harvest::getTechDomain, techDomain)
+                .orderByDesc(Harvest::getCreateAt);
+        List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
+
+        return harvests;
+    }
 }

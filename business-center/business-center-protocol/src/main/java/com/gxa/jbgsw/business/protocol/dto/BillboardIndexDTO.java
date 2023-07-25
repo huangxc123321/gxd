@@ -53,4 +53,7 @@ public class BillboardIndexDTO implements Serializable {
 
     @ApiModelProperty(value = "发榜单位LOGO： 冗余字段，便于以后查询显示需要")
     private String unitLogo;
+
+    @ApiModelProperty(value = "企业几颗星")
+    private Integer star;
 }

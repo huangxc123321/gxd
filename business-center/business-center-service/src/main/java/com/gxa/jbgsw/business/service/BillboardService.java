@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
+import java.util.List;
+
 /**
  * <p>
  * 榜单信息 服务类
@@ -42,4 +44,8 @@ public interface BillboardService extends IService<Billboard> {
     PageResult<BillboardIndexDTO> queryGovBillborads(SearchGovRequest searchGovRequest);
 
     PageResult<BillboardIndexDTO> queryBizBillborads(SearchBizRequest searchGovRequest);
+
+    List<RelateHavestDTO> getRelatedHavestByBillboardId(Long id, int i);
+
+    List<Billboard> getRelateBillboardByCategories(Integer categories, Integer type);
 }

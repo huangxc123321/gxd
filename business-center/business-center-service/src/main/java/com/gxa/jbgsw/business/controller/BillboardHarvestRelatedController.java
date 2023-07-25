@@ -58,5 +58,17 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
     public List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(Long harvestId) {
         return billboardHarvestRelatedService.getHarvestRecommendByHarvestId(harvestId);
     }
+
+    @Override
+    public List<RelateBillboardDTO> getHarvestByHarvestId(Long harvestId) {
+        List<BillboardResponse> responses =  billboardHarvestRelatedService.getHarvestByHarvestId(harvestId);
+        if(responses != null){
+            List<RelateBillboardDTO> billboards = mapperFacade.mapAsList(responses, RelateBillboardDTO.class);
+
+            return billboards;
+        }
+
+        return null;
+    }
 }
 

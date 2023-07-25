@@ -46,7 +46,7 @@ public class MyPublishBillboardController extends BaseController {
 
 
     @ApiOperation("获取我发布的榜单列表")
-    @PostMapping("/user/center/queryMyPublish/")
+    @PostMapping("/user/center/queryMyPublish")
     MyPublishBillboardResponse queryMyPublish(@RequestBody MyPublishBillboardRequest request){
 
         request.setUserId(this.getUserId());

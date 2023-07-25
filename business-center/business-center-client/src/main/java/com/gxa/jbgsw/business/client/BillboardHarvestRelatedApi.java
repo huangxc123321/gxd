@@ -26,4 +26,7 @@ public interface BillboardHarvestRelatedApi {
 
     @GetMapping("/billboard/harvest/getHarvestRecommendByHarvestId")
     List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(@RequestParam("harvestId") Long harvestId);
+
+    @GetMapping("/billboard/harvest/getHarvestByHarvestId")
+    List<RelateBillboardDTO> getHarvestByHarvestId(@RequestParam("harvestId") Long harvestId);
 }

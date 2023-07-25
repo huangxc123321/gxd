@@ -55,7 +55,7 @@
             a.label,
             a.score,
             a.success_total AS successTotal,
-            a.picture
+            a.avatar
         FROM
         t_tech_economic_man AS a
         WHERE
@@ -69,13 +69,14 @@
             AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
         </if>
 
-        <if test="label != null and label != '' ">
-            AND a.label like CONCAT('%',#{label},'%')
-        </if>
-
         <if test="level != null ">
             AND a.`level`  = #{level}
         </if>
+
+        <if test="techDomain != null and techDomain != '' ">
+            AND ( a.`label` like CONCAT('%',#{techDomain},'%') )
+        </if>
+
 
         <if test="type != null ">
             AND a.`type`  = #{type}
