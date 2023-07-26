@@ -29,4 +29,7 @@ public interface BillboardHarvestRelatedApi {
 
     @GetMapping("/billboard/harvest/getHarvestByHarvestId")
     List<RelateBillboardDTO> getHarvestByHarvestId(@RequestParam("harvestId") Long harvestId);
+
+    @GetMapping("/billboard/harvest/getBillboardstByHarvestId")
+    List<BillboardHarvestRelatedResponse> getBillboardstByHarvestId(@RequestParam("harvestId") Long harvestId);
 }

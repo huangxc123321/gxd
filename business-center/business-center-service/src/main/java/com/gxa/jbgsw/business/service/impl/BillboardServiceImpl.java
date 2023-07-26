@@ -7,6 +7,7 @@ import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardGain;
+import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
@@ -17,6 +18,7 @@ import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gxa.jbgsw.business.service.CollectionService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.ApiModelProperty;
@@ -50,11 +52,16 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     BillboardHarvestRelatedService billboardHarvestRelatedService;
     @Resource
     MapperFacade mapperFacade;
+    @Resource
+    CollectionService collectionService;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
         billboardMapper.deleteBatchIds(list);
+
+        // 收藏表也同时删除
+        collectionService.deleteBatchByPid(list);
     }
 
     @Override

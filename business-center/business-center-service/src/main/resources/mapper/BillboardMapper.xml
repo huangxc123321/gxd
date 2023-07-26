@@ -204,8 +204,11 @@
             a.tech_keys AS techKeys,
             a.amount,
             a.content,
+            a.status,
             a.start_at AS startAt,
             a.end_at AS endAt,
+            a.unit_name AS unitName,
+            a.unit_logo AS unitLogo,
             a.create_at AS createAt
         FROM
             t_billboard a

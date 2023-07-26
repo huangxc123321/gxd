@@ -159,6 +159,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
         return billboardHarvestRelatedMapper.getHarvestByHarvestId(harvestId);
     }
 
+    @Override
+    public List<BillboardHarvestRelatedResponse> getBillboardstByHarvestId(Long harvestId) {
+        return billboardHarvestRelatedMapper.getBillboardstByHarvestId(harvestId);
+    }
+
 
     public DictionaryDTO getByCache(String typeCode, String code) {
         DictionaryDTO dictionary = new DictionaryDTO();

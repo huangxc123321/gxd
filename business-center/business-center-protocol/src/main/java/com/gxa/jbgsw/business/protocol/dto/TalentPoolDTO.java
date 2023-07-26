@@ -98,6 +98,9 @@ public class TalentPoolDTO implements Serializable {
     @ApiModelProperty(value = "更新人", hidden = true)
     private Long updateBy;
 
+    @ApiModelProperty(value = "关注状态： 0 已关注  1 未关注")
+    private Integer attentionStatus = 1;
+
     @ApiModelProperty(value = "榜单推荐")
     private List<HarvestBillboardRelatedDTO> billboardRecommends = new ArrayList<>();
 

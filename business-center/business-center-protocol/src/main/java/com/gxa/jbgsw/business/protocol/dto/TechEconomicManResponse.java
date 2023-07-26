@@ -88,4 +88,7 @@ public class TechEconomicManResponse implements Serializable {
     @ApiModelProperty(value = "或者协议")
     private String agreements;
 
+    @ApiModelProperty(value = "关注状态： 0 已关注  1 未关注")
+    private Integer attentionStatus = 1;
+
 }

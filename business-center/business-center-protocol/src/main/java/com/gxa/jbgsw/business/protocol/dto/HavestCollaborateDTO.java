@@ -12,7 +12,7 @@ public class HavestCollaborateDTO implements Serializable {
     @ApiModelProperty(value = "合作ID")
     private Long id;
 
-    @ApiModelProperty(value = "合作类型：0 成果合作")
+    @ApiModelProperty(value = "合作类型：0 成果合作 1 需求合作")
     private Integer type;
 
     @ApiModelProperty(value = "发起方")
@@ -33,7 +33,13 @@ public class HavestCollaborateDTO implements Serializable {
     @ApiModelProperty(value = "状态：0 待回复  ...")
     private Integer status;
 
+    @ApiModelProperty(value = "状态名称")
+    private String statusName;
+
     @ApiModelProperty(value = "合作方式")
     private String mode;
+
+    @ApiModelProperty(value = "合作方式显示名称")
+    private String modeName;
 
 }

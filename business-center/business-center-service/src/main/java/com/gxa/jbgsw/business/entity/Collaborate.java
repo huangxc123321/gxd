@@ -54,8 +54,6 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "合作发起时间")
     private Date effectAt;
 
-    private String tech;
-
     @ApiModelProperty(value = "合作发起人名字")
     private String launchUserName;
 

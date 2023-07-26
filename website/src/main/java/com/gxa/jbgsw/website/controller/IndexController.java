@@ -7,10 +7,7 @@ import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.WebsiteBottomDTO;
 import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
-import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
-import com.gxa.jbgsw.business.protocol.enums.CollectionStatusEnum;
-import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
-import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.protocol.enums.*;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
@@ -62,6 +59,8 @@ public class IndexController extends BaseController {
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
     CollectionFeignApi collectionFeignApi;
+    @Resource
+    AttentionFeignApi attentionFeignApi;
 
 
     @ApiOperation("获取首页榜单信息")
@@ -210,7 +209,21 @@ public class IndexController extends BaseController {
     @ApiOperation("获取某个帅才信息")
     @GetMapping("/index/getTalentById")
     TalentPoolDTO getTalentById(@RequestParam(value = "id") Long id) {
-        return talentPoolFeignApi.getTalentPoolById(id);
+        TalentPoolDTO telentPoolDTO = talentPoolFeignApi.getTalentPoolById(id);
+        // 判断是否收藏
+        Long userId = this.getUserId();
+        if(userId != null){
+            AttentionDTO attentionDTO = null;
+            // 关注： 帅才
+            Integer attentionType = AttentionTypeEnum.TALENT.getCode();
+
+            AttentionDTO atInfo = attentionFeignApi.getAttention(id, userId, attentionType);
+            if(atInfo != null){
+                telentPoolDTO.setAttentionStatus(AttentionStatusEnum.ATTENTION.getCode());
+            }
+        }
+
+        return telentPoolDTO;
     }
 
     @ApiOperation("搜索技术经纪人")
@@ -221,7 +234,23 @@ public class IndexController extends BaseController {
     @ApiOperation("获取某个技术经纪人信息")
     @GetMapping("/index/getEconomicManById")
     TechEconomicManResponse getEconomicManById(@RequestParam(value = "id") Long id) {
-        return techEconomicManFeignApi.getTechEconomicManById(id);
+        TechEconomicManResponse techEconomicManResponse = techEconomicManFeignApi.getTechEconomicManById(id);
+
+        // 判断是否收藏
+        Long userId = this.getUserId();
+        if(userId != null){
+            AttentionDTO attentionDTO = null;
+            // 关注： 帅才
+            Integer attentionType = AttentionTypeEnum.TECH.getCode();
+
+            AttentionDTO atInfo = attentionFeignApi.getAttention(id, userId, attentionType);
+            if(atInfo != null){
+                techEconomicManResponse.setAttentionStatus(AttentionStatusEnum.ATTENTION.getCode());
+            }
+        }
+
+        return techEconomicManResponse;
+
     }
 
     @ApiOperation("搜索新闻资讯")

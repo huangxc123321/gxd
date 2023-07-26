@@ -19,6 +19,9 @@ public class BillboardGainDTO implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remak;
 
+    @ApiModelProperty(value = "榜单名称")
+    private String title;
+
     @ApiModelProperty(value = "揭榜人")
     private String createByName;
 

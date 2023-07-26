@@ -70,5 +70,11 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
 
         return null;
     }
+
+    @Override
+    public List<BillboardHarvestRelatedResponse> getBillboardstByHarvestId(Long harvestId) {
+        List<BillboardHarvestRelatedResponse> responses =  billboardHarvestRelatedService.getBillboardstByHarvestId(harvestId);
+        return responses;
+    }
 }
 

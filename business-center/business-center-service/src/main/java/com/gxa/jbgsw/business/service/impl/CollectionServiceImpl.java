@@ -1,10 +1,16 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.mapper.CollectionMapper;
+import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
 import com.gxa.jbgsw.business.service.CollectionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * <p>
@@ -16,5 +22,48 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collection> implements CollectionService {
+    @Resource
+    CollectionMapper collectionMapper;
 
+    @Override
+    public void deleteCollection(CollectionDTO collectionDTO) {
+        LambdaQueryWrapper<Collection> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Collection::getPid, collectionDTO.getPid());
+        lambdaQueryWrapper.eq(Collection::getUserId, collectionDTO.getUserId());
+
+        collectionMapper.delete(lambdaQueryWrapper);
+    }
+
+    @Override
+    public Collection getCollection(Long pid, Long userId, Integer type) {
+        LambdaQueryWrapper<Collection> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Collection::getPid, pid);
+        lambdaQueryWrapper.eq(Collection::getUserId, userId);
+        lambdaQueryWrapper.eq(Collection::getCollectionType, type);
+        lambdaQueryWrapper.last("limit 1");
+
+        List<Collection> collections = collectionMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(collections)){
+            return collections.get(0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public void deleteBatchByPid(List<Long> ids) {
+        LambdaQueryWrapper<Collection> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Collection::getPid, ids);
+
+        collectionMapper.delete(lambdaQueryWrapper);
+    }
+
+    @Override
+    public List<Collection> queryMyCollections(Long createBy) {
+        LambdaQueryWrapper<Collection> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(Collection::getUserId, createBy);
+
+        List<Collection> collections = collectionMapper.selectList(lambdaQueryWrapper);
+        return collections;
+    }
 }

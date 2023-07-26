@@ -22,4 +22,6 @@ public interface BillboardHarvestRelatedMapper extends BaseMapper<BillboardHarve
     List<HavestCollaborateDTO> getHarvestRecommendByHarvestId(@Param("harvestId") Long harvestId);
 
     List<BillboardResponse> getHarvestByHarvestId(@Param("harvestId") Long harvestId);
+
+    List<BillboardHarvestRelatedResponse> getBillboardstByHarvestId(@Param("harvestId") Long harvestId);
 }

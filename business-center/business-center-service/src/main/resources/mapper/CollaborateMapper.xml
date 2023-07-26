@@ -2,4 +2,19 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.CollaborateMapper">
 
+    <select id="getHavestCollaborates" resultType="com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO">
+        SELECT
+            a.id,
+            a.launch_user_name AS launchUserName,
+            a.`mode`,
+            a.detail,
+            a.effect_at AS effectAt,
+            a.`status`
+        FROM
+            t_collaborate a
+        WHERE
+            a.harvest_user_id = #{havestId}
+    </select>
+
+
 </mapper>

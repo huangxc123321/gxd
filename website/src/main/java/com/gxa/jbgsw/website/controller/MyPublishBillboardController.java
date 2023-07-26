@@ -3,22 +3,25 @@ package com.gxa.jbgsw.website.controller;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.client.TechEconomicManAppraiseApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
+import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
-import com.gxa.jbgsw.website.feignapi.BillboardFeignApi;
-import com.gxa.jbgsw.website.feignapi.BillboardGainFeignApi;
-import com.gxa.jbgsw.website.feignapi.HavestFeignApi;
-import com.gxa.jbgsw.website.feignapi.TalentPoolFeignApi;
+import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,21 +39,33 @@ public class MyPublishBillboardController extends BaseController {
     @Resource
     BillboardGainFeignApi billboardGainFeignApi;
     @Resource
-    HavestFeignApi havestFeignApi;
-    @Resource
-    TalentPoolFeignApi talentPoolFeignApi;
-    @Resource
     TechEconomicManAppraiseApi techEconomicManAppraiseApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
-
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
+    @Resource
+    BillboardTalentRelatedFeignApi billboardTalentRelatedFeignApi;
+    @Resource
+    BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
 
     @ApiOperation("获取我发布的榜单列表")
     @PostMapping("/user/center/queryMyPublish")
     MyPublishBillboardResponse queryMyPublish(@RequestBody MyPublishBillboardRequest request){
-
         request.setUserId(this.getUserId());
         MyPublishBillboardResponse response = billboardFeignApi.queryMyPublish(request);
+        List<MyPublishBillboardInfo> billboards = response.getBillboards();
+        if(CollectionUtils.isNotEmpty(billboards)){
+            billboards.stream().forEach(s->{
+                s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.categories.name(),String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    s.setCategoriesName(dictionaryDTO.getDicValue());
+                }
+            });
+        }
 
         return response;
     }
@@ -82,6 +97,9 @@ public class MyPublishBillboardController extends BaseController {
     @ApiOperation("编辑我发布的榜单信息")
     @PostMapping("/user/center/updateMyBillboard")
     void updateMyBillboard(@RequestBody BillboardDTO billboardDTO) throws BizException {
+        if(billboardDTO.getId() == null){
+            throw new BizException(BusinessErrorCode.BUSINESS_PARAMS_ERROR);
+        }
         billboardFeignApi.updateMyBillboard(billboardDTO);
     }
 
@@ -95,13 +113,27 @@ public class MyPublishBillboardController extends BaseController {
 
         // 获取揭榜
         List<BillboardGainDTO> billboardGainResponses = billboardGainFeignApi.getBillboardGainByPid(id);
+        if(CollectionUtils.isNotEmpty(billboardGainResponses)){
+            billboardGainResponses.stream().forEach(s->{
+                s.setAuditingStatusName(AuditingStatusEnum.getNameByIndex(s.getAuditingStatus()));
+            });
+        }
         detailInfo.setBillboardGains(billboardGainResponses);
 
         // 成果推荐: 根据揭榜单位
+        List<BillboardHarvestRelatedResponse> havests = billboardHarvestRelatedFeignApi.getHarvestRecommend(id);
+        detailInfo.setHarvestRecommends(havests);
 
         // 帅才推荐： 根据技术领域，研究方向确定
+        List<BillboardTalentRelatedResponse> talentRecommends = billboardTalentRelatedFeignApi.getTalentRecommend(id);
+        detailInfo.setTalentRecommends(talentRecommends);
 
         // 技术经纪人推荐: 根据专业标签来推荐
+        List<BillboardEconomicRelatedResponse> techBrokerRecommends = billboardEconomicRelatedFeignApi.getEconomicRecommend(id);
+        detailInfo.setTechBrokerRecommends(techBrokerRecommends);
+
+        // TODO: 2023/7/26 0026  不知道怎么榜单经纪人
+        List<BillboardGainDTO> billboardGains = billboardGainFeignApi.getBillboardGainByPid(id);
 
         return detailInfo;
     }

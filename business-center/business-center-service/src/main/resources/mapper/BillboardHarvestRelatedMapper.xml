@@ -47,12 +47,41 @@
    <select id="getHarvestByHarvestId" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardResponse">
        SELECT
         b. NAME,
+        b.content,
+        b.unit_name AS unitName,
+        b.start_at AS startAt,
+        b.end_at AS endAt,
+        a.s_star AS sStar,
+        b.categories,
+        b.tech_keys AS techKeys,
         b.id,
         b.amount
     FROM
         t_billboard_harvest_related a
        LEFT JOIN t_billboard b ON a.billboard_id = b.id
-       where a.billboard_id = #{harvestId}
+       where a.harvest_id = #{harvestId}
        ORDER BY a.create_at DESC
+    </select>
+
+   <select id="getBillboardstByHarvestId"
+            resultType="com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse">
+
+    SELECT
+        b.title,
+        b.content,
+        b.unit_name AS unitName,
+        b.start_at AS startAt,
+        b.end_at AS endAt,
+        a.s_star AS sStar,
+        b.categories,
+        b.tech_keys AS techKeys,
+        b.id,
+        b.amount
+    FROM
+        t_billboard_harvest_related a
+       LEFT JOIN t_billboard b ON a.billboard_id = b.id
+       where a.harvest_id = #{harvestId}
+       ORDER BY a.create_at DESC
+
     </select>
 </mapper>

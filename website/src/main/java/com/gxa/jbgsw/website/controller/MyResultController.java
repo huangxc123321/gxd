@@ -1,14 +1,16 @@
 package com.gxa.jbgsw.website.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.business.protocol.dto.HarvestRequest;
-import com.gxa.jbgsw.business.protocol.dto.HarvestResponse;
-import com.gxa.jbgsw.business.protocol.dto.HavestDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyHarvestRequest;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
+import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.CollaborateStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.CollectionStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.website.feignapi.HavestFeignApi;
+import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Api(tags = "用户中心: 我的成果")
 @RestController
@@ -26,6 +29,14 @@ import java.util.Date;
 public class MyResultController extends BaseController {
     @Resource
     HavestFeignApi havestFeignApi;
+    @Resource
+    CollectionFeignApi collectionFeignApi;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
+    @Resource
+    CollaborateFeignApi collaborateFeignApi;
 
 
     @ApiOperation("获取我的成果列表")
@@ -48,7 +59,55 @@ public class MyResultController extends BaseController {
     })
     @GetMapping("/havest/getHavestById")
     public HavestDTO getHavestById(@RequestParam("id")Long id){
-        return havestFeignApi.getHavestById(id);
+        HavestDTO havestDTO = havestFeignApi.getHavestById(id);
+        // 判断是否收藏
+        Long userId = this.getUserId();
+        if(userId != null){
+            CollectionDTO collectionDTO = null;
+            // 收藏： 成果
+            Integer collectionType = CollectionTypeEnum.HAVEST.getCode();
+
+            collectionDTO = collectionFeignApi.getCollection(id, userId, collectionType);
+            if(collectionDTO != null){
+                havestDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
+            }
+        }
+
+        // maturity_level
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(havestDTO.getMaturityLevel()));
+        if(dictionaryDTO != null){
+            havestDTO.setMaturityLevelName(dictionaryDTO.getDicValue());
+        }
+
+        // 榜单推荐，根据成果ID获取推荐榜单
+        List<BillboardHarvestRelatedResponse> relateBillboards = billboardHarvestRelatedFeignApi.getBillboardstByHarvestId(id);
+        if(relateBillboards != null){
+            havestDTO.setBillboardHarvestRecommends(relateBillboards);
+        }
+
+        // 合作发起
+        List<HavestCollaborateDTO> havestCollaborates = collaborateFeignApi.getHavestCollaborates(id);
+        if(havestCollaborates != null){
+            havestCollaborates.stream().forEach(s->{
+                s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus()));
+
+                String mode = s.getMode();
+                String[] modes = mode.split(",");
+                StringBuffer sb = new StringBuffer();
+                for(int i=0; i<modes.length; i++){
+                    DictionaryDTO dict = dictionaryFeignApi.getByCache(DictionaryTypeEnum.broker_type.name(), modes[i]);
+                    if(dict != null && i != modes.length -1){
+                        sb.append(dict.getDicValue()).append(",");
+                    }else if(dict != null && i != modes.length -1){
+                        sb.append(dict.getDicValue());
+                    }
+                }
+                s.setModeName(sb.toString());
+            });
+        }
+        havestDTO.setHavestCollaborates(havestCollaborates);
+
+        return havestDTO;
     }
 
     @ApiOperation("修改成果信息")

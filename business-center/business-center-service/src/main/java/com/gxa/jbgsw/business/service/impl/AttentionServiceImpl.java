@@ -1,14 +1,17 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.mapper.AttentionMapper;
+import com.gxa.jbgsw.business.protocol.dto.AttentionDTO;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
 import com.gxa.jbgsw.business.protocol.enums.AttentionTypeEnum;
 import com.gxa.jbgsw.business.service.AttentionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -26,6 +29,8 @@ import java.util.List;
 public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention> implements AttentionService {
     @Resource
     AttentionMapper attentionMapper;
+    @Resource
+    MapperFacade mapperFacade;
 
     @Override
     public MyAttentionResponse queryMyAttentions(MyAttentionRequest myAttentionRequest) {
@@ -60,6 +65,34 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
 
 
+
+        return null;
+    }
+
+    @Override
+    public void deleteAttention(Long pid, Long userId, Integer type) {
+        LambdaQueryWrapper<Attention> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Attention::getPid, pid)
+                          .eq(Attention::getUserId, userId)
+                          .eq(Attention::getType, type);
+
+        attentionMapper.delete(lambdaQueryWrapper);
+    }
+
+    @Override
+    public AttentionDTO getAttention(Long pid, Long userId, Integer attentionType) {
+        LambdaQueryWrapper<Attention> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Attention::getPid, pid)
+                .eq(Attention::getUserId, userId)
+                .eq(Attention::getType, attentionType)
+                .last("limit 1");
+        List<Attention> attentions = attentionMapper.selectList(lambdaQueryWrapper);
+        if(attentions != null && attentions.size()>0){
+            Attention attention = attentions.get(0);
+            AttentionDTO attentionDTO = mapperFacade.map(attention, AttentionDTO.class);
+
+            return attentionDTO;
+        }
 
         return null;
     }

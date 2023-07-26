@@ -75,13 +75,13 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "创建人")
     private Long createBy;
 
+    @ApiModelProperty(value = "收藏状态： 0 已收藏  1 未收藏")
+    private Integer collectionStatus = 1;
+
     @ApiModelProperty(value = "榜单成果推荐")
-    List<BillboardHarvestRelatedResponse> harvestRecommends = new ArrayList<>();
+    List<BillboardHarvestRelatedResponse> billboardHarvestRecommends = new ArrayList<>();
 
     @ApiModelProperty(value = "合作状态")
     List<HavestCollaborateDTO> havestCollaborates = new ArrayList<>();
-
-
-
 
 }

@@ -1,20 +1,21 @@
 package com.gxa.jbgsw.business.protocol.enums;
 
+/**
+ * @Author Mr. huang
+ * @Date 2023/7/26 0026 8:38
+ * @Version 2.0
+ */
+public enum CollectionStatusEnum {
+    // 收藏状态： 0 收藏 1 取消收藏
+    COLLECTION(0, "收藏"),
+    CANCEL(1, "取消收藏"),
 
-public enum AttentionTypeEnum {
-
-
-    // 关注类型： 0 政府 1 企业 2 帅才 3 经纪人
-    GOV(0, "政府"),
-    BUZ(1, "企业"),
-    TALENT(2, "帅才"),
-    TECH(3, "经纪人"),
     ;
 
     private final Integer code;
     private final String desc;
 
-    private AttentionTypeEnum(Integer code, String desc) {
+    private CollectionStatusEnum(Integer code, String desc) {
         this.code = code;
         this.desc = desc;
     }
@@ -29,12 +30,11 @@ public enum AttentionTypeEnum {
 
 
     public static String getNameByIndex(Integer code) {
-        for (AttentionTypeEnum targetEnum : AttentionTypeEnum.values()) {
+        for (CollectionStatusEnum targetEnum : CollectionStatusEnum.values()) {
             if (code.equals(targetEnum.code)) {
                 return targetEnum.desc;
             }
         }
         return null;
     }
-
 }

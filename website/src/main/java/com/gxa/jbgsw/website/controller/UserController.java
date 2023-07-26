@@ -36,7 +36,7 @@ public class UserController extends BaseController {
         return userFeignApi.getUserById(id);
     }
 
-    @ApiOperation("新增或修改用户信息")
+    @ApiOperation("新增用户信息")
     @PostMapping("/user/add")
     void add(@RequestBody UserDTO userDTO) throws BizException {
         boolean isValidate = false;

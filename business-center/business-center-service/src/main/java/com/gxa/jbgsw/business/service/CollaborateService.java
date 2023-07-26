@@ -2,6 +2,9 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.Collaborate;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
+
+import java.util.List;
 
 /**
  * <p>
@@ -13,4 +16,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface CollaborateService extends IService<Collaborate> {
 
+    List<HavestCollaborateDTO> getHavestCollaborates(Long id);
 }

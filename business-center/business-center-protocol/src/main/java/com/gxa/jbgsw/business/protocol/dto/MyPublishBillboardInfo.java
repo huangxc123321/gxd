@@ -23,6 +23,9 @@ public class MyPublishBillboardInfo implements Serializable {
     @ApiModelProperty(value = "工信大类：字典中获取")
     private Integer categories;
 
+    @ApiModelProperty(value = "工信大类：字典中获取")
+    private String categoriesName;
+
     @ApiModelProperty(value = "技术关键词，用逗号分隔")
     private String techKeys;
 
@@ -44,8 +47,11 @@ public class MyPublishBillboardInfo implements Serializable {
     @ApiModelProperty(value = "记录创建时间")
     private Date createAt;
 
+    @ApiModelProperty(value = "所属单位")
+    private String unitName;
+
     @ApiModelProperty(value = "企业logo")
-    private String logo;
+    private String unitLogo;
 
     @ApiModelProperty(value = "发榜状态：0 待揭榜、1 已签约、2 解决中、3 已解决")
     private Integer status;

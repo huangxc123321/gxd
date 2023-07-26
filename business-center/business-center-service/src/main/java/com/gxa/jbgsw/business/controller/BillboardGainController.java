@@ -9,6 +9,7 @@ import com.gxa.jbgsw.business.protocol.dto.BillboardGainAuditDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainResponse;
 import com.gxa.jbgsw.business.service.BillboardGainService;
+import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.common.exception.BizException;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,8 @@ public class BillboardGainController implements BillboardGainApi {
     @Resource
     BillboardGainService billboardGainService;
     @Resource
+    BillboardService billboardService;
+    @Resource
     MapperFacade mapperFacade;
 
     @Override
@@ -49,7 +52,14 @@ public class BillboardGainController implements BillboardGainApi {
     @Override
     public BillboardGainDTO getBillboardGainById(Long id) {
         BillboardGain billboardGain = billboardGainService.getById(id);
-        return mapperFacade.map(billboardGain, BillboardGainDTO.class);
+        BillboardGainDTO billboardGainDTO = mapperFacade.map(billboardGain, BillboardGainDTO.class);
+
+        Billboard billboard = billboardService.getById(billboardGain.getPid());
+        if(billboard != null){
+            billboardGainDTO.setTitle(billboard.getTitle());
+        }
+
+        return  billboardGainDTO;
     }
 
     @Override

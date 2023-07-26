@@ -18,6 +18,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "榜单ID")
     private Long id;
 
+    @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜")
+    private Integer type;
+
     @ApiModelProperty(value = "榜单标题")
     private String title;
 
@@ -52,6 +55,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "需求详情")
     private String content;
 
+    @ApiModelProperty(value = "收藏状态： 0 已收藏  1 未收藏")
+    private Integer collectionStatus = 1;
+
     @ApiModelProperty(value = "揭榜单位详情")
     List<BillboardGainDTO> billboardGains = new ArrayList<>();
 
@@ -63,4 +69,7 @@ public class DetailInfoDTO implements Serializable {
 
     @ApiModelProperty(value = "技术经纪人推荐")
     List<BillboardEconomicRelatedResponse> techBrokerRecommends = new ArrayList<>();
+
+    @ApiModelProperty(value = "我的技术经纪人")
+    MyBillboardEconomicManDTO myBillboardEconomicMan;
 }

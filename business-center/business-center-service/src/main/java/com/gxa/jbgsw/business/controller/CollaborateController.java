@@ -4,6 +4,7 @@ package com.gxa.jbgsw.business.controller;
 import com.gxa.jbgsw.business.client.CollaborateApi;
 import com.gxa.jbgsw.business.entity.Collaborate;
 import com.gxa.jbgsw.business.protocol.dto.CollaborateDTO;
+import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
 import com.gxa.jbgsw.business.service.CollaborateService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -29,6 +31,11 @@ public class CollaborateController implements CollaborateApi {
 
 
         collaborateService.save(collaborate);
+    }
+
+    @Override
+    public List<HavestCollaborateDTO> getHavestCollaborates(Long id) {
+        return collaborateService.getHavestCollaborates(id);
     }
 }
 

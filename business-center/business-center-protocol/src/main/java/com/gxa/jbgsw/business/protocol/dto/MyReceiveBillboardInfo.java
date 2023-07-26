@@ -34,11 +34,11 @@ public class MyReceiveBillboardInfo implements Serializable {
     private String attachment;
 
     @ApiModelProperty(value = "审核人")
-    private String auditingUserId;
+    private String auditingUserName;
 
     @ApiModelProperty(value = "审核时间")
     private Date applyAt;
 
-    @ApiModelProperty(value = "审核不通过的原因")
+    @ApiModelProperty(value = "说明")
     private String reason;
 }
