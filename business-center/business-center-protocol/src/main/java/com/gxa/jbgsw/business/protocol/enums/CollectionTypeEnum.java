@@ -10,8 +10,8 @@ public enum CollectionTypeEnum {
     GOV(0, "政府榜"),
     BUZ(1, "企业榜"),
     HAVEST(2, "成果"),
-    poc(3, "政策"),
-    talent(4, "帅才"),
+    POC(3, "政策"),
+    TALENT(4, "帅才"),
 
     ;
 

@@ -9,9 +9,7 @@ import com.gxa.jbgsw.website.feignapi.CollectionFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
@@ -31,5 +29,10 @@ public class MyCollectionController extends BaseController {
         return response;
     }
 
+    @ApiOperation(value = "取消收藏", notes = "取消收藏: 传收藏ID")
+    @GetMapping("/collection/deleteById")
+    public void deleteById(@RequestParam("id") Long id){
+        collectionFeignApi.deleteById(id);
+    }
 
 }

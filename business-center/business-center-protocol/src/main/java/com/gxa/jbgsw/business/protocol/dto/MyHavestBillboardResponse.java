@@ -1,11 +1,9 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.util.Date;
 
 @Data
 public class MyHavestBillboardResponse implements Serializable {

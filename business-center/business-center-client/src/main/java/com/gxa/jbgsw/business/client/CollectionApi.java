@@ -27,4 +27,7 @@ public interface CollectionApi {
 
     @GetMapping("/collection/queryMyCollections")
     MyCollectionResponse queryMyCollections(@RequestBody MyCollectionRequest myCollectionRequest);
+
+    @GetMapping("/collection/deleteById")
+    void deleteById(@RequestParam("id") Long id);
 }

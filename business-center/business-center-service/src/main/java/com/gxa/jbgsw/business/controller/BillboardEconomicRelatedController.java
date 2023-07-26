@@ -6,6 +6,7 @@ import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
 import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
 import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
+import com.gxa.jbgsw.business.protocol.dto.MyBillboardEconomicManDTO;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -53,6 +54,13 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     @Override
     public List<BillboardEconomicRelatedResponse> getEconomicRecommend(Long billboardId) {
         return billboardEconomicRelatedService.getEconomicRecommend(billboardId);
+    }
+
+    @Override
+    public MyBillboardEconomicManDTO getMyEconomicMan(Long billboardId) {
+        BillboardEconomicRelated billboardEconomicRelated = billboardEconomicRelatedService.getMyEconomicMan(billboardId);
+
+        return null;
     }
 
 

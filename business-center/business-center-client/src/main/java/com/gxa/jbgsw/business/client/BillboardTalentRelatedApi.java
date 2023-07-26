@@ -29,4 +29,7 @@ public interface BillboardTalentRelatedApi {
 
     @GetMapping("/billboard/talent/getCollaborateByTalentId")
     List<HavestCollaborateDTO> getCollaborateByTalentId(@RequestParam("id")Long id);
+
+    @GetMapping("/billboard/talent/getMyBillboradCollaborate")
+    List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(@RequestParam("talentId")Long talentId);
 }

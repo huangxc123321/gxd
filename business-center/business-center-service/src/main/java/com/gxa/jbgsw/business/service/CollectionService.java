@@ -3,6 +3,9 @@ package com.gxa.jbgsw.business.service;
 import com.gxa.jbgsw.business.entity.Collection;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
+import com.gxa.jbgsw.business.protocol.dto.MyCollectionBillboardResponse;
+import com.gxa.jbgsw.business.protocol.dto.MyHavestBillboardResponse;
+import com.gxa.jbgsw.business.protocol.dto.MypolicyResponse;
 
 import java.util.List;
 
@@ -23,4 +26,12 @@ public interface CollectionService extends IService<Collection> {
     void deleteBatchByPid(List<Long> list);
 
     List<Collection> queryMyCollections(Long createBy);
+
+    void deleteById(Long id);
+
+    List<MyCollectionBillboardResponse> getMyCollectionBillboardResponse(Long createBy, Integer collectionType);
+
+    List<MyHavestBillboardResponse> getMyHavestBillboardResponse(Long createBy, Integer collectionType);
+
+    List<MypolicyResponse> getPolicys(Long createBy, Integer collectionType);
 }

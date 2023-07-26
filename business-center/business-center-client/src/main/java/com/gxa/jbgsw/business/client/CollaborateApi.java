@@ -18,4 +18,7 @@ public interface CollaborateApi {
 
     @GetMapping("/collaborate/getHavestCollaborates")
     List<HavestCollaborateDTO> getHavestCollaborates(@RequestParam("havestId") Long id);
+
+
+
 }

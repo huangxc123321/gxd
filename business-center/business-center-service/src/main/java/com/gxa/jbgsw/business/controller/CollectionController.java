@@ -3,9 +3,7 @@ package com.gxa.jbgsw.business.controller;
 
 import com.gxa.jbgsw.business.client.CollectionApi;
 import com.gxa.jbgsw.business.entity.Collection;
-import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyCollectionRequest;
-import com.gxa.jbgsw.business.protocol.dto.MyCollectionResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
 import com.gxa.jbgsw.business.service.CollectionService;
 import io.swagger.annotations.Api;
@@ -62,20 +60,47 @@ public class CollectionController implements CollectionApi {
              for(int i=0; i<collections.size(); i++){
                  Collection coll = collections.get(i);
                  collectionType = coll.getCollectionType();
-                 // 收藏类型： 0政府榜 1企业榜 2成果 3政策 4帅才
+                 // 收藏类型： 0政府榜 1企业榜 2成果 3政策
                  if(CollectionTypeEnum.GOV.getCode().equals(collectionType)){
-                     myCollectionResponse.setGovBillboardsNum(myCollectionResponse.getBuzBillboardsNum() + 1);
-                 }else if(CollectionTypeEnum.BUZ.getCode().equals(collectionType)){
-                     myCollectionResponse.setHavestBillboardsNum(myCollectionResponse.getBuzBillboardsNum() + 1);
+                     // 数量
+                     myCollectionResponse.setGovBillboardsNum(myCollectionResponse.getGovBillboardsNum() + 1);
+                     // 我收藏的政府榜
+                     List<MyCollectionBillboardResponse> responses
+                             = collectionService.getMyCollectionBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+
+                     myCollectionResponse.setGovBillboards(responses);
                  }
 
+                 else if(CollectionTypeEnum.BUZ.getCode().equals(collectionType)){
+                     myCollectionResponse.setBuzBillboardsNum(myCollectionResponse.getBuzBillboardsNum() + 1);
+                     // 我收藏的政府榜
+                     List<MyCollectionBillboardResponse> responses
+                             = collectionService.getMyCollectionBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+                     myCollectionResponse.setBuzBillboards(responses);
+                 }
+
+                 else if(CollectionTypeEnum.HAVEST.getCode().equals(collectionType)){
+                     myCollectionResponse.setHavestBillboardsNum(myCollectionResponse.getHavestBillboardsNum() + 1);
+                     List<MyHavestBillboardResponse> havestBillboardResponses
+                             = collectionService.getMyHavestBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+                     myCollectionResponse.setHavestBillboards(havestBillboardResponses);
+                 }
+
+                 else if(CollectionTypeEnum.POC.getCode().equals(collectionType)){
+                     myCollectionResponse.setPolicyNum(myCollectionResponse.getPolicyNum() + 1);
+                     List<MypolicyResponse> policys = collectionService.getPolicys(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+                     myCollectionResponse.setPolicys(policys);
+                 }
              }
+
         }
 
+        return myCollectionResponse;
+    }
 
-
-
-        return null;
+    @Override
+    public void deleteById(Long id) {
+        collectionService.deleteById(id);
     }
 }
 

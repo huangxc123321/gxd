@@ -35,4 +35,23 @@
 
 
     </select>
+
+    <select id="getMyBillboradCollaborate"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MyBillboradCollaborateResponse">
+
+            SELECT
+                b.id,
+                b.title,
+                b.amount,
+                b.tech_keys AS techKeys,
+                a.s_star AS sStar
+            FROM
+                t_billboard_talent_related AS a
+            LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+            WHERE
+                a.talent_id = #{talentId}
+            ORDER BY
+                a.create_at DESC
+
+    </select>
 </mapper>

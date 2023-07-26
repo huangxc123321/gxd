@@ -4,6 +4,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.mapper.CollectionMapper;
 import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
+import com.gxa.jbgsw.business.protocol.dto.MyCollectionBillboardResponse;
+import com.gxa.jbgsw.business.protocol.dto.MyHavestBillboardResponse;
+import com.gxa.jbgsw.business.protocol.dto.MypolicyResponse;
 import com.gxa.jbgsw.business.service.CollectionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
@@ -65,5 +68,25 @@ public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collect
 
         List<Collection> collections = collectionMapper.selectList(lambdaQueryWrapper);
         return collections;
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        collectionMapper.deleteById(id);
+    }
+
+    @Override
+    public List<MyCollectionBillboardResponse> getMyCollectionBillboardResponse(Long createBy, Integer collectionType) {
+        return collectionMapper.getMyCollectionBillboardResponse(createBy, collectionType);
+    }
+
+    @Override
+    public List<MyHavestBillboardResponse> getMyHavestBillboardResponse(Long createBy, Integer collectionType) {
+        return collectionMapper.getMyHavestBillboardResponse(createBy, collectionType);
+    }
+
+    @Override
+    public List<MypolicyResponse> getPolicys(Long createBy, Integer collectionType) {
+        return collectionMapper.getPolicys(createBy, collectionType);
     }
 }

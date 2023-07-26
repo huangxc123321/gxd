@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Data
 public class MyBillboardEconomicManDTO implements Serializable {
 
-    @ApiModelProperty(value = "ID: 新增的時候传null, 编辑传ID")
+    @ApiModelProperty(value = "ID")
     private Long id;
 
     @ApiModelProperty(value = "姓名")

@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class MyCollectionBillboardResponse implements Serializable {
 
-    @ApiModelProperty(value = "榜单ID")
+    @ApiModelProperty(value = "收藏ID")
     private Long id;
 
     @ApiModelProperty(value = "榜单标题")

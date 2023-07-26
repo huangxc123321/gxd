@@ -65,7 +65,7 @@ public class UserController extends BaseController {
         userFeignApi.add(userDTO);
     }
 
-    @ApiOperation("修改用户信息: 头像、性别、昵称、地区")
+    @ApiOperation("修改用户信息: 头像、性别、昵称、地区, 电话")
     @PostMapping("/user/update")
     void update(@RequestBody UserDTO userDTO) throws BizException {
         if(userDTO == null || userDTO.getId() == null){

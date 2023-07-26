@@ -66,6 +66,11 @@ public class BillboardTalentRelatedController implements BillboardTalentRelatedA
     public List<HavestCollaborateDTO> getCollaborateByTalentId(Long id) {
         return billboardTalentRelatedService.getCollaborateByTalentId(id);
     }
+
+    @Override
+    public List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(Long talentId) {
+        return billboardTalentRelatedService.getMyBillboradCollaborate(talentId);
+    }
 }
 
 

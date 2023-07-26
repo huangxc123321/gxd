@@ -132,8 +132,8 @@ public class MyPublishBillboardController extends BaseController {
         List<BillboardEconomicRelatedResponse> techBrokerRecommends = billboardEconomicRelatedFeignApi.getEconomicRecommend(id);
         detailInfo.setTechBrokerRecommends(techBrokerRecommends);
 
-        // TODO: 2023/7/26 0026  不知道怎么榜单经纪人
-        List<BillboardGainDTO> billboardGains = billboardGainFeignApi.getBillboardGainByPid(id);
+        MyBillboardEconomicManDTO economicMan = billboardEconomicRelatedFeignApi.getMyEconomicMan(id);
+        detailInfo.setMyBillboardEconomicMan(economicMan);
 
         return detailInfo;
     }

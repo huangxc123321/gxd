@@ -1,9 +1,6 @@
 package com.gxa.jbgsw.business.client;
 
-import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,4 +22,6 @@ public interface BillboardEconomicRelatedApi {
     @GetMapping("/billboard/economic/getEconomicRecommend")
     List<BillboardEconomicRelatedResponse> getEconomicRecommend(@RequestParam("id") Long billboardId);
 
+    @GetMapping("/billboard/economic/getMyEconomicMan")
+    MyBillboardEconomicManDTO getMyEconomicMan(@RequestParam("id") Long billboardId);
 }

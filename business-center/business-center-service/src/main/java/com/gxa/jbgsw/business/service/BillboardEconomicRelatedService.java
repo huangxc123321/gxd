@@ -19,4 +19,6 @@ public interface BillboardEconomicRelatedService extends IService<BillboardEcono
     void addEconomicRelated(Long valueOf);
 
     List<BillboardEconomicRelatedResponse> getEconomicRecommend(Long billboardId);
+
+    BillboardEconomicRelated getMyEconomicMan(Long billboardId);
 }

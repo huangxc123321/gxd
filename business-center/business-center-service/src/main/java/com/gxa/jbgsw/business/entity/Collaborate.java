@@ -57,5 +57,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "合作发起人名字")
     private String launchUserName;
 
+    @ApiModelProperty(value = "技术/产品方向，多个用逗号分开")
+    private String techKeys;
 
+    @ApiModelProperty(value = "需求合作:邀请揭榜的时候，选择榜单时候传的榜单ID，可以多个")
+    private Integer billboardId;
 }

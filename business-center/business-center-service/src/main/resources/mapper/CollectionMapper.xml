@@ -2,4 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.CollectionMapper">
 
+    <select id="getMyCollectionBillboardResponse"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MyCollectionBillboardResponse">
+        SELECT
+            a.id, b.title, b.content, b.`status`, b.amount, b.unit_logo, b.unit_name, b.create_at
+        FROM
+            t_collection AS a
+        LEFT JOIN t_billboard AS b ON a.pid = b.id
+        WHERE
+          a.collection_type = #{collectionType}
+          AND a.user_id = #{createBy}
+          ORDER BY a.create_at DESC
+
+    </select>
+
+    <select id="getMyHavestBillboardResponse"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MyHavestBillboardResponse">
+
+            SELECT
+                a.id,
+                b.`name`,
+                b.remark,
+                b.guide_picture AS guidePicture,
+                b.unit_name AS unitName
+            FROM
+                t_collection AS a
+            LEFT JOIN t_harvest AS b ON a.pid = b.id
+            WHERE
+                a.collection_type = #{collectionType}
+            AND a.user_id = #{createBy}
+            ORDER BY
+                a.create_at DESC
+    </select>
+
+    <select id="getPolicys" resultType="com.gxa.jbgsw.business.protocol.dto.MypolicyResponse">
+
+            SELECT
+                a.id,
+              b.title,
+              b.origin
+            FROM
+                t_collection AS a
+            LEFT JOIN t_news AS b ON a.pid = b.id
+            WHERE
+            b.news_policy = 2
+            AND collection_type = #{collectionType}
+            AND a.user_id = #{createBy}
+            ORDER BY
+                a.create_at DESC
+
+
+    </select>
 </mapper>

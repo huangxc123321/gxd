@@ -87,6 +87,32 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         User user = this.getById(userDTO.getId());
 
+        // 判断电话是否一致
+        if(user.getMobile() != null && !userDTO.getMobile().equals(user.getMobile())){
+            // 判断验证码是否过期
+            boolean isValidate = false;
+            // 判断验证码是否正确
+            Object value = stringRedisTemplate.opsForValue().get(RedisKeys.USER_VALIDATE_CODE+userDTO.getMobile());
+            if(value != null){
+                if(userDTO.getValidateCode() != null && userDTO.getValidateCode().equals(value.toString())){
+                    isValidate = true;
+                }
+            }
+            if(!isValidate){
+                throw new BizException(UserErrorCode.LOGIN_VALIDATECODE_IS_ERROR);
+            }
+
+            // 判断手机号码是否注册
+            UserRequest userRequest = new UserRequest();
+            userRequest.setSearchFiled(userDTO.getMobile());
+            PageResult<UserResponse> pageResult = this.pageQuery(userRequest);
+            if(pageResult.getTotal()>0){
+                throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);
+            }
+
+            user.setMobile(userDTO.getMobile());
+        }
+
         // 判断头像是否一致
         if((userDTO.getAvatar()!= null && !userDTO.getAvatar().equals(user.getAvatar())) || userDTO.getAvatar() == null ){
             user.setAvatar(userDTO.getAvatar());

@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
 import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
 import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
+import com.gxa.jbgsw.business.protocol.dto.MyBillboradCollaborateResponse;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -24,4 +25,6 @@ public interface BillboardTalentRelatedMapper extends BaseMapper<BillboardTalent
     List<HarvestBillboardRelatedDTO> getBillboardRecommendByTalentId(@Param("talentId")Long talentId);
 
     List<HavestCollaborateDTO> getCollaborateByTalentId(@Param("talentId")Long talentId);
+
+    List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(@Param("talentId")Long talentId);
 }

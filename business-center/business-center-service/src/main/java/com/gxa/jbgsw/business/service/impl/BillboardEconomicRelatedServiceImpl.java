@@ -3,6 +3,7 @@ package com.gxa.jbgsw.business.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
 import com.gxa.jbgsw.business.entity.*;
@@ -154,6 +155,21 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
     @Override
     public List<BillboardEconomicRelatedResponse> getEconomicRecommend(Long billboardId) {
         return billboardEconomicRelatedMapper.getEconomicRecommend(billboardId);
+    }
+
+    @Override
+    public BillboardEconomicRelated getMyEconomicMan(Long billboardId) {
+        LambdaQueryWrapper<BillboardEconomicRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(BillboardEconomicRelated::getBillboardId, billboardId);
+        lambdaQueryWrapper.ge(BillboardEconomicRelated::getHStart, 0);
+        lambdaQueryWrapper.last("limit 1");
+
+        List<BillboardEconomicRelated> relateds = billboardEconomicRelatedMapper.selectList(lambdaQueryWrapper);
+        if(relateds != null){
+            return relateds.get(0);
+        }
+
+        return null;
     }
 
 
