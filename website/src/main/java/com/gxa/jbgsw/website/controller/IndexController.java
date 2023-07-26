@@ -8,6 +8,8 @@ import com.gxa.jbgsw.basis.protocol.dto.WebsiteBottomDTO;
 import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
+import com.gxa.jbgsw.business.protocol.enums.CollectionStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.ApiResult;
@@ -92,7 +94,26 @@ public class IndexController extends BaseController {
     @ApiOperation("获取某个政府榜信息")
     @GetMapping("/index/getGovBillboradById")
     DetailInfoDTO getGovBillboradById(@RequestParam(value = "id") Long id) {
-        return billboardFeignApi.detail(id);
+        DetailInfoDTO detailInfoDTO = billboardFeignApi.detail(id);
+        // 判断是否收藏
+        Long userId = this.getUserId();
+        if(userId != null){
+            CollectionDTO collectionDTO = null;
+            Integer collectionType = 0;
+            if(CollectionTypeEnum.GOV.getCode().equals(detailInfoDTO.getType())){
+                collectionType = CollectionTypeEnum.GOV.getCode();
+            }else if(CollectionTypeEnum.BUZ.getCode().equals(detailInfoDTO.getType())){
+                collectionType = CollectionTypeEnum.BUZ.getCode();
+            }
+
+            collectionDTO = collectionFeignApi.getCollection(id, userId, collectionType);
+
+            if(collectionDTO != null){
+                detailInfoDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
+            }
+        }
+
+        return detailInfoDTO;
     }
 
     @ApiOperation("根据榜单ID获取相关成果、帅才推荐、榜单推荐信息， （榜单详情页使用）")
@@ -152,7 +173,22 @@ public class IndexController extends BaseController {
     @ApiOperation("获取某个成果信息")
     @GetMapping("/index/getHavestById")
     DetailInfoDTO getHavestById(@RequestParam(value = "id") Long id) {
-        return havestFeignApi.detail(id);
+        DetailInfoDTO detailInfoDTO = havestFeignApi.detail(id);
+
+        // 判断是否收藏
+        Long userId = this.getUserId();
+        if(userId != null){
+            CollectionDTO collectionDTO = null;
+            // 收藏： 成果
+            Integer collectionType = CollectionTypeEnum.HAVEST.getCode();
+
+            collectionDTO = collectionFeignApi.getCollection(id, userId, collectionType);
+            if(collectionDTO != null){
+                detailInfoDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
+            }
+        }
+
+        return detailInfoDTO;
     }
 
     @ApiOperation("搜索帅才")
@@ -230,10 +266,18 @@ public class IndexController extends BaseController {
     @ApiOperation("榜单收藏")
     @PostMapping("/collection/add")
     void addCollection(CollectionDTO collectionDTO){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
         collectionDTO.setCreateAt(new Date());
         collectionDTO.setUserId(this.getUserId());
 
-        collectionFeignApi.add(collectionDTO);
+        if(CollectionStatusEnum.COLLECTION.getCode().equals(collectionDTO.getStatus())){
+            collectionFeignApi.add(collectionDTO);
+        }else {
+            collectionFeignApi.delete(collectionDTO);
+        }
     }
 
 
