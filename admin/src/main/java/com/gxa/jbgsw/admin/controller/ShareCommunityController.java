@@ -37,7 +37,7 @@ public class ShareCommunityController extends BaseController {
 
     @ApiOperation("获取分享文章或者视频的详情")
     @GetMapping("/share/community/detail")
-    ShareCommunityDTO detail(@RequestParam("id") Long id){
+    ShareCommunityDetailDTO detail(@RequestParam("id") Long id){
         return shareCommunityFeignApi.detail(id);
     }
 

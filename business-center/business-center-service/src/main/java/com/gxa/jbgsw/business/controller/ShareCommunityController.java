@@ -65,7 +65,7 @@ public class ShareCommunityController implements ShareCommunityApi {
     }
 
     @Override
-    public ShareCommunityDTO detail(Long id) {
+    public ShareCommunityDetailDTO detail(Long id) {
         return shareCommunityService.detail(id);
     }
 
@@ -92,6 +92,45 @@ public class ShareCommunityController implements ShareCommunityApi {
         }
 
         return pages;
+    }
+
+    @Override
+    public PageResult<MyShareCommunityResponse> getMyShareCommunityPages(MyShareCommunityRequest request) {
+        PageResult<MyShareCommunityResponse> pages = new PageResult<>();
+
+        PageResult<ShareCommunity> pageResult = shareCommunityService.getMyShareCommunityPages(request);
+        List<ShareCommunity> shareCommunities = pageResult.getList();
+        if(CollectionUtils.isNotEmpty(shareCommunities)){
+            List<MyShareCommunityResponse> responses = mapperFacade.mapAsList(shareCommunities, MyShareCommunityResponse.class);
+            // 转换数据
+            responses.stream().forEach(s->{
+                s.setStatusName(ShareCommunityStatusEnum.getNameByIndex(s.getStatus()));
+            });
+
+            pages.setList(responses);
+            pages.setPageNum(pageResult.getPageNum());
+            pages.setPages(pageResult.getPages());
+            pages.setPageSize(pageResult.getPageSize());
+            pages.setSize(pageResult.getSize());
+            pages.setTotal(pageResult.getTotal());
+        }
+
+        return pages;
+    }
+
+    @Override
+    public void addViews(Long id) {
+        shareCommunityService.addViews(id);
+    }
+
+    @Override
+    public void addlikes(Long id) {
+        shareCommunityService.addlikes(id);
+    }
+
+    @Override
+    public void addComments(Long id) {
+        shareCommunityService.addComments(id);
     }
 }
 

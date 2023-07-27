@@ -28,9 +28,20 @@ public interface ShareCommunityApi {
     void deleteBatchIds(@RequestBody Long[] ids);
 
     @GetMapping("/share/community/detail")
-    ShareCommunityDTO detail(@RequestParam("id") Long id);
+    ShareCommunityDetailDTO detail(@RequestParam("id") Long id);
 
     @PostMapping("/share/community/pageQuery")
     PageResult<ShareCommunityResponse> pageQuery(@RequestBody ShareCommunityRequest request);
 
+    @PostMapping("/share/community/getMyShareCommunityPages")
+    PageResult<MyShareCommunityResponse> getMyShareCommunityPages(@RequestBody MyShareCommunityRequest request);
+
+    @GetMapping("/my/share/community/addViews")
+    void addViews(@RequestParam("id") Long id);
+
+    @GetMapping("/my/share/community/addlikes")
+    void addlikes(@RequestParam("id") Long id);
+
+    @GetMapping("/my/share/community/addComments")
+    void addComments(@RequestParam("id") Long id);
 }

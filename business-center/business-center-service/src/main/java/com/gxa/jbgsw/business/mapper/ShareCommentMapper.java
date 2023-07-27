@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gxa.jbgsw.business.entity.ShareComment;
 import com.gxa.jbgsw.business.entity.ShareCommunity;
 import com.gxa.jbgsw.business.protocol.dto.CommentResponse;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ import java.util.List;
  * @Version 2.0
  */
 public interface ShareCommentMapper extends BaseMapper<ShareComment> {
-    List<CommentResponse> getCommentById(Long id);
+    List<CommentResponse> getCommentById(@Param("shareId") Long shareId);
 }

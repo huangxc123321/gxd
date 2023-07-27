@@ -8,9 +8,7 @@ import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.ShareCommunity;
 import com.gxa.jbgsw.business.mapper.ShareCommunityMapper;
-import com.gxa.jbgsw.business.protocol.dto.ShareCommunityAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.ShareCommunityDTO;
-import com.gxa.jbgsw.business.protocol.dto.ShareCommunityRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.ShareCommunityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -60,9 +58,11 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     }
 
     @Override
-    public ShareCommunityDTO detail(Long id) {
+    public ShareCommunityDetailDTO detail(Long id) {
         ShareCommunity shareCommunity = this.getById(id);
-        ShareCommunityDTO shareCommunityDTO = mapperFacade.map(shareCommunity, ShareCommunityDTO.class);
+        ShareCommunityDetailDTO shareCommunityDTO = mapperFacade.map(shareCommunity, ShareCommunityDetailDTO.class);
+
+
 
         return shareCommunityDTO;
     }
@@ -77,5 +77,44 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<ShareCommunity>>() {
         }.build(), new TypeBuilder<PageResult<ShareCommunity>>() {}.build());
+    }
+
+    @Override
+    public PageResult<ShareCommunity> getMyShareCommunityPages(MyShareCommunityRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<ShareCommunity> shareCommunities = shareCommunityMapper.getMyShareCommunityPages(request);
+        PageInfo<ShareCommunity> pageInfo = new PageInfo<>(shareCommunities);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<ShareCommunity>>() {
+        }.build(), new TypeBuilder<PageResult<ShareCommunity>>() {}.build());
+    }
+
+    @Override
+    public void addlikes(Long id) {
+        LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
+                           .setSql("'likes' = 'likes' + 1");
+
+        shareCommunityMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public void addViews(Long id) {
+        LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
+                .setSql("'views' = 'views' + 1");
+
+        shareCommunityMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public void addComments(Long id) {
+        LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
+                .setSql("'comments' = 'comments' + 1");
+
+        shareCommunityMapper.update(null, lambdaUpdateWrapper);
     }
 }

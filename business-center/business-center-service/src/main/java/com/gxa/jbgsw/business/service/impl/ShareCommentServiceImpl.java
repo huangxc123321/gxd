@@ -20,4 +20,8 @@ public class ShareCommentServiceImpl  extends ServiceImpl<ShareCommentMapper, Sh
         List<CommentResponse> commentResponses =shareCommentMapper.getCommentById(id);
         return commentResponses;
     }
+
+
+
+
 }

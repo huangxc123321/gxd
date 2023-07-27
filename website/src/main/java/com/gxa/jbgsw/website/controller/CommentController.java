@@ -13,10 +13,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -33,9 +30,10 @@ public class CommentController extends BaseController {
     StringRedisTemplate stringRedisTemplate;
 
 
-    List<CommentResponse> getCommentById() throws BizException{
-        
-        return null;
+    @ApiOperation("根据分享文章/视频ID获取评论")
+    @GetMapping("/comment/getCommentById")
+    List<CommentResponse> getCommentById(@RequestParam("shareId") Long shareId) throws BizException{
+        return shareCommentFeignApi.getCommentById(shareId);
     }
 
 
@@ -56,7 +54,6 @@ public class CommentController extends BaseController {
         commentDTO.setNick(user.getNick());
 
         shareCommentFeignApi.add(commentDTO);
-
     }
 
 

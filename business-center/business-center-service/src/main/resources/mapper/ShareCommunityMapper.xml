@@ -44,6 +44,19 @@
 
     </select>
 
+    <select id="getMyShareCommunityPages" parameterType="com.gxa.jbgsw.business.protocol.dto.MyShareCommunityRequest" resultType="com.gxa.jbgsw.business.entity.ShareCommunity">
+        SELECT
+            a.id,
+            a.`status`,
+            a.title,
+            a.create_at createAt,
+            a.likes,
+            a.views,
+            a.comments
+        FROM
+            t_share_community AS a
+        WHERE a.create_by = #{createBy}
 
-
+        ORDER BY a.create_at DESC
+    </select>
 </mapper>
