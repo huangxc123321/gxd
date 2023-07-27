@@ -115,37 +115,6 @@ public class IndexController extends BaseController {
         return detailInfoDTO;
     }
 
-    @ApiOperation("根据榜单ID获取相关成果、帅才推荐、榜单推荐信息， （榜单详情页使用）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
-    })
-    @GetMapping("/index/getRelatedByBillboardId")
-    RelateDTO getRelatedByBillboardId(@RequestParam(value = "id") Long id) {
-        RelateDTO relateDTO = indexFeignApi.getRelatedByBillboardId(id);
-        return relateDTO;
-    }
-
-    @ApiOperation("根据成果ID获取相关成果、帅才推荐、榜单推荐信息， （成果详情页使用）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "成果ID", name = "id", dataType = "Long", paramType = "query"),
-    })
-    @GetMapping("/index/getRelatedByHarvestId")
-    RelateDTO getRelatedByHarvestId(@RequestParam(value = "id") Long id) {
-        RelateDTO relateDTO = indexFeignApi.getRelatedByHarvestId(id);
-        return relateDTO;
-    }
-
-    @ApiOperation("根据帅才ID获取相关成果、帅才推荐、榜单推荐信息， （帅才详情页使用）")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "帅才ID", name = "id", dataType = "Long", paramType = "query"),
-    })
-    @GetMapping("/index/getRelatedByTalentId")
-    RelateDTO getRelatedByTalentId(@RequestParam(value = "id") Long id) {
-        RelateDTO relateDTO = indexFeignApi.getRelatedByTalentId(id);
-        return relateDTO;
-    }
-
-
     @ApiOperation("搜索企业榜")
     @PostMapping("/index/searchBizBillborads")
     PageResult<BillboardIndexDTO> searchBizBillborads(@RequestBody SearchBizRequest searchGovRequest) {

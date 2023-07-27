@@ -1,7 +1,9 @@
 package com.gxa.jbgsw.business.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gxa.jbgsw.business.client.CollectionApi;
+import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
@@ -101,6 +103,11 @@ public class CollectionController implements CollectionApi {
     @Override
     public void deleteById(Long id) {
         collectionService.deleteById(id);
+    }
+
+    @Override
+    public Integer getCollections(Long userId) {
+        return collectionService.getCollections(userId);
     }
 }
 

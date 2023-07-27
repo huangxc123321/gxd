@@ -20,6 +20,6 @@ public interface ShareCommentApi {
     void add(@RequestBody CommentDTO commentDTO);
 
     @GetMapping("/comment/getCommentById")
-    List<CommentResponse> getCommentById(@RequestParam(value = "id") Long id);
+    List<CommentResponse> getCommentById(@RequestParam(value = "shareId") Long shareId, @RequestParam(value = "parentId") Long parentId);
 
 }

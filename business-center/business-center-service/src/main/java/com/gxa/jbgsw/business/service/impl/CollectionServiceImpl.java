@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.mapper.CollectionMapper;
 import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
@@ -88,5 +89,15 @@ public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collect
     @Override
     public List<MypolicyResponse> getPolicys(Long createBy, Integer collectionType) {
         return collectionMapper.getPolicys(createBy, collectionType);
+    }
+
+    @Override
+    public Integer getCollections(Long userId) {
+        QueryWrapper<Collection> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                .eq("user_id", userId);
+
+        Integer count = collectionMapper.selectCount(queryWrapper);
+        return count;
     }
 }

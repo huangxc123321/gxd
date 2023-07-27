@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.mapper.AttentionMapper;
@@ -97,9 +98,24 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
         return null;
     }
 
-    Integer getAttentionNum(Long userId, Integer type){
+    @Override
+    public Integer getAttentionNum(Long userId) {
+        QueryWrapper<Attention> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                    .eq("user_id", userId);
 
-        return 0;
+        Integer count = attentionMapper.selectCount(queryWrapper);
+        return count;
+    }
+
+    Integer getAttentionNum(Long userId, Integer type){
+        QueryWrapper<Attention> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                .eq("type", type)
+                .eq("user_id", userId);
+
+        Integer count = attentionMapper.selectCount(queryWrapper);
+        return count;
     }
 
 

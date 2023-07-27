@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.basis.mapper.TechnicalFieldClassifyMapper">
+
+    <resultMap id="commentDTOMap" type="com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO">
+         <collection property="children" ofType="com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO"
+                     column="{pid=id}" select="getAllById">
+         </collection>
+    </resultMap>
+
+
+    <select id="getAllById" resultType="com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO">
+        SELECT a.id, a.pid, a.`name` FROM t_technical_field_classify a
+        WHERE a.id = #{pid}
+    </select>
+
+
+
+</mapper>

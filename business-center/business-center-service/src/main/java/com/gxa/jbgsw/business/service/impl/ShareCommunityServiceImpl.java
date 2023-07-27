@@ -2,13 +2,16 @@ package com.gxa.jbgsw.business.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
+import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.entity.ShareCommunity;
 import com.gxa.jbgsw.business.mapper.ShareCommunityMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.service.ShareCommentService;
 import com.gxa.jbgsw.business.service.ShareCommunityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -33,6 +36,8 @@ import java.util.stream.Collectors;
 public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper, ShareCommunity> implements ShareCommunityService {
     @Resource
     ShareCommunityMapper shareCommunityMapper;
+    @Resource
+    ShareCommentService shareCommentService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -61,8 +66,8 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     public ShareCommunityDetailDTO detail(Long id) {
         ShareCommunity shareCommunity = this.getById(id);
         ShareCommunityDetailDTO shareCommunityDTO = mapperFacade.map(shareCommunity, ShareCommunityDetailDTO.class);
-
-
+        List<CommentResponse> commentResponses =  shareCommentService.getCommentById(id, -1L);
+        shareCommunityDTO.setCommentResponses(commentResponses);
 
         return shareCommunityDTO;
     }
@@ -116,5 +121,15 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
                 .setSql("'comments' = 'comments' + 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public Integer getShareCommunitys(Long userId) {
+        QueryWrapper<ShareCommunity> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                .eq("create_by", userId);
+
+        Integer count = shareCommunityMapper.selectCount(queryWrapper);
+        return count;
     }
 }

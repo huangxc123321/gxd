@@ -12,5 +12,5 @@ import java.util.List;
  * @Version 2.0
  */
 public interface ShareCommentService extends IService<ShareComment> {
-    List<CommentResponse> getCommentById(Long id);
+    List<CommentResponse> getCommentById(Long shareId, Long parentId);
 }

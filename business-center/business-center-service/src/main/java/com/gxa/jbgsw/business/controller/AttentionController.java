@@ -47,5 +47,10 @@ public class AttentionController implements AttentionApi {
     public AttentionDTO getAttention(Long pid, Long userId, Integer attentionType) {
         return attentionService.getAttention(pid, userId, attentionType);
     }
+
+    @Override
+    public Integer getAttentionNum(Long userId) {
+        return attentionService.getAttentionNum(userId);
+    }
 }
 

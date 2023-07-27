@@ -4,24 +4,23 @@
 
 
     <resultMap id="commentDTOMap" type="com.gxa.jbgsw.business.protocol.dto.CommentResponse">
+<!--
         <id property="id" column="id"></id>
         <result property="nick" column="nick"></result>
         <result property="content" column="content"></result>
-        <result property="createAt" column="create_at"></result>
-        <result property="shareId" column="share_id"></result>
         <result property="content" column="content"></result>
+-->
 
         <association property="children"
-                     select="com.gxa.jbgsw.business.mapper.ShareCommentMapper.getCommentById" column="{shareId=share_id,parentId=id}"
+                     select="com.gxa.jbgsw.business.mapper.ShareCommentMapper.getCommentById" column="{shareId=shareId,parentId=id}"
                      fetchType="lazy">
         </association>
-
     </resultMap>
 
 
     <select id="getCommentById" resultMap="commentDTOMap">
-     SELECT id,avatar,nick,create_at AS createAt,content,share_id AS shareId FROM t_share_comment
-      WHERE share_id = #{shareId} AND parent_id = #{parentId}
+      SELECT id,avatar,nick,create_at AS createAt,content,share_id AS shareId FROM t_share_comment
+      WHERE  parent_id = #{parentId} AND share_id = #{shareId}
     </select>
 
 

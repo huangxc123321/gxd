@@ -21,4 +21,6 @@ public interface AttentionService extends IService<Attention> {
     void deleteAttention(Long pid, Long userId, Integer type);
 
     AttentionDTO getAttention(Long pid, Long userId, Integer attentionType);
+
+    Integer getAttentionNum(Long userId);
 }

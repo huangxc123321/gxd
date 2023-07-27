@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.business.protocol.dto.CommentDTO;
 import com.gxa.jbgsw.business.protocol.dto.CommentResponse;
 import com.gxa.jbgsw.common.exception.BizException;
+import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
@@ -12,10 +13,12 @@ import com.gxa.jbgsw.website.feignapi.ShareCommentFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -32,10 +35,14 @@ public class CommentController extends BaseController {
 
     @ApiOperation("根据分享文章/视频ID获取评论")
     @GetMapping("/comment/getCommentById")
-    List<CommentResponse> getCommentById(@RequestParam("shareId") Long shareId) throws BizException{
-        return shareCommentFeignApi.getCommentById(shareId);
-    }
+    ApiResult<List<CommentResponse>> getCommentById(@RequestParam("shareId") Long shareId,@RequestParam("parentId") Long parentId) throws BizException{
+        List<CommentResponse> commentResponses = shareCommentFeignApi.getCommentById(shareId, parentId);
 
+        ApiResult<List<CommentResponse>> apiResult = new ApiResult();
+        apiResult.setData(commentResponses);
+
+        return apiResult;
+    }
 
     @ApiOperation("新增评论信息")
     @PostMapping("/comment/add")

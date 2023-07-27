@@ -34,4 +34,6 @@ public interface CollectionService extends IService<Collection> {
     List<MyHavestBillboardResponse> getMyHavestBillboardResponse(Long createBy, Integer collectionType);
 
     List<MypolicyResponse> getPolicys(Long createBy, Integer collectionType);
+
+    Integer getCollections(Long userId);
 }

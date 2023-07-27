@@ -21,4 +21,7 @@ public interface AttentionApi {
 
     @GetMapping("/attention/getAttention")
     AttentionDTO getAttention(@RequestParam("pid")Long pid, @RequestParam("userId")Long userId, @RequestParam("attentionType")Integer attentionType);
+
+    @GetMapping("/attention/getAttentionNum")
+    Integer getAttentionNum(@RequestParam("userId")Long userId);
 }

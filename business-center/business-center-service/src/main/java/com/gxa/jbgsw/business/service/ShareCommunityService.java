@@ -30,4 +30,6 @@ public interface ShareCommunityService extends IService<ShareCommunity> {
     void addViews(Long id);
 
     void addComments(Long id);
+
+    Integer getShareCommunitys(Long userId);
 }

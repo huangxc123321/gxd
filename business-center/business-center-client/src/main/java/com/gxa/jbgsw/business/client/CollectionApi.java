@@ -30,4 +30,7 @@ public interface CollectionApi {
 
     @GetMapping("/collection/deleteById")
     void deleteById(@RequestParam("id") Long id);
+
+    @GetMapping("/collection/getCollections")
+    Integer getCollections(@RequestParam("userId") Long userId);
 }

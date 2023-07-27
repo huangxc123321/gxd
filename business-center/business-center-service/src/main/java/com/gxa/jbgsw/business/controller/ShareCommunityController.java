@@ -132,5 +132,10 @@ public class ShareCommunityController implements ShareCommunityApi {
     public void addComments(Long id) {
         shareCommunityService.addComments(id);
     }
+
+    @Override
+    public Integer getShareCommunitys(Long userId) {
+        return shareCommunityService.getShareCommunitys(userId);
+    }
 }
 

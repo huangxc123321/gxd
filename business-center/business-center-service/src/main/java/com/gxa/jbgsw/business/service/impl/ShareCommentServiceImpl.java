@@ -16,8 +16,8 @@ public class ShareCommentServiceImpl  extends ServiceImpl<ShareCommentMapper, Sh
     ShareCommentMapper shareCommentMapper;
 
     @Override
-    public List<CommentResponse> getCommentById(Long id) {
-        List<CommentResponse> commentResponses =shareCommentMapper.getCommentById(id);
+    public List<CommentResponse> getCommentById(Long shareId, Long parentId) {
+        List<CommentResponse> commentResponses =shareCommentMapper.getCommentById(shareId, parentId);
         return commentResponses;
     }
 

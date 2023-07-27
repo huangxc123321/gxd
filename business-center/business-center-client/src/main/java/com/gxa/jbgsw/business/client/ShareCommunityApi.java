@@ -44,4 +44,7 @@ public interface ShareCommunityApi {
 
     @GetMapping("/my/share/community/addComments")
     void addComments(@RequestParam("id") Long id);
+
+    @GetMapping("/my/share/community/getShareCommunitys")
+    Integer getShareCommunitys(@RequestParam("userId") Long userId);
 }

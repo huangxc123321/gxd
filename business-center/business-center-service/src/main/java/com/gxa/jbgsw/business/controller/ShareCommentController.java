@@ -29,8 +29,8 @@ public class ShareCommentController implements ShareCommentApi {
     }
 
     @Override
-    public List<CommentResponse> getCommentById(Long id) {
-        return shareCommentService.getCommentById(id);
+    public List<CommentResponse> getCommentById(Long shareId, Long parentId) {
+        return shareCommentService.getCommentById(shareId, parentId);
     }
 
 

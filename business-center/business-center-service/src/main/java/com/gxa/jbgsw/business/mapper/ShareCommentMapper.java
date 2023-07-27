@@ -14,5 +14,5 @@ import java.util.List;
  * @Version 2.0
  */
 public interface ShareCommentMapper extends BaseMapper<ShareComment> {
-    List<CommentResponse> getCommentById(@Param("shareId") Long shareId);
+    List<CommentResponse> getCommentById(@Param("shareId") Long shareId, @Param("parentId") Long parentId);
 }
