@@ -13,5 +13,5 @@ import java.util.List;
  * @Version 2.0
  */
 public interface TechnicalFieldClassifyService extends IService<TechnicalFieldClassify> {
-    List<TechnicalFieldClassifyDTO> getAllById(Long id);
+    List<TechnicalFieldClassifyDTO> getAllById(Long pid);
 }

@@ -17,4 +17,6 @@ import java.util.List;
 public interface CollaborateService extends IService<Collaborate> {
 
     List<HavestCollaborateDTO> getHavestCollaborates(Long id);
+
+    void saveCollaborate(Collaborate collaborate);
 }

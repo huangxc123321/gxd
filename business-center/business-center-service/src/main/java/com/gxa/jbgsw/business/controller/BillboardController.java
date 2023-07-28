@@ -3,6 +3,8 @@ package com.gxa.jbgsw.business.controller;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.util.CharUtil;
+import cn.hutool.core.util.StrUtil;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.BillboardApi;
@@ -50,6 +52,25 @@ public class BillboardController implements BillboardApi {
     public void add(BillboardDTO billboardDTO) {
         Billboard billboard = mapperFacade.map(billboardDTO, Billboard.class);
         billboard.setCreateAt(new Date());
+
+        // 组装keys
+        StringBuffer sb = new StringBuffer();
+        // 标题
+        sb.append(billboardDTO.getTitle());
+        sb.append(CharUtil.COMMA);
+        // 技术关键字（直接输入）
+        sb.append(billboardDTO.getTechKeys());
+        sb.append(CharUtil.COMMA);
+        // 工信大类
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(billboardDTO.getCategories()));
+        if(dictionaryDTO != null){
+            sb.append(dictionaryDTO.getDicValue());
+        }
+        sb.append(CharUtil.COMMA);
+        sb.append(billboard.getProvinceName()).append(CharUtil.COMMA)
+                .append(billboard.getCityName()).append(CharUtil.COMMA)
+                .append(billboard.getAreaName());
+        billboard.setKeys(sb.toString());
 
         billboardService.save(billboard);
 

@@ -3,8 +3,11 @@ package com.gxa.jbgsw.business.service;
 import com.gxa.jbgsw.business.entity.Attention;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.AttentionDTO;
+import com.gxa.jbgsw.business.protocol.dto.AttentionDynamicDTO;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
+
+import java.util.List;
 
 /**
  * <p>
@@ -23,4 +26,6 @@ public interface AttentionService extends IService<Attention> {
     AttentionDTO getAttention(Long pid, Long userId, Integer attentionType);
 
     Integer getAttentionNum(Long userId);
+
+    List<AttentionDynamicDTO> getDynamicInfo(Long userId);
 }

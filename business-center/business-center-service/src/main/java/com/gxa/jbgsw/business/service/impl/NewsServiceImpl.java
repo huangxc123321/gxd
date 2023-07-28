@@ -5,16 +5,14 @@ import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.News;
 import com.gxa.jbgsw.business.mapper.NewsMapper;
-import com.gxa.jbgsw.business.protocol.dto.NewsDTO;
-import com.gxa.jbgsw.business.protocol.dto.NewsRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchNewsRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchNewsResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.IsFixedEnum;
 import com.gxa.jbgsw.business.service.NewsService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -23,6 +21,7 @@ import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -133,6 +132,20 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchNewsResponse>>() {
         }.build(), new TypeBuilder<PageResult<SearchNewsResponse>>() {}.build());
+    }
+
+    @Override
+    public List<NewsResponse> getHotNews() {
+        LambdaQueryWrapper<News> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.orderByDesc(News::getCreateAt, News::getViews);
+        lambdaQueryWrapper.last("limit 5");
+
+        List<News> newsList = newsMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(newsList)){
+            return mapperFacade.mapAsList(newsList, NewsResponse.class);
+        }
+
+        return null;
     }
 
 }

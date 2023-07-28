@@ -2,13 +2,11 @@ package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.mapper.AttentionMapper;
-import com.gxa.jbgsw.business.protocol.dto.AttentionDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo;
-import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
-import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AttentionTypeEnum;
 import com.gxa.jbgsw.business.service.AttentionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -106,6 +104,11 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
         Integer count = attentionMapper.selectCount(queryWrapper);
         return count;
+    }
+
+    @Override
+    public List<AttentionDynamicDTO> getDynamicInfo(Long userId) {
+        return attentionMapper.getDynamicInfo(userId);
     }
 
     Integer getAttentionNum(Long userId, Integer type){

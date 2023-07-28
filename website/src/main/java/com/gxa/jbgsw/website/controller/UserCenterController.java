@@ -1,20 +1,20 @@
 package com.gxa.jbgsw.website.controller;
 
+import com.gxa.jbgsw.business.protocol.dto.AttentionDynamicDTO;
 import com.gxa.jbgsw.business.protocol.dto.CommentResponse;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.user.protocol.dto.AttentionDynamicResponse;
 import com.gxa.jbgsw.user.protocol.dto.UserCenterDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
-import com.gxa.jbgsw.website.feignapi.AttentionFeignApi;
-import com.gxa.jbgsw.website.feignapi.CollectionFeignApi;
-import com.gxa.jbgsw.website.feignapi.ShareCommunityFeignApi;
-import com.gxa.jbgsw.website.feignapi.UserFeignApi;
+import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,6 +36,8 @@ public class UserCenterController extends BaseController {
     CollectionFeignApi collectionFeignApi;
     @Resource
     ShareCommunityFeignApi shareCommunityFeignApi;
+    @Resource
+    MessageFeignApi messageFeignApi;
     @Resource
     MapperFacade mapperFacade;
 
@@ -62,13 +64,18 @@ public class UserCenterController extends BaseController {
         userCenterDTO.setShareCommunitys(shareCommunitys);
 
         // 我的消息
-        userCenterDTO.setMessages(0);
+        Integer messages = messageFeignApi.getAllMessages(userId);
+        userCenterDTO.setMessages(messages);
 
         // 我的积分
         userCenterDTO.setPoints(0);
 
-        // TODO: 2023/7/27 0027 动态不知道怎么搞
-
+        // 动态关注(查询一个月内的数据)
+        List<AttentionDynamicDTO> dynamics = attentionFeignApi.getDynamicInfo(userId);
+        if(CollectionUtils.isNotEmpty(dynamics)){
+            List<AttentionDynamicResponse> responses = mapperFacade.mapAsList(dynamics, AttentionDynamicResponse.class);
+            userCenterDTO.setAttentionDynamic(responses);
+        }
 
         return userCenterDTO;
     }

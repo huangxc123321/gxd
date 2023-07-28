@@ -37,6 +37,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "发起方")
     private Long launchUserId;
 
+    @ApiModelProperty(value = "第三方ID（成果ID或者帅才ID）")
     private Long pid;
 
     @ApiModelProperty(value = "成果拥有者ID")

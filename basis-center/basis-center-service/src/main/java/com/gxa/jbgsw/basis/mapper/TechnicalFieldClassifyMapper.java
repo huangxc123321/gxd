@@ -9,5 +9,5 @@ import java.util.List;
 
 
 public interface TechnicalFieldClassifyMapper  extends BaseMapper<TechnicalFieldClassify> {
-    List<TechnicalFieldClassifyDTO> getAllById(@Param("pid") Long id);
+    List<TechnicalFieldClassifyDTO> getAllById(@Param("pid") Long pid);
 }

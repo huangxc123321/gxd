@@ -5,15 +5,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.Harvest;
+import com.gxa.jbgsw.business.entity.News;
 import com.gxa.jbgsw.business.mapper.HarvestMapper;
-import com.gxa.jbgsw.business.protocol.dto.HarvestRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchHarvestsRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchHavestResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -84,5 +84,19 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
         List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
 
         return harvests;
+    }
+
+    @Override
+    public List<RecommendHavestResponse> getRecommendHavest() {
+        LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.orderByDesc(Harvest::getCreateAt, Harvest::getViews);
+        lambdaQueryWrapper.last("limit 3");
+
+        List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(harvests)){
+            return mapperFacade.mapAsList(harvests, RecommendHavestResponse.class);
+        }
+
+        return null;
     }
 }

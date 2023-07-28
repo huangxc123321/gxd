@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import cn.hutool.core.util.CharUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
@@ -157,6 +158,25 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         Billboard billboard = billboardMapper.selectById(billboardDTO.getId());
         // BillboardDTO有null就不需要替换billboard
         BeanUtils.copyProperties(billboardDTO, billboard, CopyPropertionIngoreNull.getNullPropertyNames(billboard));
+
+        // 组装keys
+        StringBuffer sb = new StringBuffer();
+        // 标题
+        sb.append(billboardDTO.getTitle());
+        sb.append(CharUtil.COMMA);
+        // 技术关键字（直接输入）
+        sb.append(billboardDTO.getTechKeys());
+        sb.append(CharUtil.COMMA);
+        // 工信大类
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(billboardDTO.getCategories()));
+        if(dictionaryDTO != null){
+            sb.append(dictionaryDTO.getDicValue());
+        }
+        sb.append(CharUtil.COMMA);
+        sb.append(billboard.getProvinceName()).append(CharUtil.COMMA)
+                .append(billboard.getCityName()).append(CharUtil.COMMA)
+                .append(billboard.getAreaName());
+        billboard.setKeys(sb.toString());
 
         billboardMapper.updateById(billboard);
     }

@@ -76,6 +76,7 @@
         b.categories,
         b.tech_keys AS techKeys,
         b.id,
+        b.type,
         b.amount
     FROM
         t_billboard_harvest_related a

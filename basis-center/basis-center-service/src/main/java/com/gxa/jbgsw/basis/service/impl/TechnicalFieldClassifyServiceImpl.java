@@ -16,7 +16,7 @@ public class TechnicalFieldClassifyServiceImpl extends ServiceImpl<TechnicalFiel
     TechnicalFieldClassifyMapper technicalFieldClassifyMapper;
 
     @Override
-    public List<TechnicalFieldClassifyDTO> getAllById(Long id) {
-        return technicalFieldClassifyMapper.getAllById(id);
+    public List<TechnicalFieldClassifyDTO> getAllById(Long pid) {
+        return technicalFieldClassifyMapper.getAllById(pid);
     }
 }

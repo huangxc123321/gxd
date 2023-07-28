@@ -28,9 +28,9 @@ public class CollaborateController implements CollaborateApi {
     @Override
     public void add(CollaborateDTO collaborateDTO) {
         Collaborate collaborate = mapperFacade.map(collaborateDTO, Collaborate.class);
+        collaborateService.saveCollaborate(collaborate);
 
 
-        collaborateService.save(collaborate);
     }
 
     @Override

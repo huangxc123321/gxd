@@ -3,6 +3,8 @@ package com.gxa.jbgsw.business.listener;
 import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.mapper.NewsMapper;
+import com.gxa.jbgsw.business.protocol.enums.MessageOriginEnum;
+import com.gxa.jbgsw.business.protocol.enums.MessageTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.NewsStatusEnum;
 import com.gxa.jbgsw.business.service.*;
 import com.gxa.jbgsw.common.utils.RedisKeys;
@@ -12,6 +14,7 @@ import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Date;
 
 /**
  * 监听所有db的过期事件
@@ -30,6 +33,8 @@ public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
     BillboardEconomicRelatedService billboardEconomicRelatedService;
     @Resource
     BillboardTalentRelatedService billboardTalentRelatedService;
+    @Resource
+    MessageService messageService;
 
 
     public RedisKeyExpiration(RedisMessageListenerContainer listenerContainer) {
@@ -70,6 +75,26 @@ public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
             billboardTalentRelatedService.addTalentRelated(Long.valueOf(id));
             billboardEconomicRelatedService.addEconomicRelated(Long.valueOf(id));
             System.out.println("结束定时任务");
+
+            // 写系统消息
+            com.gxa.jbgsw.business.entity.Message msg = new com.gxa.jbgsw.business.entity.Message();
+            Billboard billboard = billboardService.getById(Long.valueOf(id));
+            if(billboard != null){
+                msg.setUserId(billboard.getCreateBy());
+                msg.setOrigin(MessageOriginEnum.APPLY.getCode());
+                if(billboard != null){
+                    msg.setTitle(billboard.getTitle()+"榜单推荐通知");
+                    msg.setPid(billboard.getId());
+                }else{
+                    msg.setTitle("榜单推荐通知");
+                }
+                msg.setType(MessageTypeEnum.SYS.getCode());
+                msg.setCreateAt(new Date());
+                msg.setReadFlag(0);
+
+                messageService.save(msg);
+            }
+
         }
 
 

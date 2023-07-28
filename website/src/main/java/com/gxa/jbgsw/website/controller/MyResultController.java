@@ -82,6 +82,11 @@ public class MyResultController extends BaseController {
         // 榜单推荐，根据成果ID获取推荐榜单
         List<BillboardHarvestRelatedResponse> relateBillboards = billboardHarvestRelatedFeignApi.getBillboardstByHarvestId(id);
         if(relateBillboards != null){
+            relateBillboards.stream().forEach(s->{
+                DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeEnum.categories.name(), String.valueOf(s.getCategories()));
+                s.setCategoriesName(dic.getDicValue());
+            });
+
             havestDTO.setBillboardHarvestRecommends(relateBillboards);
         }
 
@@ -130,6 +135,15 @@ public class MyResultController extends BaseController {
 
         havestFeignApi.add(havestDTO);
     }
+
+
+    @ApiOperation("成果推荐(用在右边的推荐)")
+    @GetMapping("/havest/getRecommendHavest")
+    List<RecommendHavestResponse> getRecommendHavest(){
+        // 先时间，阅览数排序， 取3条数据
+        return havestFeignApi.getRecommendHavest();
+    }
+
 
 
 }

@@ -4,12 +4,16 @@ package com.gxa.jbgsw.business.controller;
 import com.gxa.jbgsw.business.client.BillboardGainApi;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardGain;
+import com.gxa.jbgsw.business.entity.Message;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainAddDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainAuditDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainResponse;
+import com.gxa.jbgsw.business.protocol.enums.MessageOriginEnum;
+import com.gxa.jbgsw.business.protocol.enums.MessageTypeEnum;
 import com.gxa.jbgsw.business.service.BillboardGainService;
 import com.gxa.jbgsw.business.service.BillboardService;
+import com.gxa.jbgsw.business.service.MessageService;
 import com.gxa.jbgsw.common.exception.BizException;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +38,8 @@ public class BillboardGainController implements BillboardGainApi {
     BillboardGainService billboardGainService;
     @Resource
     BillboardService billboardService;
+    @Resource
+    MessageService messageService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -80,6 +86,24 @@ public class BillboardGainController implements BillboardGainApi {
         BillboardGain billboardGain = mapperFacade.map(billboardGainAddDTO, BillboardGain.class);
 
         billboardGainService.save(billboardGain);
+
+        Billboard billboard = billboardService.getById(billboardGain.getPid());
+
+        // 写系统消息
+        Message message = new Message();
+        message.setUserId(billboardGain.getCreateBy());
+        message.setOrigin(MessageOriginEnum.APPLY.getCode());
+        if(billboard != null){
+            message.setTitle(billboard.getTitle()+"揭榜通知");
+            message.setPid(billboard.getId());
+        }else{
+            message.setTitle("揭榜通知");
+        }
+        message.setType(MessageTypeEnum.SYS.getCode());
+        message.setCreateAt(new Date());
+        message.setReadFlag(0);
+
+        messageService.save(message);
     }
 
 }

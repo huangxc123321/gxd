@@ -4,6 +4,7 @@ package com.gxa.jbgsw.business.controller;
 import com.gxa.jbgsw.business.client.AttentionApi;
 import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.protocol.dto.AttentionDTO;
+import com.gxa.jbgsw.business.protocol.dto.AttentionDynamicDTO;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest;
 import com.gxa.jbgsw.business.protocol.dto.MyAttentionResponse;
 import com.gxa.jbgsw.business.service.AttentionService;
@@ -14,6 +15,7 @@ import ma.glasnost.orika.MapperFacade;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 @RestController
 @Slf4j
@@ -51,6 +53,11 @@ public class AttentionController implements AttentionApi {
     @Override
     public Integer getAttentionNum(Long userId) {
         return attentionService.getAttentionNum(userId);
+    }
+
+    @Override
+    public List<AttentionDynamicDTO> getDynamicInfo(Long userId) {
+        return attentionService.getDynamicInfo(userId);
     }
 }
 

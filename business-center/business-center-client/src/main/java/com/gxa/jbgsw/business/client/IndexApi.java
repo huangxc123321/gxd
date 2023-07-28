@@ -42,4 +42,7 @@ public interface IndexApi {
 
     @GetMapping("/index/getRelatedByTalentId")
     RelateDTO getRelatedByTalentId(@RequestParam("id") Long id);
+
+    @PostMapping("/index/search")
+    PcIndexSearchResponse search(@RequestBody PcIndexSearchRequest pcIndexSearchRequest);
 }

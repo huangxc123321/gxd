@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.controller;
 
 
+import cn.hutool.core.util.CharUtil;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.HarvestApi;
 import com.gxa.jbgsw.business.entity.Harvest;
@@ -73,6 +74,30 @@ public class HarvestController implements HarvestApi {
         Harvest harvest = mapperFacade.map(havestDTO, Harvest.class);
         harvest.setCreateAt(new Date());
 
+        // trade_type + tech_domain + maturity_level + name
+        // 组装keys
+        StringBuffer sb = new StringBuffer();
+        // 标题
+        sb.append(havestDTO.getName());
+        sb.append(CharUtil.COMMA);
+        // 成熟度
+        DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(havestDTO.getMaturityLevel()));
+        if(dic != null){
+            sb.append(dic.getDicValue());
+        }
+        sb.append(CharUtil.COMMA);
+        // 行业类型
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), String.valueOf(havestDTO.getTradeType()));
+        if(dictionaryDTO != null){
+            sb.append(dictionaryDTO.getDicValue());
+        }
+        // 技术领域
+
+
+
+        harvest.setKeys(sb.toString());
+
+
         harvestService.save(harvest);
     }
 
@@ -113,6 +138,11 @@ public class HarvestController implements HarvestApi {
         HavestDTO havestDTO = mapperFacade.map(harvest, HavestDTO.class);
 
         return havestDTO;
+    }
+
+    @Override
+    public List<RecommendHavestResponse> getRecommendHavest() {
+        return harvestService.getRecommendHavest();
     }
 
 }

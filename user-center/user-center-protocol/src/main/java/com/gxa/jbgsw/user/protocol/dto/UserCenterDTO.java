@@ -40,7 +40,7 @@ public class UserCenterDTO implements Serializable {
     private Integer points;
 
     @ApiModelProperty(value = "关注动态")
-    List<String> attentionDynamic;
+    List<AttentionDynamicResponse> attentionDynamic;
 
 
 }

@@ -87,4 +87,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "展示图：从详情中获取第一张图片，记录下来")
     private String guidePicture;
 
+    @ApiModelProperty(value = "浏览量")
+    private Integer views;
+
+    @ApiModelProperty(value = "查询关键字")
+    private String keys;
 }

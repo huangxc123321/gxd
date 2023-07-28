@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
+import java.util.List;
+
 /**
  * <p>
  *  服务类
@@ -26,4 +28,6 @@ public interface NewsService extends IService<News> {
     PageResult<News> pageQuery(NewsRequest request);
 
     PageResult<SearchNewsResponse> queryNews(SearchNewsRequest searchNewsRequest);
+
+    List<NewsResponse> getHotNews();
 }

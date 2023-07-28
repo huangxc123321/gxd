@@ -24,7 +24,7 @@ public class TechnicalFieldClassifyController implements TechnicalFieldClassifyA
     }
 
     @Override
-    public List<TechnicalFieldClassifyDTO> getAllById(Long id) {
-        return technicalFieldClassifyService.getAllById(id);
+    public List<TechnicalFieldClassifyDTO> getAllById(Long pid) {
+        return technicalFieldClassifyService.getAllById(pid);
     }
 }

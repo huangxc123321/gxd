@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * @Author Mr. huang
  * @Date 2023/7/3 0003 11:16
@@ -15,19 +17,21 @@ import org.springframework.web.bind.annotation.RequestParam;
  */
 public interface NewsApi {
 
-    @PostMapping("/new/add")
+    @PostMapping("/news/add")
     void add(@RequestBody NewsDTO newsDTO);
 
-    @PostMapping(value = "/new/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/news/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     void deleteBatchIds(@RequestBody Long[] ids);
 
-    @PostMapping("/new/pageQuery")
+    @PostMapping("/news/pageQuery")
     PageResult<NewsResponse> pageQuery(@RequestBody NewsRequest request);
 
-    @PostMapping("/new/update")
+    @PostMapping("/news/update")
     void update(@RequestBody NewsDTO newsDTO);
 
-    @GetMapping("/new/detail")
+    @GetMapping("/news/detail")
     NewsDTO detail(@RequestParam("id") Long id);
 
+    @GetMapping("/news/getHotNews")
+    List<NewsResponse> getHotNews();
 }

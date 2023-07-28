@@ -63,6 +63,16 @@ public class IndexController extends BaseController {
     AttentionFeignApi attentionFeignApi;
 
 
+
+    @ApiOperation("获取首页榜单信息")
+    @PostMapping("/index/search")
+    public PcIndexSearchResponse search(@RequestBody PcIndexSearchRequest pcIndexSearchRequest) {
+        PcIndexSearchResponse pcIndexSearchResponse = new PcIndexSearchResponse();
+
+        return indexFeignApi.search(pcIndexSearchRequest);
+    }
+
+
     @ApiOperation("获取首页榜单信息")
     @GetMapping("/index/getIndex")
     public ApiResult<IndexResponse> getIndex() {

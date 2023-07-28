@@ -41,13 +41,16 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "榜单标题")
     private String title;
 
+    @ApiModelProperty(value = "查询关键字： 榜单标题+工信大类+技术关键词")
+    private String keys;
+
     @ApiModelProperty(value = "工信大类：字典中获取")
     private Integer categories;
 
     @ApiModelProperty(value = "技术关键词，用逗号分隔")
     private String techKeys;
 
-    @ApiModelProperty(value = "意向金额：0 面议， 其它为具体金额\"")
+    @ApiModelProperty(value = "意向金额：0 面议， 其它为具体金额")
     private BigDecimal amount;
 
     @ApiModelProperty(value = "详情")
@@ -100,5 +103,8 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "发布人")
     private Long createBy;
+
+    @ApiModelProperty(value = "浏览量")
+    private Integer views;
 
 }

@@ -27,4 +27,5 @@ public interface HarvestService extends IService<Harvest> {
 
     List<Harvest> getHarvesByTechDomain(String techDomain);
 
+    List<RecommendHavestResponse> getRecommendHavest();
 }

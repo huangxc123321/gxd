@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.controller;
 
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.business.client.NewsApi;
 import com.gxa.jbgsw.business.entity.News;
 import com.gxa.jbgsw.business.feignapi.UserFeignApi;
@@ -79,6 +80,11 @@ public class NewsController implements NewsApi {
 
         NewsDTO newsDTO = mapperFacade.map(news, NewsDTO.class);
         return newsDTO;
+    }
+
+    @Override
+    public List<NewsResponse> getHotNews() {
+        return newsService.getHotNews();
     }
 }
 

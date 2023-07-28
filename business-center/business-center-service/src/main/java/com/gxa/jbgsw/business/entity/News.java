@@ -76,5 +76,6 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "更新人")
     private Long updateBy;
 
-
+    @ApiModelProperty(value = "预览量")
+    private Integer views;
 }

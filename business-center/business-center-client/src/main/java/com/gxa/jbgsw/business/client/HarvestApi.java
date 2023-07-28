@@ -38,4 +38,6 @@ public interface HarvestApi {
     @GetMapping("/harvest/getCompanyById")
     HavestDTO getHavestById(@RequestParam("id")  Long id);
 
+    @GetMapping("/harvest/getRecommendHavest")
+    List<RecommendHavestResponse> getRecommendHavest();
 }

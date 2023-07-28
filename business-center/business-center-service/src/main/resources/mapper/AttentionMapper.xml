@@ -10,6 +10,22 @@
 
 </select>
 
+<select id="getDynamicInfo" resultType="com.gxa.jbgsw.business.protocol.dto.AttentionDynamicDTO">
+        SELECT
+          b.id,
+          b.amount,
+          b.title,
+          b.type,
+          b.create_at AS createAt,
+          b.unit_name AS unitName
+        FROM
+            t_attention AS a
+        LEFT JOIN t_billboard AS b ON a.pid = b.id
+        WHERE
+            a.user_id = #{userId}
+            AND date_sub(CURDATE(), interval 1 month) <![CDATA[ < ]]> b.create_at
+            order by b.create_at desc
+</select>
 
 
 </mapper>
