@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,4 +31,8 @@ public interface NewsService extends IService<News> {
     PageResult<SearchNewsResponse> queryNews(SearchNewsRequest searchNewsRequest);
 
     List<NewsResponse> getHotNews();
+
+    NewsRelatedDTO getLastRelated(Integer type, Date date);
+
+    NewsRelatedDTO getNextRelated(Integer type, Date date);
 }

@@ -91,5 +91,5 @@ private static final long serialVersionUID=1L;
     private Integer views;
 
     @ApiModelProperty(value = "查询关键字")
-    private String keys;
+    private String queryKeys;
 }

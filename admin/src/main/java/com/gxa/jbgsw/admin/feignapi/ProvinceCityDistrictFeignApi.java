@@ -5,6 +5,6 @@ import com.gxa.jbgsw.basis.client.ProvinceCityDistrictApi;
 import org.springframework.cloud.openfeign.FeignClient;
 
 
-@FeignClient(name = "user-center-service", contextId = "provinceCityDistrictApi", configuration = {KeepErrMsgConfiguration.class})
+@FeignClient(name = "basis-center-service", contextId = "provinceCityDistrictApi", configuration = {KeepErrMsgConfiguration.class})
 public interface ProvinceCityDistrictFeignApi extends ProvinceCityDistrictApi {
 }

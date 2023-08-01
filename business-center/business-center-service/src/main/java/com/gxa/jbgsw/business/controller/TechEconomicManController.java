@@ -5,10 +5,13 @@ import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.TechEconomicManApi;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.TechEconomicMan;
+import com.gxa.jbgsw.business.entity.TechEconomicManAppraise;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.protocol.enums.LevelEnum;
 import com.gxa.jbgsw.business.protocol.enums.TechEconomicManLevelEnum;
+import com.gxa.jbgsw.business.service.TechEconomicManAppraiseService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -33,6 +36,8 @@ import java.util.List;
 public class TechEconomicManController implements TechEconomicManApi {
     @Resource
     TechEconomicManService techEconomicManService;
+    @Resource
+    TechEconomicManAppraiseService techEconomicManAppraiseService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -86,7 +91,15 @@ public class TechEconomicManController implements TechEconomicManApi {
 
     @Override
     public TechEconomicManResponse getTechEconomicManById(Long id) {
-        return null;
+        TechEconomicMan techEconomicMan = techEconomicManService.getById(id);
+        TechEconomicManResponse techEconomicManResponse = mapperFacade.map(techEconomicMan, TechEconomicManResponse.class);
+
+        if(techEconomicManResponse != null){
+            if(techEconomicManResponse.getLevel() != null){
+                techEconomicManResponse.setLevelName(LevelEnum.getNameByIndex(techEconomicManResponse.getLevel()));
+            }
+        }
+        return techEconomicManResponse;
     }
 }
 

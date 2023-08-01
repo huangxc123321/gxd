@@ -26,7 +26,7 @@ public class AttentionDynamicResponse implements Serializable {
     @ApiModelProperty(value = "榜单发布单位, 从登录信息中获取")
     private String unitName;
 
-    @ApiModelProperty(value = "发布时间", hidden = true)
+    @ApiModelProperty(value = "发布时间")
     private Date createAt;
 
 }

@@ -60,4 +60,10 @@ public class NewsDTO implements Serializable {
     @ApiModelProperty(value = "发布者名称： 显示的时候，获取发布者名称")
     private String createName;
 
+    @ApiModelProperty(value = "上一遍新闻")
+    private NewsRelatedDTO last;
+
+    @ApiModelProperty(value = "下一遍新闻")
+    private NewsRelatedDTO next;
+
 }

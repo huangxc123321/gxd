@@ -59,4 +59,38 @@
 
         ORDER BY a.create_at DESC
     </select>
+
+
+
+    <select id="getShareItems" parameterType="com.gxa.jbgsw.business.protocol.dto.ShareCommunityRequest"
+            resultType="com.gxa.jbgsw.business.entity.ShareCommunity">
+        SELECT
+        a.id,
+        a.type,
+        a.`status`,
+        a.title,
+        a.nick,
+        a.origin,
+        a.create_at createAt,
+        a.likes,
+        a.views,
+        FROM
+        t_share_community AS a
+        WHERE 1 = 1
+
+        <if test="status != null ">
+            AND a.status =  #{status}
+        </if>
+
+        ORDER BY a.create_at DESC
+
+
+    </select>
+
+
+
+
+
+
+
 </mapper>

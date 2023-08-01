@@ -12,4 +12,10 @@ public enum DictionaryTypeEnum {
     billboard_status,
     maturity_level,
     broker_type,
+    trade_type,
+    unit_nature,
+    highest_edu,
+    professional,
+    enterprise_type,
+    hot_words,
 }

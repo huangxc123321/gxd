@@ -89,8 +89,9 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
     @Override
     public List<RecommendHavestResponse> getRecommendHavest() {
         LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.orderByDesc(Harvest::getCreateAt, Harvest::getViews);
-        lambdaQueryWrapper.last("limit 3");
+        lambdaQueryWrapper.orderByDesc(Harvest::getCreateAt)
+                          .orderByDesc(Harvest::getViews)
+                          .last("LIMIT 3");
 
         List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
         if(CollectionUtils.isNotEmpty(harvests)){

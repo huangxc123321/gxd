@@ -94,10 +94,7 @@ public class HarvestController implements HarvestApi {
         // 技术领域
 
 
-
-        harvest.setKeys(sb.toString());
-
-
+        harvest.setQueryKeys(sb.toString());
         harvestService.save(harvest);
     }
 

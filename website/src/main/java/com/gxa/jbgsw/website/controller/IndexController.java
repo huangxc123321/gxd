@@ -61,6 +61,8 @@ public class IndexController extends BaseController {
     CollectionFeignApi collectionFeignApi;
     @Resource
     AttentionFeignApi attentionFeignApi;
+    @Resource
+    TechEconomicManAppraiseFeignApi techEconomicManAppraiseFeignApi;
 
 
 
@@ -121,6 +123,9 @@ public class IndexController extends BaseController {
                 detailInfoDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
             }
         }
+
+        detailInfoDTO.setStatusName(BillboardStatusEnum.getNameByIndex(detailInfoDTO.getStatus()));
+
 
         return detailInfoDTO;
     }
@@ -229,7 +234,12 @@ public class IndexController extends BaseController {
         }
 
         return techEconomicManResponse;
+    }
 
+    @ApiOperation("获取技术经纪人的评价")
+    @PostMapping("/tech/economic/appraise/getAppraise")
+    PageResult<TechEconomicManAppraiseResponse> getAppraise(@RequestBody TechEconomicManAppraiseRequest request) {
+        return techEconomicManAppraiseFeignApi.getAppraise(request);
     }
 
     @ApiOperation("搜索新闻资讯")
@@ -273,7 +283,7 @@ public class IndexController extends BaseController {
 
     @ApiOperation("榜单收藏")
     @PostMapping("/collection/add")
-    void addCollection(CollectionDTO collectionDTO){
+    void addCollection(@RequestBody CollectionDTO collectionDTO){
         Long userId = this.getUserId();
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);

@@ -11,7 +11,7 @@ import java.util.Date;
 @Data
 public class TechEconomicManResponse implements Serializable {
 
-    @ApiModelProperty(value = "主键")
+    @ApiModelProperty(value = "技术经纪人ID")
     private Long id;
 
     @ApiModelProperty(value = "姓名")
@@ -90,5 +90,7 @@ public class TechEconomicManResponse implements Serializable {
 
     @ApiModelProperty(value = "关注状态： 0 已关注  1 未关注")
     private Integer attentionStatus = 1;
+
+
 
 }

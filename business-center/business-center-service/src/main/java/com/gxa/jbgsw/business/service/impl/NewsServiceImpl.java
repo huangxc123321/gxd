@@ -137,14 +137,46 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     @Override
     public List<NewsResponse> getHotNews() {
         LambdaQueryWrapper<News> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.orderByDesc(News::getCreateAt, News::getViews);
-        lambdaQueryWrapper.last("limit 5");
-
+        lambdaQueryWrapper.orderByDesc(News::getViews)
+                          .orderByDesc(News::getCreateAt)
+                          .last("LIMIT 5");
         List<News> newsList = newsMapper.selectList(lambdaQueryWrapper);
         if(CollectionUtils.isNotEmpty(newsList)){
             return mapperFacade.mapAsList(newsList, NewsResponse.class);
         }
 
+        return null;
+    }
+
+    @Override
+    public NewsRelatedDTO getLastRelated(Integer type, Date date) {
+        LambdaQueryWrapper<News> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(News::getNewsPolicy, type);
+        lambdaQueryWrapper.le(News::getCreateAt, date);
+        lambdaQueryWrapper.orderByDesc(News::getCreateAt);
+        lambdaQueryWrapper.last("limit 1");
+
+        List<News> newsList = newsMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(newsList)){
+            News news = newsList.get(0);
+            return mapperFacade.map(news, NewsRelatedDTO.class);
+        }
+        return null;
+    }
+
+    @Override
+    public NewsRelatedDTO getNextRelated(Integer type, Date date) {
+        LambdaQueryWrapper<News> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(News::getNewsPolicy, type);
+        lambdaQueryWrapper.ge(News::getCreateAt, date);
+        lambdaQueryWrapper.orderByDesc(News::getCreateAt);
+        lambdaQueryWrapper.last("limit 1");
+
+        List<News> newsList = newsMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(newsList)){
+            News news = newsList.get(0);
+            return mapperFacade.map(news, NewsRelatedDTO.class);
+        }
         return null;
     }
 

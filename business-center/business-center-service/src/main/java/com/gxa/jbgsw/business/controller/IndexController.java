@@ -129,6 +129,8 @@ public class IndexController implements IndexApi {
         List<RelateHavestDTO> relateHavests = billboardService.getRelatedHavestByBillboardId(id, 3);
         if(CollectionUtils.isNotEmpty(relateHavests)){
             relateDTO.setHavests(relateHavests);
+        }else{
+
         }
 
         // 相关帅才推荐

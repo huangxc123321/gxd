@@ -24,7 +24,7 @@ public interface MessageApi {
     @GetMapping("/message/getAllMessages")
     Integer getAllMessages(@RequestParam("userId") Long userId);
 
-    @PostMapping(value = "/billboard/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/message/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     void deleteBatchIds(@RequestBody Long[] ids);
 
     @GetMapping("/message/updateReadFlag")

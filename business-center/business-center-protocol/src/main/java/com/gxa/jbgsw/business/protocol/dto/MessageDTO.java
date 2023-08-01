@@ -30,4 +30,8 @@ public class MessageDTO implements Serializable {
     @ApiModelProperty(value = "消息生成时间", hidden = true)
     private Date createAt;
 
+    @ApiModelProperty(value = "消息ID")
+    private Long id;
+
+
 }

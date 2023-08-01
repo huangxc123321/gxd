@@ -36,7 +36,7 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "意向金额：0 面议， 其它为具体金额")
     private BigDecimal amount;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy.MM.dd",timezone = "GMT+8")
     @ApiModelProperty(value = "发布时间")
     private Date createAt;
 

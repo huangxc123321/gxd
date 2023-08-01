@@ -70,7 +70,7 @@ public class BillboardController implements BillboardApi {
         sb.append(billboard.getProvinceName()).append(CharUtil.COMMA)
                 .append(billboard.getCityName()).append(CharUtil.COMMA)
                 .append(billboard.getAreaName());
-        billboard.setKeys(sb.toString());
+        billboard.setQueryKeys(sb.toString());
 
         billboardService.save(billboard);
 

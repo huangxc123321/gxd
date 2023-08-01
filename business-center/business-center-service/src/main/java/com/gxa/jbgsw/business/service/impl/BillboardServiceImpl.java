@@ -176,7 +176,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         sb.append(billboard.getProvinceName()).append(CharUtil.COMMA)
                 .append(billboard.getCityName()).append(CharUtil.COMMA)
                 .append(billboard.getAreaName());
-        billboard.setKeys(sb.toString());
+        billboard.setQueryKeys(sb.toString());
 
         billboardMapper.updateById(billboard);
     }
@@ -333,9 +333,10 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
     private List<Billboard> getLast() {
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
-        lambdaQueryWrapper.orderByDesc(Billboard::getIsTop, Billboard::getCreateAt);
-        lambdaQueryWrapper.last("limit 4");
+        lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
+                          .orderByDesc(Billboard::getIsTop)
+                          .orderByDesc(Billboard::getCreateAt)
+                          .last("LIMIT  4");
         List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
 
         return billboards;

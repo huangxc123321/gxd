@@ -10,6 +10,7 @@ webauth:
   url:
     - /web/index/addBillboardGain
     - /web/collection/add
+    - /web/collaborate/add
 
 
 # Tomcat

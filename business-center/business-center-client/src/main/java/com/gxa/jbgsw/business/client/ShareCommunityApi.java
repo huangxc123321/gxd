@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
+
 /**
  * @Author Mr. huang
  * @Date 2023/7/18 0018 8:46
@@ -47,4 +50,10 @@ public interface ShareCommunityApi {
 
     @GetMapping("/my/share/community/getShareCommunitys")
     Integer getShareCommunitys(@RequestParam("userId") Long userId);
+
+    @PostMapping("/share/community/getShareItems")
+    PageResult<CommunityResponse> getShareItems(@RequestBody ShareCommuntiyRequest request);
+
+    @GetMapping("/my/share/community/getHotShare")
+    List<CommunityResponse> getHotShare();
 }

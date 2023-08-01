@@ -132,4 +132,26 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
         Integer count = shareCommunityMapper.selectCount(queryWrapper);
         return count;
     }
+
+    @Override
+    public PageResult<CommunityResponse> getShareItems(ShareCommuntiyRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<ShareCommunity> shareCommunities = shareCommunityMapper.getShareItems(request);
+        PageInfo<ShareCommunity> pageInfo = new PageInfo<>(shareCommunities);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<ShareCommunity>>() {
+        }.build(), new TypeBuilder<PageResult<CommunityResponse>>() {}.build());
+    }
+
+    @Override
+    public List<ShareCommunity> getHotShare() {
+        LambdaQueryWrapper<ShareCommunity> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.orderByDesc(ShareCommunity::getViews, ShareCommunity::getCreateAt);
+        lambdaQueryWrapper.last("limit 5");
+        List<ShareCommunity>  shareCommunities = shareCommunityMapper.selectList(lambdaQueryWrapper);
+
+        return shareCommunities;
+    }
 }

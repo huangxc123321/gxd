@@ -1,5 +1,7 @@
 package com.gxa.jbgsw.gateway.filter;
 
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -100,22 +102,28 @@ public class ApiRespGlobalFilter implements GlobalFilter, Ordered {
                         if (contentType.includes(MediaType.APPLICATION_JSON) || contentType.includes(MediaType.APPLICATION_JSON_UTF8)) {
 
                             String responseData = new String(content, contentCharset);
-                            JSONObject jsonObject = JSONObject.parseObject(responseData);
                             log.debug("响应内容:{}", responseData);
                             ApiResult apiResult = new ApiResult();
 
                             try {
-
-                                if(jsonObject.size() != 3){
-                                    apiResult.setData(jsonObject);
-                                }else if(jsonObject.size() == 3){
-                                    apiResult.setMessage(jsonObject.getString("message"));
-                                    apiResult.setCode(jsonObject.getInteger("code"));
-                                    apiResult.setData(jsonObject.get("data"));
-                                }
-                                else {
-                                    apiResult.setMessage(jsonObject.getString("message"));
-                                    apiResult.setCode(jsonObject.getInteger("code"));
+                                if(responseData != null && responseData.length() > 0){
+                                    if(StrUtil.startWith(responseData, "[")){
+                                        JSONArray jsonArray = JSONArray.parseArray(responseData);
+                                        apiResult.setData(jsonArray);
+                                    }else {
+                                        JSONObject  jsonObject = JSONObject.parseObject(responseData);
+                                        if(jsonObject.size() != 3){
+                                            apiResult.setData(jsonObject);
+                                        }else if(jsonObject.size() == 3){
+                                            apiResult.setMessage(jsonObject.getString("message"));
+                                            apiResult.setCode(jsonObject.getInteger("code"));
+                                            apiResult.setData(jsonObject.get("data"));
+                                        }
+                                        else {
+                                            apiResult.setMessage(jsonObject.getString("message"));
+                                            apiResult.setCode(jsonObject.getInteger("code"));
+                                        }
+                                    }
                                 }
 
                                 byte[] newRs = jsonMapper.writeValueAsBytes(apiResult);

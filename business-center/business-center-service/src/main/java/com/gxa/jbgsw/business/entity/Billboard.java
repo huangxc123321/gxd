@@ -42,7 +42,7 @@ private static final long serialVersionUID=1L;
     private String title;
 
     @ApiModelProperty(value = "查询关键字： 榜单标题+工信大类+技术关键词")
-    private String keys;
+    private String queryKeys;
 
     @ApiModelProperty(value = "工信大类：字典中获取")
     private Integer categories;

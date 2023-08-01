@@ -21,4 +21,6 @@ public class UserErrorCode {
     public static final ResultCode TOKEN_NOT_EXIST = new ResultCode(1012, "token 不存在");
     public static final ResultCode USER_PARAMS_ERROR = new ResultCode(1013, "参数不正确");
 
+    public static final ResultCode QR_CODE_EXPIRE = new ResultCode(1014, "二维码已失效");
+    public static final ResultCode QR_CODE_2 = new ResultCode(1015, "二维码已确认");
 }

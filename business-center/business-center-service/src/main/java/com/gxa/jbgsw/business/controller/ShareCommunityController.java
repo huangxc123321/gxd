@@ -137,5 +137,20 @@ public class ShareCommunityController implements ShareCommunityApi {
     public Integer getShareCommunitys(Long userId) {
         return shareCommunityService.getShareCommunitys(userId);
     }
+
+    @Override
+    public PageResult<CommunityResponse> getShareItems(ShareCommuntiyRequest request) {
+        return shareCommunityService.getShareItems(request);
+    }
+
+    @Override
+    public List<CommunityResponse> getHotShare() {
+         List<ShareCommunity> shareCommunities = shareCommunityService.getHotShare();
+         if(CollectionUtils.isNotEmpty(shareCommunities)){
+             return mapperFacade.mapAsList(shareCommunities, CommunityResponse.class);
+         }
+
+         return null;
+    }
 }
 

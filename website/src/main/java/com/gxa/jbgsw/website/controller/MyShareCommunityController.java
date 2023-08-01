@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.website.controller;
 
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.ShareCommunityTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -37,6 +38,16 @@ public class MyShareCommunityController extends BaseController {
         shareCommunityDTO.setStatus(0);
         shareCommunityDTO.setCreateAt(new Date());
         shareCommunityDTO.setNick(this.getUserNick());
+
+        // 如果是图文，取详情的第一张图来做预览图，视频的话取第一帧来做预览图
+        if(ShareCommunityTypeEnum.article.getCode().equals(shareCommunityDTO.getType())){
+            // 图片
+
+        }else{
+            // 视频
+
+        }
+
 
         shareCommunityFeignApi.add(shareCommunityDTO);
     }

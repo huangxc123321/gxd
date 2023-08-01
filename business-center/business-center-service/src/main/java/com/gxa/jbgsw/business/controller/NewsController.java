@@ -77,8 +77,14 @@ public class NewsController implements NewsApi {
     @Override
     public NewsDTO detail(Long id) {
         News news = newsService.getById(id);
-
         NewsDTO newsDTO = mapperFacade.map(news, NewsDTO.class);
+        // 上一条
+        NewsRelatedDTO lastNews = newsService.getLastRelated(news.getNewsPolicy(), news.getCreateAt());
+        newsDTO.setLast(lastNews);
+        // 下一条
+        NewsRelatedDTO nextNews = newsService.getNextRelated(news.getNewsPolicy(), news.getCreateAt());
+        newsDTO.setNext(nextNews);
+
         return newsDTO;
     }
 

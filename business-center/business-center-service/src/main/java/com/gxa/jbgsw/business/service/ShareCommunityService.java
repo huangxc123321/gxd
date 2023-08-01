@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 
+import java.util.List;
+
 /**
  * <p>
  * 分享社区 服务类
@@ -32,4 +34,8 @@ public interface ShareCommunityService extends IService<ShareCommunity> {
     void addComments(Long id);
 
     Integer getShareCommunitys(Long userId);
+
+    PageResult<CommunityResponse> getShareItems(ShareCommuntiyRequest request);
+
+    List<ShareCommunity> getHotShare();
 }
