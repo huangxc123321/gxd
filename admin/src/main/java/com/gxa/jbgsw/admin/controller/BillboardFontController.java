@@ -43,6 +43,8 @@ public class BillboardFontController extends BaseController {
     @Resource
     BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
     @Resource
+    CompanyFeignApi companyFeignApi;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
@@ -122,6 +124,9 @@ public class BillboardFontController extends BaseController {
         billboardDTO.setCreateBy(this.getUserId());
         // 设置默认的待揭榜
         billboardDTO.setStatus(0);
+        if(billboardDTO.getUnitName() == null){
+            billboardDTO.setUnitName(this.getUnitName());
+        }
 
         // 判断是否政府发布政府榜单
         UserResponse userResponse = getUser();

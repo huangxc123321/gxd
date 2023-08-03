@@ -3,11 +3,13 @@ package com.gxa.jbgsw.admin.controller;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.TalentPoolFeignApi;
+import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.client.BillboardTalentRelatedApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
@@ -17,6 +19,7 @@ import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +38,10 @@ public class TalentPoolFontController extends BaseController {
     StringRedisTemplate stringRedisTemplate;
     @Resource
     BillboardTalentRelatedApi billboardTalentRelatedApi;
-
+    @Resource
+    UserFeignApi userFeignApi;
+    @Resource
+    MapperFacade mapperFacade;
 
     @ApiOperation(value = "批量删除帅才", notes = "批量删除帅才")
     @PostMapping("/talent/pool/deleteBatchIds")
@@ -49,6 +55,21 @@ public class TalentPoolFontController extends BaseController {
         talentPoolDTO.setCreateBy(this.getUserId());
 
         talentPoolFeignApi.add(talentPoolDTO);
+
+        /**
+         * 分配一个账号
+         * 先判断手机号是否注册，如果没有注册则注册
+         */
+        UserDTO user = userFeignApi.getUserByMobile(talentPoolDTO.getMobie());
+        if(user == null){
+            UserDTO userDTO = mapperFacade.map(talentPoolDTO, UserDTO.class);
+            userDTO.setNick(talentPoolDTO.getName());
+            userDTO.setAvatar(talentPoolDTO.getPhoto());
+            // 设置默认密码: 123456
+            userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+
+            userFeignApi.add(userDTO);
+        }
     }
 
     @ApiOperation("编辑帅才信息")

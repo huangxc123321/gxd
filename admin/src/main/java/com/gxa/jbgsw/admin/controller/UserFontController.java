@@ -25,7 +25,6 @@ public class UserFontController extends BaseController {
     UserFeignApi userFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
-    static final String defalutMd5Password = "e10adc3949ba59abbe56e057f20f883e";
 
     @ApiOperation("获取用户列表")
     @PostMapping("/user/pageQuery")
@@ -69,7 +68,7 @@ public class UserFontController extends BaseController {
 
         userDTO.setCreateBy(this.getUserId());
         // 设置默认密码: 123456
-        userDTO.setPassword(defalutMd5Password);
+        userDTO.setPassword(ConstantsUtils.defalutMd5Password);
         userFeignApi.add(userDTO);
     }
 

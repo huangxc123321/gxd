@@ -5,16 +5,20 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.BillboardEconomicRelatedFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TechEconomicManFeignApi;
+import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.catalina.authenticator.Constants;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,7 +32,7 @@ public class TechEconomicManController extends BaseController {
     @Resource
     TechEconomicManFeignApi techEconomicManFeignApi;
     @Resource
-    BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
+    UserFeignApi userFeignApi;
     @Resource
     MapperFacade mapperFacade;
 
@@ -46,6 +50,21 @@ public class TechEconomicManController extends BaseController {
         techEconomicManDTO.setCreateAt(new Date());
 
         techEconomicManFeignApi.add(techEconomicManDTO);
+
+        /**
+         * 分配一个账号
+         * 先判断手机号是否注册，如果没有注册则注册
+         */
+        UserDTO user = userFeignApi.getUserByMobile(techEconomicManDTO.getMobile());
+        if(user == null){
+            UserDTO userDTO = mapperFacade.map(user, UserDTO.class);
+            userDTO.setNick(techEconomicManDTO.getName());
+            userDTO.setAvatar(techEconomicManDTO.getAvatar());
+            // 设置默认密码: 123456
+            userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+
+            userFeignApi.add(userDTO);
+        }
     }
 
     @ApiOperation("更新技术经纪人信息")
