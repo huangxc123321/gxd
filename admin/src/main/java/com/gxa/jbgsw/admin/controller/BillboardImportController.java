@@ -1,7 +1,9 @@
-package com.gxa.jbgsw.website.controller;
+package com.gxa.jbgsw.admin.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.gxa.jbgsw.admin.feignapi.BillboardFeignApi;
+import com.gxa.jbgsw.admin.feignapi.DictionaryTypeFeignApi;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.BillboardDTO;
@@ -9,8 +11,6 @@ import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
-import com.gxa.jbgsw.website.feignapi.BillboardFeignApi;
-import com.gxa.jbgsw.website.feignapi.DictionaryTypeFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -18,7 +18,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;

@@ -46,6 +46,6 @@ public interface BillboardApi {
     @PostMapping("/user/center/queryMyReceiveBillboard/")
     MyReceiveBillboardResponse queryMyReceiveBillboard(@RequestBody MyReceiveBillboardRequest request);
 
-    @PostMapping("/billboard/batchInsert")
+    @PostMapping(value = "/billboard/batchInsert",consumes = MediaType.APPLICATION_JSON_VALUE)
     void batchInsert(@RequestBody BillboardDTO[] batchList);
 }
