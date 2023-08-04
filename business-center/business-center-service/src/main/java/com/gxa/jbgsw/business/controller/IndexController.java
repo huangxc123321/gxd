@@ -9,11 +9,13 @@ import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.*;
+import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -57,19 +59,21 @@ public class IndexController implements IndexApi {
     public PageResult<BillboardIndexDTO> queryGovBillborads(SearchGovRequest searchGovRequest) {
         PageResult<BillboardIndexDTO> pageResult = billboardService.queryGovBillborads(searchGovRequest);
 
-        List<BillboardIndexDTO> billboards = pageResult.getList();
-        if(CollectionUtils.isNotEmpty(billboards)){
-            List<BillboardIndexDTO> responses = mapperFacade.mapAsList(billboards, BillboardIndexDTO.class);
-            responses.forEach(s->{
-                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
-                if(dictionaryDTO != null){
-                    // 工信大类名称
-                    s.setCategoriesName(dictionaryDTO.getDicValue());
-                }
-                // 状态名称
-                s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
-            });
-            pageResult.setList(responses);
+        if(pageResult != null){
+            List<BillboardIndexDTO> billboards = pageResult.getList();
+            if(CollectionUtils.isNotEmpty(billboards)){
+                List<BillboardIndexDTO> responses = mapperFacade.mapAsList(billboards, BillboardIndexDTO.class);
+                responses.forEach(s->{
+                    DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                    if(dictionaryDTO != null){
+                        // 工信大类名称
+                        s.setCategoriesName(dictionaryDTO.getDicValue());
+                    }
+                    // 状态名称
+                    s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
+                });
+                pageResult.setList(responses);
+            }
         }
 
         return pageResult;
@@ -79,21 +83,22 @@ public class IndexController implements IndexApi {
     public PageResult<BillboardIndexDTO> queryBizBillborads(SearchBizRequest searchGovRequest) {
         PageResult<BillboardIndexDTO> pageResult = billboardService.queryBizBillborads(searchGovRequest);
 
-        List<BillboardIndexDTO> billboards = pageResult.getList();
-        if(CollectionUtils.isNotEmpty(billboards) && billboards.size()>0 ){
-            List<BillboardIndexDTO> responses = mapperFacade.mapAsList(billboards, BillboardIndexDTO.class);
-            responses.forEach(s->{
-                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
-                if(dictionaryDTO != null){
-                    // 工信大类名称
-                    s.setCategoriesName(dictionaryDTO.getDicValue());
-                }
-                // 状态名称
-                s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
-            });
-            pageResult.setList(responses);
+        if(pageResult != null){
+            List<BillboardIndexDTO> billboards = pageResult.getList();
+            if(CollectionUtils.isNotEmpty(billboards) && billboards.size()>0 ){
+                List<BillboardIndexDTO> responses = mapperFacade.mapAsList(billboards, BillboardIndexDTO.class);
+                responses.forEach(s->{
+                    DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                    if(dictionaryDTO != null){
+                        // 工信大类名称
+                        s.setCategoriesName(dictionaryDTO.getDicValue());
+                    }
+                    // 状态名称
+                    s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
+                });
+                pageResult.setList(responses);
+            }
         }
-
         return pageResult;
     }
 
@@ -130,6 +135,16 @@ public class IndexController implements IndexApi {
         if(CollectionUtils.isNotEmpty(relateHavests)){
             relateDTO.setHavests(relateHavests);
         }else{
+            // 如果没有数据，就默认的取
+            Billboard billboard = billboardService.getById(id);
+            List<Harvest>  harvests = harvestService.getHarvesByTechDomain(billboard.getTechKeys());
+            if(CollectionUtils.isNotEmpty(harvests)){
+                if(harvests.size()>=3){
+                    harvests = harvests.subList(0,2);
+                    List<RelateHavestDTO> havestDTOList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
+                    relateDTO.setHavests(havestDTOList);
+                }
+            }
 
         }
 

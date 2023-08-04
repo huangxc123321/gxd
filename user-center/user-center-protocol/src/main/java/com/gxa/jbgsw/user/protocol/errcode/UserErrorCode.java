@@ -23,4 +23,6 @@ public class UserErrorCode {
 
     public static final ResultCode QR_CODE_EXPIRE = new ResultCode(1014, "二维码已失效");
     public static final ResultCode QR_CODE_2 = new ResultCode(1015, "二维码已确认");
+
+    public static final ResultCode CHATGPT_MESSAGE_IS_NULL = new ResultCode(1016, "消息不能为空");
 }

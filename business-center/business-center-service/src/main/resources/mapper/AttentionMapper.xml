@@ -5,7 +5,14 @@
 <select id="getMyAttentionInfos" resultType="com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo"
         parameterType="com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest">
 
-
+         SELECT
+            a.id,
+            b.`name`,
+            b.logo
+        FROM
+            t_attention AS a
+        LEFT JOIN t_company AS b ON a.pid = b.id
+        WHERE a.user_id =  #{createBy} AND a.type = 0
 
 
 </select>
@@ -26,6 +33,43 @@
             AND date_sub(CURDATE(), interval 1 month) <![CDATA[ < ]]> b.create_at
             order by b.create_at desc
 </select>
+
+
+    <select id="getMyAttentionTalentInfos" resultType="com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo"
+            parameterType="com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest">
+
+        SELECT
+            a.id,
+            b.`name`,
+            b.unit_name AS unitName,
+            b.professional,
+            b.job,
+            b.photo,
+            b.research_direction AS harvest,
+            b.tech_domain AS techDomain
+        FROM
+            t_attention AS a
+        LEFT JOIN t_talent_pool AS b ON a.pid = b.id
+        where a.user_id = #{createBy} and a.type = 2
+
+    </select>
+
+
+    <select id="getMyBuzAttentionInfos" resultType="com.gxa.jbgsw.business.protocol.dto.MyAttentionInfo"
+            parameterType="com.gxa.jbgsw.business.protocol.dto.MyAttentionRequest">
+
+         SELECT
+            a.id,
+            b.`name`,
+            b.logo
+        FROM
+            t_attention AS a
+        LEFT JOIN t_company AS b ON a.pid = b.id
+        WHERE a.user_id =  #{createBy} AND a.type = 1
+
+    </select>
+
+
 
 
 </mapper>

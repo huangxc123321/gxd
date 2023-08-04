@@ -10,6 +10,7 @@ import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -42,11 +43,16 @@ public class MyResultController extends BaseController {
     @ApiOperation("获取我的成果列表")
     @PostMapping("/havest/pageQuery")
     PageResult<HarvestResponse> pageQuery(@RequestBody MyHarvestRequest myHarvestRequest){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         HarvestRequest harvestRequest = new HarvestRequest();
-        harvestRequest.setCreateBy(this.getUserId());
+        harvestRequest.setCreateBy(userId);
         harvestRequest.setPageNum(myHarvestRequest.getPageNum());
         harvestRequest.setPageSize(myHarvestRequest.getPageSize());
-        PageResult<HarvestResponse> pageResult = havestFeignApi.pageQuery(harvestRequest);
+        PageResult<HarvestResponse> pageResult = havestFeignApi.pageMyHarvestQuery(harvestRequest);
         log.info("Result：{}", JSONObject.toJSONString(pageResult));
 
         return pageResult;
@@ -94,7 +100,7 @@ public class MyResultController extends BaseController {
         List<HavestCollaborateDTO> havestCollaborates = collaborateFeignApi.getHavestCollaborates(id);
         if(havestCollaborates != null){
             havestCollaborates.stream().forEach(s->{
-                s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus()));
+                s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus() == null ? 0 : s.getStatus()));
 
                 String mode = s.getMode();
                 String[] modes = mode.split(",");
@@ -118,12 +124,22 @@ public class MyResultController extends BaseController {
     @ApiOperation("修改成果信息")
     @PostMapping("/havest/update")
     void update(@RequestBody HavestDTO havestDTO) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         havestFeignApi.update(havestDTO);
     }
 
     @ApiOperation(value = "删除成果", notes = "删除成果")
     @PostMapping("/havest/deleteBatchIds")
     public void deleteBatchIds(@RequestBody Long[] ids){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         havestFeignApi.deleteBatchIds(ids);
     }
 

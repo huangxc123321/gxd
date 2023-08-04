@@ -22,4 +22,8 @@ public interface AttentionMapper extends BaseMapper<Attention> {
     List<MyAttentionInfo> getMyAttentionInfos(MyAttentionRequest myAttentionRequest);
 
     List<AttentionDynamicDTO> getDynamicInfo(@Param("userId") Long userId);
+
+    List<MyAttentionInfo> getMyAttentionTalentInfos(MyAttentionRequest myAttentionRequest);
+
+    List<MyAttentionInfo> getMyBuzAttentionInfos(MyAttentionRequest myAttentionRequest);
 }

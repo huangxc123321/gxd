@@ -59,6 +59,10 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     @Override
     public MyBillboardEconomicManDTO getMyEconomicMan(Long billboardId) {
         BillboardEconomicRelated billboardEconomicRelated = billboardEconomicRelatedService.getMyEconomicMan(billboardId);
+        if(billboardEconomicRelated != null){
+            MyBillboardEconomicManDTO myBillboardEconomicManDTO = mapperFacade.map(billboardEconomicRelated, MyBillboardEconomicManDTO.class);
+            return myBillboardEconomicManDTO;
+        }
 
         return null;
     }

@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -98,5 +99,19 @@ public class UserController implements UserApi {
         lambdaQueryWrapper.in(User::getId, ids);
         List<User> users = userService.list(lambdaQueryWrapper);
         return mapperFacade.mapAsList(users, UserResponse.class);
+    }
+
+    @Override
+    public UserDTO getUserByMobile(String mobie) {
+        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(User::getMobile, mobie);
+
+        List<User> users = userService.list(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(users)){
+            User user = users.get(0);
+            UserDTO userDTO = mapperFacade.map(user, UserDTO.class);
+            return userDTO;
+        }
+        return null;
     }
 }

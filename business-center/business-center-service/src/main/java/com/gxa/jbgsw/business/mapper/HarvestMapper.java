@@ -21,4 +21,6 @@ public interface HarvestMapper extends BaseMapper<Harvest> {
     List<Harvest> pageQuery(HarvestRequest request);
 
     List<SearchHavestResponse> queryHarvests(SearchHarvestsRequest searchHarvestsRequest);
+
+    List<Harvest> pageMyHarvestQuery(HarvestRequest request);
 }

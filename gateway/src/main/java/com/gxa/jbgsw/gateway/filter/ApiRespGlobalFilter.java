@@ -49,6 +49,7 @@ public class ApiRespGlobalFilter implements GlobalFilter, Ordered {
         if (path.contains("websocket")) {
             return chain.filter(exchange);
         }
+
         //获取response的 返回数据
         ServerHttpResponse response = exchange.getResponse();
 

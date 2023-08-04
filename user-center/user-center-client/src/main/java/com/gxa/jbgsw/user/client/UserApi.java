@@ -38,5 +38,8 @@ public interface UserApi {
 
     @PostMapping(value = "/user/getUserByIds")
     List<UserResponse> getUserByIds(@RequestBody Long[]  ids);
+
+    @GetMapping("/user/getUserByMobile")
+    UserDTO getUserByMobile(@RequestParam("mobie")String mobie);
 }
 

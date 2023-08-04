@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.gxa.jbgsw.basis.mapper.LeaveWordsMapper">
+
+    <select id="pageQuery" parameterType="com.gxa.jbgsw.basis.protocol.dto.LeaveWordsRequest"
+             resultType="com.gxa.jbgsw.basis.entity.LeaveWords" >
+
+        SELECT
+            a.id,
+            a.`code`,
+            a.content,
+            a.create_at AS createAt,
+            a.mobile,
+            a.`name`,
+            a.remark,
+            a.reply
+        FROM
+            t_leave_words AS a
+        WHERE
+           1 = 1
+
+            <if test="searchFiled != null and searchFiled != '' ">
+                AND (a.content = #{searchFiled} OR a.`name` = #{searchFiled})
+            </if>
+
+            <if test="reply != null">
+                AND a.`reply` = #{reply}
+            </if>
+
+            <if test="startDate != null and startDate != '' ">
+                AND a.create_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+                AND a.create_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+            </if>
+
+           ORDER BY a.create_at DESC
+
+
+    </select>
+
+</mapper>

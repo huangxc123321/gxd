@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+
 /**
  * @author huangxc
  */
@@ -42,5 +44,8 @@ public interface BillboardApi {
     void updateMyBillboard(@RequestBody BillboardDTO billboardDTO);
 
     @PostMapping("/user/center/queryMyReceiveBillboard/")
-    MyReceiveBillboardResponse queryMyReceiveBillboard(MyReceiveBillboardRequest request);
+    MyReceiveBillboardResponse queryMyReceiveBillboard(@RequestBody MyReceiveBillboardRequest request);
+
+    @PostMapping("/billboard/batchInsert")
+    void batchInsert(@RequestBody BillboardDTO[] batchList);
 }

@@ -342,12 +342,11 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         return billboards;
     }
 
-
-
-
-
-
-
+    @Override
+    public void batchInsert(List<BillboardDTO> batchList) {
+        List<Billboard> billboards = mapperFacade.mapAsList(batchList, Billboard.class);
+        this.saveBatch(billboards);
+    }
 
 
 }

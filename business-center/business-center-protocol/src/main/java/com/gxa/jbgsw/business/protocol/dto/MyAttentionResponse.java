@@ -13,13 +13,13 @@ public class MyAttentionResponse implements Serializable {
     List<MyAttentionInfo> billboards;
 
     @ApiModelProperty(value = "我关注的政府部门总数")
-    Integer govNum;
+    Integer govNum = 0;
 
     @ApiModelProperty(value = "我关注的企业总数")
-    Integer busBuzNum;
+    Integer busBuzNum = 0;
 
     @ApiModelProperty(value = "我关注的帅才总数")
-    Integer talentNum;
+    Integer talentNum = 0;
 
     @ApiModelProperty(notes = "页数（默认1）")
     private Integer pageNum;

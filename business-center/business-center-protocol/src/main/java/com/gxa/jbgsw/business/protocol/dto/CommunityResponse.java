@@ -16,16 +16,13 @@ public class CommunityResponse implements Serializable {
     @ApiModelProperty(value = "类型：0 文章  1 视频")
     private Integer type;
 
-    @ApiModelProperty(value = "类型名称：0 文章  1 视频")
-    private String typeName;
-
     @ApiModelProperty(value = "分享标题")
     private String title;
 
     @ApiModelProperty(value = "分享内容")
     private String content;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy/MM/dd",timezone = "GMT+8")
     @ApiModelProperty(value = "分享时间")
     private Date createAt;
 

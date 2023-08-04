@@ -15,6 +15,7 @@ import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
+import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import io.swagger.annotations.Api;
@@ -28,9 +29,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * @author huangxc
@@ -43,6 +46,8 @@ public class BillboardController implements BillboardApi {
     BillboardService billboardService;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    CompanyService companyService;
     @Resource
     MapperFacade mapperFacade;
     @Resource
@@ -71,6 +76,15 @@ public class BillboardController implements BillboardApi {
                 .append(billboard.getCityName()).append(CharUtil.COMMA)
                 .append(billboard.getAreaName());
         billboard.setQueryKeys(sb.toString());
+
+        // 如果是企业榜，看发布人是否为空， 如果不为空看是否可以查询到企业，如果能够查到，就吧图片加入
+        if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(billboardDTO.getType())
+                && StrUtil.isNotBlank(billboardDTO.getUnitName())){
+            CompanyDTO companyDTO = companyService.getCompanyByName(billboardDTO.getUnitName());
+            if(companyDTO != null){
+                billboard.setUnitLogo(companyDTO.getLogo());
+            }
+        }
 
         billboardService.save(billboard);
 
@@ -231,6 +245,12 @@ public class BillboardController implements BillboardApi {
         }
 
         return response;
+    }
+
+    @Override
+    public void batchInsert(BillboardDTO[] batchList) {
+        List<BillboardDTO> list = Arrays.stream(batchList).collect(Collectors.toList());
+        billboardService.batchInsert(list);
     }
 }
 

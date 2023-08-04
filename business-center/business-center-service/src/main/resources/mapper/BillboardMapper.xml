@@ -54,7 +54,7 @@
         </if>
 
         <if test="searchFiled != null and searchFiled != '' ">
-            AND a.title like CONCAT('%',#{searchFiled},'%')
+            AND a.query_keys like CONCAT('%',#{searchFiled},'%')
         </if>
 
         <if test="addrId != null and addrId != '' ">
@@ -92,7 +92,7 @@
         1 = 1
 
         <if test="searchFiled != null and searchFiled != '' ">
-            AND a.title like CONCAT('%',#{searchFiled},'%')
+            AND a.query_keys like CONCAT('%',#{searchFiled},'%')
         </if>
 
         <if test="addrId != null and addrId != '' ">
@@ -212,12 +212,12 @@
             a.create_at AS createAt
         FROM
             t_billboard a
-        WHERE
-        <if test="createBy != null and createBy != '' ">
-            a.create_by = #{createBy}#
+        WHERE 1 = 1
+        <if test="userId != null and userId != '' ">
+            AND a.create_by = #{userId}#
         </if>
         <if test="type != null">
-            a.type = #{type}
+            AND a.type = #{type}
         </if>
 
         ORDER BY a.create_at DESC
@@ -281,7 +281,7 @@
             </if>
 
             <if test="searchFiled != null and searchFiled != '' ">
-                AND a.title like CONCAT('%',#{searchFiled},'%')
+                AND a.query_keys like CONCAT('%',#{searchFiled},'%')
             </if>
 
             <if test="addrId != null and addrId != '' ">

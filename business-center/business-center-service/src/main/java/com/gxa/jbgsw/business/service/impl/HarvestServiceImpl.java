@@ -100,4 +100,16 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
 
         return null;
     }
+
+    @Override
+    public PageResult<Harvest> pageMyHarvestQuery(HarvestRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<Harvest> harvests = harvestMapper.pageMyHarvestQuery(request);
+        PageInfo<Harvest> pageInfo = new PageInfo<>(harvests);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<Harvest>>() {
+        }.build(), new TypeBuilder<PageResult<Harvest>>() {}.build());
+    }
 }

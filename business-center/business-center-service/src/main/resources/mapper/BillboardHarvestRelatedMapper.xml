@@ -39,14 +39,14 @@
              LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
              LEFT JOIN t_harvest AS c ON a.harvest_id = c.id
         WHERE
-            a.harvest_id = #{harvestId}
+            a.harvest_id = #{harvestId}  and b.id is not null
 
             ORDER BY a.create_at DESC
     </select>
 
    <select id="getHarvestByHarvestId" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardResponse">
        SELECT
-        b. NAME,
+        b.title,
         b.content,
         b.unit_name AS unitName,
         b.start_at AS startAt,
@@ -67,7 +67,7 @@
             resultType="com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse">
 
     SELECT
-        b.title,
+        b.title AS name,
         b.content,
         b.unit_name AS unitName,
         b.start_at AS startAt,

@@ -3,7 +3,9 @@ package com.gxa.jbgsw.website.controller;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.BillboardFeignApi;
 import com.gxa.jbgsw.website.feignapi.BillboardGainFeignApi;
 import io.swagger.annotations.Api;
@@ -30,7 +32,12 @@ public class MyReceiveBillboardController extends BaseController {
     @ApiOperation("获取我揭榜的榜单列表")
     @PostMapping("/user/center/queryMyReceiveBillboard")
     MyReceiveBillboardResponse queryMyReceiveBillboard(@RequestBody MyReceiveBillboardRequest request){
-        request.setUserId(this.getUserId());
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
+        request.setUserId(userId);
         MyReceiveBillboardResponse response = billboardFeignApi.queryMyReceiveBillboard(request);
 
         return response;

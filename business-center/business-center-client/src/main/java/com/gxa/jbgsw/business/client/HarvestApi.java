@@ -33,11 +33,14 @@ public interface HarvestApi {
     List<HavestDTO> getHarvesByHolder(@RequestParam("holder") String holder);
 
     @GetMapping("/harvest/detail")
-    DetailInfoDTO detail(@RequestParam("id") Long id);
+    HavestDetailInfo detail(@RequestParam("id") Long id);
 
     @GetMapping("/harvest/getCompanyById")
     HavestDTO getHavestById(@RequestParam("id")  Long id);
 
     @GetMapping("/harvest/getRecommendHavest")
     List<RecommendHavestResponse> getRecommendHavest();
+
+    @PostMapping("/harvest/pageMyHarvestQuery")
+    PageResult<HarvestResponse> pageMyHarvestQuery(@RequestBody HarvestRequest request);
 }

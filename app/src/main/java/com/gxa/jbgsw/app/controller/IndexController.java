@@ -73,7 +73,7 @@ public class IndexController extends BaseController {
     @ApiOperation("获取某个成果信息")
     @GetMapping("/index/getHavestById")
     DetailInfoDTO getHavestById(@RequestParam(value = "id") Long id) {
-        return havestFeignApi.detail(id);
+        return null;
     }
 
     @ApiOperation("搜索帅才")

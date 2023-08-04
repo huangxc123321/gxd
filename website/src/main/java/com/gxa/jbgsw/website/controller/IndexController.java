@@ -17,8 +17,6 @@ import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
@@ -155,9 +153,10 @@ public class IndexController extends BaseController {
     }
     @ApiOperation("获取某个成果信息")
     @GetMapping("/index/getHavestById")
-    DetailInfoDTO getHavestById(@RequestParam(value = "id") Long id) {
-        DetailInfoDTO detailInfoDTO = havestFeignApi.detail(id);
+    ApiResult<HavestDetailInfo> getHavestById(@RequestParam(value = "id") Long id) {
+        ApiResult<HavestDetailInfo>  apiResult = new ApiResult<>();
 
+        HavestDetailInfo havestDetailInfo = havestFeignApi.detail(id);
         // 判断是否收藏
         Long userId = this.getUserId();
         if(userId != null){
@@ -167,11 +166,12 @@ public class IndexController extends BaseController {
 
             collectionDTO = collectionFeignApi.getCollection(id, userId, collectionType);
             if(collectionDTO != null){
-                detailInfoDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
+                havestDetailInfo.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
             }
         }
+        apiResult.setData(havestDetailInfo);
 
-        return detailInfoDTO;
+        return apiResult;
     }
 
     @ApiOperation("搜索帅才")
@@ -191,9 +191,11 @@ public class IndexController extends BaseController {
         return pageResult;
     }
     @ApiOperation("获取某个帅才信息")
-    @GetMapping("/index/getTalentById")
-    TalentPoolDTO getTalentById(@RequestParam(value = "id") Long id) {
-        TalentPoolDTO telentPoolDTO = talentPoolFeignApi.getTalentPoolById(id);
+    @GetMapping("/index/getTalentPoolDetailInfo")
+    ApiResult<TalentPoolDetailInfo> getTalentPoolDetailInfo(@RequestParam(value = "id") Long id) {
+        ApiResult<TalentPoolDetailInfo> apiResult = new ApiResult<>();
+
+        TalentPoolDetailInfo telentPoolDTO = talentPoolFeignApi.getTalentPoolDetailInfo(id);
         // 判断是否收藏
         Long userId = this.getUserId();
         if(userId != null){
@@ -206,8 +208,9 @@ public class IndexController extends BaseController {
                 telentPoolDTO.setAttentionStatus(AttentionStatusEnum.ATTENTION.getCode());
             }
         }
+        apiResult.setData(telentPoolDTO);
 
-        return telentPoolDTO;
+        return apiResult;
     }
 
     @ApiOperation("搜索技术经纪人")
@@ -249,7 +252,7 @@ public class IndexController extends BaseController {
         List<SearchNewsResponse> responses = pageResult.getList();
         if(responses != null && responses.size()> 0){
             responses.stream().forEach(s->{
-
+                s.setTypeName(NewsTypeEnum.getNameByIndex(s.getType()));
             });
         }
 

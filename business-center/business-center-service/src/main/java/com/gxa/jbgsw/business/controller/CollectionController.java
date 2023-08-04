@@ -65,7 +65,7 @@ public class CollectionController implements CollectionApi {
                  // 收藏类型： 0政府榜 1企业榜 2成果 3政策
                  if(CollectionTypeEnum.GOV.getCode().equals(collectionType)){
                      // 数量
-                     myCollectionResponse.setGovBillboardsNum(myCollectionResponse.getGovBillboardsNum() + 1);
+                     myCollectionResponse.setGovBillboardsNum(myCollectionResponse.getGovBillboardsNum() == null ? 0 : myCollectionResponse.getGovBillboardsNum().intValue() + 1);
                      // 我收藏的政府榜
                      List<MyCollectionBillboardResponse> responses
                              = collectionService.getMyCollectionBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
@@ -74,7 +74,7 @@ public class CollectionController implements CollectionApi {
                  }
 
                  else if(CollectionTypeEnum.BUZ.getCode().equals(collectionType)){
-                     myCollectionResponse.setBuzBillboardsNum(myCollectionResponse.getBuzBillboardsNum() + 1);
+                     myCollectionResponse.setBuzBillboardsNum(myCollectionResponse.getBuzBillboardsNum() == null ? 0 : myCollectionResponse.getBuzBillboardsNum().intValue() + 1);
                      // 我收藏的政府榜
                      List<MyCollectionBillboardResponse> responses
                              = collectionService.getMyCollectionBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
@@ -82,14 +82,14 @@ public class CollectionController implements CollectionApi {
                  }
 
                  else if(CollectionTypeEnum.HAVEST.getCode().equals(collectionType)){
-                     myCollectionResponse.setHavestBillboardsNum(myCollectionResponse.getHavestBillboardsNum() + 1);
+                     myCollectionResponse.setHavestBillboardsNum(myCollectionResponse.getHavestBillboardsNum() == null ? 0 : myCollectionResponse.getHavestBillboardsNum().intValue() + 1);
                      List<MyHavestBillboardResponse> havestBillboardResponses
                              = collectionService.getMyHavestBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
                      myCollectionResponse.setHavestBillboards(havestBillboardResponses);
                  }
 
                  else if(CollectionTypeEnum.POC.getCode().equals(collectionType)){
-                     myCollectionResponse.setPolicyNum(myCollectionResponse.getPolicyNum() + 1);
+                     myCollectionResponse.setPolicyNum(myCollectionResponse.getPolicyNum() == null ? 0 : myCollectionResponse.getPolicyNum().intValue() + 1);
                      List<MypolicyResponse> policys = collectionService.getPolicys(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
                      myCollectionResponse.setPolicys(policys);
                  }

@@ -52,7 +52,11 @@ public class LoginController implements LoginApi {
         // 发送短信的类型：type: 0 验证, 1 其它
         smsMessageDTO.setType(0);
 
-        long code = this.rand();
+        // long code = this.rand();
+
+        // TODO: 2023/8/2 0002
+        //// 为测试需要，
+        long code = 6666L;
         System.out.println("code: "+code);
 
         smsMessageDTO.setContent(String.valueOf(code));

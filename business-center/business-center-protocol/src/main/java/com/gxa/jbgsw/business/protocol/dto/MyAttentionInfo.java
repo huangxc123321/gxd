@@ -8,6 +8,9 @@ import java.io.Serializable;
 @Data
 public class MyAttentionInfo implements Serializable {
 
+    @ApiModelProperty(value = "关注ID")
+    private Long id;
+
     @ApiModelProperty(value = "名称（政府/企业/帅才）")
     private String name;
 

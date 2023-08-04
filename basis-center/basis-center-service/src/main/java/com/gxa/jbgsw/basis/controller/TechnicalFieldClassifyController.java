@@ -6,6 +6,7 @@ import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.service.TechnicalFieldClassifyService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
+import ma.glasnost.orika.MapperFacade;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -17,6 +18,8 @@ import java.util.List;
 public class TechnicalFieldClassifyController implements TechnicalFieldClassifyApi {
     @Resource
     TechnicalFieldClassifyService technicalFieldClassifyService;
+    @Resource
+    MapperFacade mapperFacade;
 
     @Override
     public List<TechnicalFieldClassifyDTO> getAll() {
@@ -26,5 +29,11 @@ public class TechnicalFieldClassifyController implements TechnicalFieldClassifyA
     @Override
     public List<TechnicalFieldClassifyDTO> getAllById(Long pid) {
         return technicalFieldClassifyService.getAllById(pid);
+    }
+
+    @Override
+    public TechnicalFieldClassifyDTO getById(Long id) {
+        TechnicalFieldClassify technicalFieldClassify = technicalFieldClassifyService.getById(id);
+        return mapperFacade.map(technicalFieldClassify, TechnicalFieldClassifyDTO.class);
     }
 }

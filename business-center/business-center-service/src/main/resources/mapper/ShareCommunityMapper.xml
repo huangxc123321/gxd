@@ -73,7 +73,7 @@
         a.origin,
         a.create_at createAt,
         a.likes,
-        a.views,
+        a.views
         FROM
         t_share_community AS a
         WHERE 1 = 1

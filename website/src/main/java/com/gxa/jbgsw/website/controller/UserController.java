@@ -3,6 +3,7 @@ package com.gxa.jbgsw.website.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UpdatePasswordDTO;
@@ -28,7 +29,6 @@ public class UserController extends BaseController {
     UserFeignApi userFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
-    static final String defalutMd5Password = "e10adc3949ba59abbe56e057f20f883e";
 
     @ApiOperation("通过id获取用户信息")
     @GetMapping("/user/getUserById")
@@ -52,16 +52,14 @@ public class UserController extends BaseController {
         }
 
         // 判断手机号码是否注册
-        UserRequest userRequest = new UserRequest();
-        userRequest.setSearchFiled(userDTO.getMobile());
-        PageResult<UserResponse> pageResult = userFeignApi.pageQuery(userRequest);
-        if(pageResult.getTotal()>0){
+        UserDTO existUserDTO = userFeignApi.getUserByMobile(userDTO.getMobile());
+        if(existUserDTO != null){
             throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);
         }
 
         userDTO.setCreateBy(this.getUserId());
         // 设置默认密码: 123456
-        userDTO.setPassword(defalutMd5Password);
+        userDTO.setPassword(ConstantsUtils.defalutMd5Password);
         userFeignApi.add(userDTO);
     }
 

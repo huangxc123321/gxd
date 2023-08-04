@@ -15,4 +15,6 @@ public interface CompanyService extends IService<Company> {
     void updateCompany(CompanyDTO companyDTO);
 
     PageResult<Company> pageQuery(CompanyRequest request);
+
+    CompanyDTO getCompanyByName(String unitName);
 }

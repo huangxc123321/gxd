@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -15,6 +16,7 @@ import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -64,5 +66,20 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         pageResult.setList(responses);
 
         return pageResult;
+    }
+
+    @Override
+    public CompanyDTO getCompanyByName(String unitName) {
+        LambdaQueryWrapper<Company> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Company::getName, unitName);
+        lambdaQueryWrapper.last("LIMIT 1");
+
+        List<Company> companies =  companyMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(companies)){
+            Company company = companies.get(0);
+            return mapperFacade.map(company, CompanyDTO.class);
+        }
+
+        return null;
     }
 }

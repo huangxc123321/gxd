@@ -56,11 +56,17 @@ public class TalentPoolDTO implements Serializable {
     @ApiModelProperty(value = "职称")
     private Long professional;
 
+    @ApiModelProperty(value = "职称中文名称")
+    private String professionalName;
+
     @ApiModelProperty(value = "个人简介")
     private String remark;
 
     @ApiModelProperty(value = "技术领域：字典")
     private Long techDomain;
+
+    @ApiModelProperty(value = "技术领域中文名称")
+    private String techDomainName;
 
     @ApiModelProperty(value = "研究方向")
     private String researchDirection;

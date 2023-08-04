@@ -5,13 +5,27 @@ skip:
     - /admin/get/validate/code
     - /app/user/add
     - /app/login
+    - /web/qr/initQRCodeInfo
+    - /web/index/getIndex
+    - /web/index/searchNews
+    - /web/dictionary/getDictionaryByCode
+    - /web/qr/initQRCodeInfo
 
 webauth:
   url:
     - /web/index/addBillboardGain
     - /web/collection/add
     - /web/collaborate/add
-
+    - /web/user/center/queryMyPublish
+    - /web/user/center/addMyBillboard
+    - /web/user/center/updateMyBillboard
+    - /web/user/center/addAppraise
+    - /web/user/center/deleteMyBillboard
+    - /web/attention/pageQuery
+    - /web/attention/add
+    - /web/collection/pageQuery
+    - /web/collection/deleteById
+    - /web/havest/pageQuery
 
 # Tomcat
 server:

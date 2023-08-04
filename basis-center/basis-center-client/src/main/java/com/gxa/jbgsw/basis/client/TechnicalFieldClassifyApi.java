@@ -18,4 +18,6 @@ public interface TechnicalFieldClassifyApi {
     @GetMapping("/techical/field/classify/getAllById")
     List<TechnicalFieldClassifyDTO> getAllById(@RequestParam("pid") Long pid);
 
+    @GetMapping("/techical/field/classify/getById")
+    TechnicalFieldClassifyDTO getById(@RequestParam("id") Long id);
 }

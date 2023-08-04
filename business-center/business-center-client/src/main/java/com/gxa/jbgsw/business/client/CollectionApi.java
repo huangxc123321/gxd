@@ -25,7 +25,7 @@ public interface CollectionApi {
     @GetMapping("/collection/getCollection")
     CollectionDTO getCollection(@RequestParam("id") Long id, @RequestParam("userId") Long userId, @RequestParam("type") Integer type);
 
-    @GetMapping("/collection/queryMyCollections")
+    @PostMapping("/collection/queryMyCollections")
     MyCollectionResponse queryMyCollections(@RequestBody MyCollectionRequest myCollectionRequest);
 
     @GetMapping("/collection/deleteById")

@@ -38,6 +38,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "榜单发布单位")
     private String unitName;
 
+    @ApiModelProperty(value = "榜单发布单位图标")
+    private String unitLogo;
+
     @ApiModelProperty(value = "榜单标题")
     private String title;
 

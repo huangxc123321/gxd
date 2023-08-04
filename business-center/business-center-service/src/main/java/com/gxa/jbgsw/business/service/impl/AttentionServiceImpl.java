@@ -4,13 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.entity.Attention;
+import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.AttentionMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AttentionTypeEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.AttentionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -29,11 +33,16 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
     @Resource
     AttentionMapper attentionMapper;
     @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
     MapperFacade mapperFacade;
 
     @Override
     public MyAttentionResponse queryMyAttentions(MyAttentionRequest myAttentionRequest) {
         MyAttentionResponse response = new MyAttentionResponse();
+
+        // 获取该类型下的分页数据
+        PageHelper.startPage(myAttentionRequest.getPageNum(), myAttentionRequest.getPageSize());
 
         // 先统计另外类型的关注数量
         if(AttentionTypeEnum.GOV.getCode().equals(myAttentionRequest.getType())){
@@ -42,6 +51,9 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
             response.setBusBuzNum(bizNum);
             response.setTalentNum(talentNum);
+            List<MyAttentionInfo> attentionInfos = attentionMapper.getMyAttentionInfos(myAttentionRequest);
+            response.setBillboards(attentionInfos);
+
         }
         else if(AttentionTypeEnum.BUZ.getCode().equals(myAttentionRequest.getType())){
             Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
@@ -49,23 +61,30 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
             response.setGovNum(govNum);
             response.setTalentNum(talentNum);
+
+            List<MyAttentionInfo> attentionInfos = attentionMapper.getMyBuzAttentionInfos(myAttentionRequest);
+            response.setBillboards(attentionInfos);
+
         } else if(AttentionTypeEnum.TALENT.getCode().equals(myAttentionRequest.getType())){
             Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
             Integer buzNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.BUZ.getCode());
 
             response.setGovNum(govNum);
             response.setBusBuzNum(buzNum);
+
+            List<MyAttentionInfo> attentionInfos = attentionMapper.getMyAttentionTalentInfos(myAttentionRequest);
+            if(CollectionUtils.isNotEmpty(attentionInfos)){
+                attentionInfos.stream().forEach(s->{
+                    DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                    if(dictionaryDTO != null){
+                        s.setProfessionalName(dictionaryDTO.getDicValue());
+                    }
+                });
+            }
+            response.setBillboards(attentionInfos);
         }
 
-        // 获取该类型下的分页数据
-        PageHelper.startPage(myAttentionRequest.getPageNum(), myAttentionRequest.getPageSize());
-        List<MyAttentionInfo> attentionInfos = attentionMapper.getMyAttentionInfos(myAttentionRequest);
-
-
-
-
-
-        return null;
+        return response;
     }
 
     @Override

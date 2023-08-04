@@ -2,10 +2,13 @@ package com.gxa.jbgsw.business.controller;
 
 
 import cn.hutool.core.util.CharUtil;
+import com.gxa.jbgsw.basis.client.TechnicalFieldClassifyApi;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.client.HarvestApi;
 import com.gxa.jbgsw.business.entity.Harvest;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
+import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.HarvestService;
@@ -37,6 +40,8 @@ public class HarvestController implements HarvestApi {
     HarvestService harvestService;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
     @Resource
     MapperFacade mapperFacade;
 
@@ -92,8 +97,20 @@ public class HarvestController implements HarvestApi {
             sb.append(dictionaryDTO.getDicValue());
         }
         // 技术领域
-
-
+        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(havestDTO.getTechDomain()));
+        if(tfc1 != null){
+            sb.append(tfc1.getName());
+            sb.append(CharUtil.COMMA);
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+            if(tfc2 != null){
+                sb.append(tfc2.getName());
+                sb.append(CharUtil.COMMA);
+                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                if(tfc3 != null){
+                    sb.append(tfc3.getName());
+                }
+            }
+        }
         harvest.setQueryKeys(sb.toString());
         harvestService.save(harvest);
     }
@@ -123,10 +140,34 @@ public class HarvestController implements HarvestApi {
     }
 
     @Override
-    public DetailInfoDTO detail(Long id) {
-        // TODO: 2023/7/4 0004 待完成 
-        
-        return null;
+    public HavestDetailInfo detail(Long id) {
+        Harvest harvest = harvestService.getById(id);
+
+        HavestDetailInfo havestDetailInfo = mapperFacade.map(harvest, HavestDetailInfo.class);
+        // 技术领域
+        StringBuffer sb = new StringBuffer();
+        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(harvest.getTechDomain()));
+        if(tfc1 != null){
+            sb.append(tfc1.getName());
+            sb.append(CharUtil.COMMA);
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+            if(tfc2 != null){
+                sb.append(tfc2.getName());
+                sb.append(CharUtil.COMMA);
+                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                if(tfc3 != null){
+                    sb.append(tfc3.getName());
+                }
+            }
+        }
+        havestDetailInfo.setTechKeys(sb.toString().replace("所有分类,", ""));
+        // 成熟度
+        DictionaryDTO dicMaturityLevel = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(harvest.getMaturityLevel()));
+        if(dicMaturityLevel != null){
+            havestDetailInfo.setMaturityLevelName(dicMaturityLevel.getDicValue());
+        }
+
+        return havestDetailInfo;
     }
 
     @Override
@@ -140,6 +181,34 @@ public class HarvestController implements HarvestApi {
     @Override
     public List<RecommendHavestResponse> getRecommendHavest() {
         return harvestService.getRecommendHavest();
+    }
+
+    @Override
+    public PageResult<HarvestResponse> pageMyHarvestQuery(HarvestRequest request) {
+        PageResult<HarvestResponse> pages = new PageResult<>();
+
+        PageResult<Harvest> pageResult = harvestService.pageMyHarvestQuery(request);
+        List<Harvest> harvests = pageResult.getList();
+        if(CollectionUtils.isNotEmpty(harvests)){
+            List<HarvestResponse> responses = mapperFacade.mapAsList(harvests, HarvestResponse.class);
+            responses.forEach(s->{
+                // TODO: 2023/7/4 0004 暂时不转换
+
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(""));
+                if(dictionaryDTO != null){
+
+
+                }
+            });
+            pages.setList(responses);
+            pages.setPageNum(pageResult.getPageNum());
+            pages.setPages(pageResult.getPages());
+            pages.setPageSize(pageResult.getPageSize());
+            pages.setSize(pageResult.getSize());
+            pages.setTotal(pageResult.getTotal());
+        }
+
+        return pages;
     }
 
 }

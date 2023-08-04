@@ -11,5 +11,5 @@ public class BusinessErrorCode {
 
     public static final ResultCode BUSINESS_PARAMS_ERROR = new ResultCode(3001, "参数不正确");
     public static final ResultCode GOV_BILLBOARD_PUBLISH_ERROR = new ResultCode(3002, "政府榜单只能由政府部门来发布");
-
+    public static final ResultCode BUSINESS_PARAMS_DATE_ERROR = new ResultCode(3003, "有效期时间格式与规定的格式不一致");
 }

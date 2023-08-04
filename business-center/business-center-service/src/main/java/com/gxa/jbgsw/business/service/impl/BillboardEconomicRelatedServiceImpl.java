@@ -165,7 +165,7 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
         lambdaQueryWrapper.last("limit 1");
 
         List<BillboardEconomicRelated> relateds = billboardEconomicRelatedMapper.selectList(lambdaQueryWrapper);
-        if(relateds != null){
+        if(relateds != null && relateds.size()>0){
             return relateds.get(0);
         }
 

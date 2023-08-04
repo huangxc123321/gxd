@@ -48,4 +48,6 @@ public interface BillboardService extends IService<Billboard> {
     List<RelateHavestDTO> getRelatedHavestByBillboardId(Long id, int i);
 
     List<Billboard> getRelateBillboardByCategories(Integer categories, Integer type);
+
+    void batchInsert(List<BillboardDTO> batchList);
 }

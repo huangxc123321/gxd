@@ -31,6 +31,7 @@
             SELECT
                 a.id,
                 a.NAME,
+                a.unit_name AS unitName,
                 a.maturity_level AS maturityLevel,
                 a.tech_domain AS techDomain,
                 a.holder,
@@ -45,7 +46,7 @@
             WHERE
                 1 = 1
                 <if test="searchFiled != null and searchFiled != '' ">
-                    AND a.`name` LIKE CONCAT('%',#{searchFiled},'%')
+                    AND a.`query_keys` LIKE CONCAT('%',#{searchFiled},'%')
                 </if>
 
                 <if test="tradeType != null ">
@@ -63,6 +64,11 @@
                 <if test="holder != null and holder != '' ">
                     AND a.holder = '' LIKE CONCAT('%',#{holder},'%')
                 </if>
+
+                <if test="createBy != null ">
+                    AND a.create_by = #{createBy}
+                </if>
+
 
                 ORDER BY
                     a.create_at DESC
@@ -86,7 +92,7 @@
         WHERE
         1 = 1
         <if test="searchFiled != null and searchFiled != '' ">
-            AND a.`name` LIKE CONCAT('%',#{searchFiled},'%')
+            AND a.`query_keys` LIKE CONCAT('%',#{searchFiled},'%')
         </if>
 
         <if test="tradeType != null ">
@@ -105,6 +111,53 @@
         ORDER BY
         a.create_at DESC
     </select>
+
+
+
+    <select id="pageMyHarvestQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.HarvestRequest"
+            resultType="com.gxa.jbgsw.business.entity.Harvest" >
+        SELECT
+        a.id,
+        a.NAME,
+        a.unit_name AS unitName,
+        a.maturity_level AS maturityLevel,
+        a.tech_domain AS techDomain,
+        a.holder,
+        a.remark,
+        a.create_at AS createAt
+        FROM
+        t_harvest a
+        WHERE
+        1 = 1
+        <if test="searchFiled != null and searchFiled != '' ">
+            AND a.`query_keys` LIKE CONCAT('%',#{searchFiled},'%')
+        </if>
+
+        <if test="tradeType != null ">
+            AND a.trade_type =  #{tradeType}
+        </if>
+
+        <if test="techDomain != null and techDomain != '' ">
+            AND a.`tech_domain` LIKE CONCAT('%',#{techDomain},'%')
+        </if>
+
+        <if test="maturityLevel != null ">
+            AND a.maturity_level = #{maturityLevel}
+        </if>
+
+        <if test="holder != null and holder != '' ">
+            AND a.holder = '' LIKE CONCAT('%',#{holder},'%')
+        </if>
+
+        <if test="createBy != null ">
+            AND a.create_by = #{createBy}
+        </if>
+        ORDER BY
+        a.create_at DESC
+
+    </select>
+
+
 
 
 </mapper>

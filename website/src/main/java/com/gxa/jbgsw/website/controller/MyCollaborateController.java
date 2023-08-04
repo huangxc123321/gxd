@@ -9,6 +9,7 @@ import com.gxa.jbgsw.business.protocol.dto.MyBillboradCollaborateResponse;
 import com.gxa.jbgsw.business.protocol.enums.CollaborateTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.BillboardTalentRelatedFeignApi;
 import com.gxa.jbgsw.website.feignapi.CollaborateFeignApi;
 import com.gxa.jbgsw.website.feignapi.DictionaryFeignApi;
@@ -40,8 +41,13 @@ public class MyCollaborateController extends BaseController {
     @ApiOperation("新增合作")
     @PostMapping("/collaborate/add")
     void add(@RequestBody CollaborateDTO collaborateDTO) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         collaborateDTO.setEffectAt(new Date());
-        collaborateDTO.setLaunchUserId(this.getUserId());
+        collaborateDTO.setLaunchUserId(userId);
         collaborateDTO.setLaunchUserName(this.getUserNick());
         // 合作类型：0 成果合作  1 需求合作
         if(CollaborateTypeEnum.GAIN.getCode().equals(collaborateDTO.getType())){

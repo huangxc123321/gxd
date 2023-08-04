@@ -31,7 +31,12 @@ public class MyAttentionController extends BaseController {
     @ApiOperation("获取我的关注")
     @PostMapping("/attention/pageQuery")
     MyAttentionResponse pageQuery(@RequestBody MyAttentionRequest myAttentionRequest){
-        myAttentionRequest.setCreateBy(this.getUserId());
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
+        myAttentionRequest.setCreateBy(userId);
         MyAttentionResponse response = attentionFeignApi.queryMyAttentions(myAttentionRequest);
 
         return response;
