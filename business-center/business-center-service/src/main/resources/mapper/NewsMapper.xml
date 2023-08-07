@@ -10,7 +10,7 @@
 
         <result column="content" property="content" jdbcType="VARCHAR" />
         <result column="region_scope" property="regionScope" jdbcType="VARCHAR" />
-        <result column="from" property="from" jdbcType="VARCHAR" />
+        <result column="origin" property="origin" jdbcType="VARCHAR" />
 
         <result column="publish_at" property="publishAt" jdbcType="TIMESTAMP" />
         <result column="is_fixed" property="isFixed" jdbcType="INTEGER" />
@@ -46,7 +46,8 @@
         ORDER BY a.publish_at desc
     </select>
 
-    <select id="queryNews"  resultType="com.gxa.jbgsw.business.protocol.dto.SearchNewsResponse">
+    <select id="queryNews" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchNewsRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.SearchNewsResponse">
         SELECT
             a.content,
             a.id,
@@ -58,7 +59,21 @@
             t_news a
         WHERE
             a.`status` = 0
-            AND news_policy = #{type}
+            <if test="type != null ">
+                AND a.news_policy = #{type}
+            </if>
+            <if test="searchFiled != null and searchFiled != '' ">
+                AND a.title like CONCAT('%',#{searchFiled},'%')
+            </if>
+            <if test="address != null and address != '' ">
+                AND a.region_scope like CONCAT('%',#{address},'%')
+            </if>
+            <if test="startDate != null and startDate != '' ">
+                AND a.publish_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
+                AND a.publish_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
+            </if>
+            ORDER BY a.publish_at desc
+
     </select>
 
 

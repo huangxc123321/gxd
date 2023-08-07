@@ -36,4 +36,9 @@ public class TechEconomicManAppraiseController implements TechEconomicManApprais
     public PageResult<TechEconomicManAppraiseResponse> getAppraise(TechEconomicManAppraiseRequest request) {
         return techEconomicManAppraiseService.getAppraise(request);
     }
+
+    @Override
+    public void delete(Long id) {
+        techEconomicManAppraiseService.removeById(id);
+    }
 }

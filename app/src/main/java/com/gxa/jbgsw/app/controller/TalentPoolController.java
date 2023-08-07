@@ -1,9 +1,9 @@
 package com.gxa.jbgsw.app.controller;
 
-import com.gxa.jbgsw.app.feignapi.TalentPoolFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.app.feignapi.TalentPoolFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

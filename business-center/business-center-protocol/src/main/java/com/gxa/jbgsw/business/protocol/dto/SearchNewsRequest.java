@@ -15,4 +15,13 @@ public class SearchNewsRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "搜索字段")
     private String searchFiled;
 
+    @ApiModelProperty(value = "省份市地区的中文名称： 后台发表的时候是输入中文的，所以需要中文")
+    private String address;
+
+    @ApiModelProperty(value = "开始日期")
+    private String startDate;
+
+    @ApiModelProperty(value = "结束日期")
+    private String endDate;
+
 }

@@ -1,11 +1,13 @@
 package com.gxa.jbgsw.app.controller;
 
-import com.gxa.jbgsw.app.feignapi.BillboardFeignApi;
-import com.gxa.jbgsw.app.feignapi.BillboardGainFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainDTO;
 import com.gxa.jbgsw.business.protocol.dto.MyReceiveBillboardRequest;
 import com.gxa.jbgsw.business.protocol.dto.MyReceiveBillboardResponse;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
+import com.gxa.jbgsw.app.feignapi.BillboardFeignApi;
+import com.gxa.jbgsw.app.feignapi.BillboardGainFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -27,9 +29,14 @@ public class MyReceiveBillboardController extends BaseController {
 
 
     @ApiOperation("获取我揭榜的榜单列表")
-    @PostMapping("/user/center/queryMyReceiveBillboard/")
+    @PostMapping("/user/center/queryMyReceiveBillboard")
     MyReceiveBillboardResponse queryMyReceiveBillboard(@RequestBody MyReceiveBillboardRequest request){
-        request.setUserId(this.getUserId());
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
+        request.setUserId(userId);
         MyReceiveBillboardResponse response = billboardFeignApi.queryMyReceiveBillboard(request);
 
         return response;
@@ -43,6 +50,8 @@ public class MyReceiveBillboardController extends BaseController {
     public BillboardGainDTO myReceiveBillboardDetail(@RequestParam("id")Long id){
         return billboardGainFeignApi.getBillboardGainById(id);
     }
+
+
 
 
 }

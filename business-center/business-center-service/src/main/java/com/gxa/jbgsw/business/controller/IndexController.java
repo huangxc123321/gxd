@@ -1,5 +1,7 @@
 package com.gxa.jbgsw.business.controller;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.IndexApi;
 import com.gxa.jbgsw.business.entity.*;
@@ -14,6 +16,7 @@ import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.RestController;
@@ -290,6 +293,24 @@ public class IndexController implements IndexApi {
         pcIndexSearchResponse.setPolicys(pageResultNews.getList());
 
         return pcIndexSearchResponse;
+    }
+
+    @Override
+    public PageResult<SearchTeamsResponse> searchTeamRequest(CompanyRequest companyRequest) {
+        PageHelper.startPage(companyRequest.getPageNum(), companyRequest.getPageSize());
+        // 团队
+        PageResult<Company> pageResult = companyService.pageQuery(companyRequest);
+        if(pageResult.getList() !=null){
+            List<SearchTeamsResponse> searchTeamsResponses = mapperFacade.mapAsList(pageResult.getList(), SearchTeamsResponse.class);
+            PageInfo<SearchTeamsResponse> pageInfo = new PageInfo<>(searchTeamsResponses);
+
+            //类型转换
+            return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchTeamsResponse>>() {
+            }.build(), new TypeBuilder<PageResult<SearchTeamsResponse>>() {}.build());
+
+        }
+
+        return null;
     }
 
 

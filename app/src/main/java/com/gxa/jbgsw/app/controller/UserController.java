@@ -1,16 +1,14 @@
 package com.gxa.jbgsw.app.controller;
 
-import com.gxa.jbgsw.app.feignapi.UserFeignApi;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.ConstantsUtils;
-import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UpdatePasswordDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
-import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
+import com.gxa.jbgsw.app.feignapi.UserFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +33,7 @@ public class UserController extends BaseController {
         return userFeignApi.getUserById(id);
     }
 
-    @ApiOperation("新增或修改用户信息")
+    @ApiOperation("新增用户信息")
     @PostMapping("/user/add")
     void add(@RequestBody UserDTO userDTO) throws BizException {
         boolean isValidate = false;
@@ -51,10 +49,8 @@ public class UserController extends BaseController {
         }
 
         // 判断手机号码是否注册
-        UserRequest userRequest = new UserRequest();
-        userRequest.setSearchFiled(userDTO.getMobile());
-        PageResult<UserResponse> pageResult = userFeignApi.pageQuery(userRequest);
-        if(pageResult.getTotal()>0){
+        UserDTO existUserDTO = userFeignApi.getUserByMobile(userDTO.getMobile());
+        if(existUserDTO != null){
             throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);
         }
 
@@ -64,7 +60,7 @@ public class UserController extends BaseController {
         userFeignApi.add(userDTO);
     }
 
-    @ApiOperation("修改用户信息: 头像、性别、昵称、地区")
+    @ApiOperation("修改用户信息: 头像、性别、昵称、地区, 电话")
     @PostMapping("/user/update")
     void update(@RequestBody UserDTO userDTO) throws BizException {
         if(userDTO == null || userDTO.getId() == null){

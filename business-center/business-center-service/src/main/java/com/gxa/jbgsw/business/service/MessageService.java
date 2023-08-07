@@ -3,6 +3,8 @@ package com.gxa.jbgsw.business.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.entity.Message;
 import com.gxa.jbgsw.business.entity.News;
+import com.gxa.jbgsw.business.protocol.dto.AppMessageRequest;
+import com.gxa.jbgsw.business.protocol.dto.AppMessageResponse;
 import com.gxa.jbgsw.business.protocol.dto.MessageDTO;
 import com.gxa.jbgsw.business.protocol.dto.MyMessageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -24,4 +26,6 @@ public interface MessageService extends IService<Message> {
     void deleteBatchIds(Long[] ids);
 
     void updateReadFlag(Long id);
+
+    AppMessageResponse pageQUery(AppMessageRequest request);
 }

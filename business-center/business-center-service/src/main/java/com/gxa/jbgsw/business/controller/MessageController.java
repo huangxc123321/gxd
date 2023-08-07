@@ -2,9 +2,7 @@ package com.gxa.jbgsw.business.controller;
 
 import com.gxa.jbgsw.business.client.MessageApi;
 import com.gxa.jbgsw.business.entity.Message;
-import com.gxa.jbgsw.business.protocol.dto.MessageDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyMessagePageResult;
-import com.gxa.jbgsw.business.protocol.dto.MyMessageRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.MessageTypeEnum;
 import com.gxa.jbgsw.business.service.MessageService;
 import com.gxa.jbgsw.common.utils.PageRequest;
@@ -78,5 +76,10 @@ public class MessageController implements MessageApi {
     @Override
     public void updateReadFlag(Long id) {
         messageService.updateReadFlag(id);
+    }
+
+    @Override
+    public AppMessageResponse pageQUery(AppMessageRequest request) {
+        return messageService.pageQUery(request);
     }
 }

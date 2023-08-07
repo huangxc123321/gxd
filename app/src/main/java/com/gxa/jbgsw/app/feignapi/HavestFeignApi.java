@@ -1,7 +1,7 @@
 package com.gxa.jbgsw.app.feignapi;
 
-import com.gxa.jbgsw.app.config.KeepErrMsgConfiguration;
 import com.gxa.jbgsw.business.client.HarvestApi;
+import com.gxa.jbgsw.app.config.KeepErrMsgConfiguration;
 import org.springframework.cloud.openfeign.FeignClient;
 
 /**

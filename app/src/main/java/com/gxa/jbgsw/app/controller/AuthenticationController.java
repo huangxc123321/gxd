@@ -1,9 +1,9 @@
 package com.gxa.jbgsw.app.controller;
 
-import com.gxa.jbgsw.app.feignapi.AuthenticationFeignApi;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.dto.AuthenticationDTO;
+import com.gxa.jbgsw.app.feignapi.AuthenticationFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;

@@ -1,9 +1,7 @@
 package com.gxa.jbgsw.admin.controller;
 
-import cn.hutool.core.util.CharUtil;
-import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.admin.feignapi.BillboardEconomicRelatedFeignApi;
+import com.gxa.jbgsw.admin.feignapi.TechEconomicManAppraiseFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TechEconomicManFeignApi;
 import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
@@ -18,7 +16,6 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
-import org.apache.catalina.authenticator.Constants;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,6 +29,8 @@ import java.util.List;
 public class TechEconomicManController extends BaseController {
     @Resource
     TechEconomicManFeignApi techEconomicManFeignApi;
+    @Resource
+    TechEconomicManAppraiseFeignApi techEconomicManAppraiseFeignApi;
     @Resource
     UserFeignApi userFeignApi;
     @Resource
@@ -104,11 +103,27 @@ public class TechEconomicManController extends BaseController {
         //评价
 
         // 需求派单: 根据经纪人，找到分配的需求
-         // billboardEconomicRelatedFeignApi.getRelatedByTechManId(id);
+
+       // billboardEconomicRelatedFeignApi.getRelatedByTechManId(id);
+
+        // 写消息，需求消息
 
 
         return techEconomicManDTO;
     }
+
+    @ApiOperation("获取技术经纪人的评价")
+    @PostMapping("/tech/economic/appraise/getAppraise")
+    PageResult<TechEconomicManAppraiseResponse> getAppraise(@RequestBody TechEconomicManAppraiseRequest request) {
+        return techEconomicManAppraiseFeignApi.getAppraise(request);
+    }
+
+    @ApiOperation(value = "删除技术经纪人评价", notes = "删除技术经纪人评价")
+    @GetMapping("/tech/economic/appraise/delete")
+    public void delete(@RequestParam Long id){
+        techEconomicManAppraiseFeignApi.delete(id);
+    }
+
 
 
 }

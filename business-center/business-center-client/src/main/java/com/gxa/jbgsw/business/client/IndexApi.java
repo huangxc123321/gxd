@@ -45,4 +45,7 @@ public interface IndexApi {
 
     @PostMapping("/index/search")
     PcIndexSearchResponse search(@RequestBody PcIndexSearchRequest pcIndexSearchRequest);
+
+    @PostMapping("/index/searchTeamRequest")
+    PageResult<SearchTeamsResponse> searchTeamRequest(@RequestBody CompanyRequest companyRequest);
 }

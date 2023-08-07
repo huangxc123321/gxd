@@ -222,6 +222,8 @@ public class IndexController extends BaseController {
     PageResult<SearchEconomicMansResponse> searchEconomicMans(@RequestBody SearchEconomicMansRequest searchTalentsRequest) {
         return indexFeignApi.queryEconomicMans(searchTalentsRequest);
     }
+
+
     @ApiOperation("获取某个技术经纪人信息")
     @GetMapping("/index/getEconomicManById")
     TechEconomicManResponse getEconomicManById(@RequestParam(value = "id") Long id) {
@@ -242,6 +244,13 @@ public class IndexController extends BaseController {
 
         return techEconomicManResponse;
     }
+
+    @ApiOperation("搜索团队")
+    @PostMapping("/index/searchTeams")
+    PageResult<SearchTeamsResponse> searchTeams(@RequestBody CompanyRequest companyRequest) {
+        return indexFeignApi.searchTeamRequest(companyRequest);
+    }
+
 
     @ApiOperation("获取技术经纪人的评价")
     @PostMapping("/tech/economic/appraise/getAppraise")

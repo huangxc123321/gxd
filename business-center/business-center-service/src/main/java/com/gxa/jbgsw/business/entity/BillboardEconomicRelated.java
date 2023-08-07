@@ -59,7 +59,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "备注")
     private String remark;
 
-    @ApiModelProperty(value = "状态： 0 不推荐 1推荐")
+    @ApiModelProperty(value = "状态： 0 待派单， 1推荐，2 已接受 , 3 已拒绝")
     private  Integer status;
 
 }

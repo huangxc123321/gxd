@@ -1,9 +1,7 @@
 package com.gxa.jbgsw.business.client;
 
 
-import com.gxa.jbgsw.business.protocol.dto.MessageDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyMessagePageResult;
-import com.gxa.jbgsw.business.protocol.dto.MyMessageRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,4 +27,8 @@ public interface MessageApi {
 
     @GetMapping("/message/updateReadFlag")
     void updateReadFlag(@RequestParam("id") Long id);
+
+    @PostMapping("/msg/pageQUery")
+    AppMessageResponse pageQUery(@RequestBody AppMessageRequest request);
+
 }

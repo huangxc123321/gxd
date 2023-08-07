@@ -4,8 +4,10 @@ import com.gxa.jbgsw.business.protocol.dto.TechEconomicManAppraiseDTO;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManAppraiseRequest;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManAppraiseResponse;
 import com.gxa.jbgsw.common.utils.PageResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * @Author Mr. huang
@@ -20,4 +22,6 @@ public interface TechEconomicManAppraiseApi {
     @PostMapping("/tech/economic/appraise/getAppraise")
     PageResult<TechEconomicManAppraiseResponse> getAppraise(@RequestBody TechEconomicManAppraiseRequest request);
 
+    @GetMapping("/tech/economic/appraise/delete")
+    void delete(@RequestParam("id") Long id);
 }

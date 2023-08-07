@@ -126,7 +126,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     public PageResult<SearchNewsResponse> queryNews(SearchNewsRequest searchNewsRequest) {
         PageHelper.startPage(searchNewsRequest.getPageNum(), searchNewsRequest.getPageSize());
 
-        List<SearchNewsResponse> responses = newsMapper.queryNews(searchNewsRequest.getType());
+        List<SearchNewsResponse> responses = newsMapper.queryNews(searchNewsRequest);
         PageInfo<SearchNewsResponse> pageInfo = new PageInfo<>(responses);
 
         //类型转换

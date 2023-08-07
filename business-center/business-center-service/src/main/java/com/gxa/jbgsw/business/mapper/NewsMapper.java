@@ -21,5 +21,5 @@ public interface NewsMapper extends BaseMapper<News> {
 
     List<News> pageQuery(NewsRequest request);
 
-    List<SearchNewsResponse> queryNews(@Param("type") Integer type);
+    List<SearchNewsResponse> queryNews(SearchNewsRequest searchNewsRequest);
 }

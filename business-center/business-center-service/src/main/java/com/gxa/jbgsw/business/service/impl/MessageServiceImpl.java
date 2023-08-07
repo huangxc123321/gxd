@@ -8,6 +8,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Message;
 import com.gxa.jbgsw.business.mapper.MessageMapper;
+import com.gxa.jbgsw.business.protocol.dto.AppMessageRequest;
+import com.gxa.jbgsw.business.protocol.dto.AppMessageResponse;
 import com.gxa.jbgsw.business.protocol.dto.MessageDTO;
 import com.gxa.jbgsw.business.protocol.dto.MyMessageRequest;
 import com.gxa.jbgsw.business.service.MessageService;
@@ -55,7 +57,9 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
         LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Message::getUserId, myMessageRequest.getCreateBy())
-                          .eq(Message::getType, myMessageRequest.getType());
+                          .eq(Message::getType, myMessageRequest.getType())
+                          .orderByDesc(Message::getCreateAt);
+
         List<Message> messages =  messageMapper.selectList(lambdaQueryWrapper);
         PageInfo<Message> pageInfo = new PageInfo<>(messages);
 
@@ -77,5 +81,53 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
                            .eq(Message::getId, id);
 
         messageMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public AppMessageResponse pageQUery(AppMessageRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Message::getUserId, request.getUserId());
+        // 所有
+        if(request.getType() == 1){
+            lambdaQueryWrapper.eq(Message::getReadFlag, 0);
+        }
+        lambdaQueryWrapper.orderByDesc(Message::getCreateAt);
+
+        List<Message> messages =  messageMapper.selectList(lambdaQueryWrapper);
+
+        boolean noReadFlage = false;
+        if(request.getType() == 0){
+            for(Message m : messages){
+                if(m.getReadFlag().equals(0)){
+                    noReadFlage = true;
+                    break;
+                }
+            }
+        }
+
+        PageInfo<Message> pageInfo = new PageInfo<>(messages);
+
+        //类型转换
+        AppMessageResponse appMessageResponse = new AppMessageResponse();
+        appMessageResponse.setAllIsNoReadFlag(noReadFlage);
+        if(pageInfo != null && pageInfo.getList() != null && pageInfo.getList().size()>0){
+            List<MessageDTO> list = mapperFacade.mapAsList(messages, MessageDTO.class);
+            appMessageResponse.setMessages(list);
+        }
+        appMessageResponse.setNoReadFlag(noReadFlage);
+        appMessageResponse.setPageNum(pageInfo.getPageNum());
+        appMessageResponse.setPages(pageInfo.getPages());
+        appMessageResponse.setPageSize(pageInfo.getPageSize());
+        appMessageResponse.setTotal(pageInfo.getTotal());
+
+        // 获取是否有新需求单
+
+
+
+
+
+        return null;
     }
 }

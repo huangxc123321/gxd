@@ -25,7 +25,7 @@ public class TechEconomicManAppraiseResponse implements Serializable {
     @ApiModelProperty(value = "评价内容")
     private String content;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "创建时间")
     private Date createAt;
 

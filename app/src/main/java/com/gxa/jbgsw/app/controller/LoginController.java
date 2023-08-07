@@ -1,14 +1,13 @@
 package com.gxa.jbgsw.app.controller;
 
-import com.gxa.jbgsw.app.feignapi.LoginFeignApi;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.dto.LoginRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.app.feignapi.LoginFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import ma.glasnost.orika.MapperFacade;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -25,8 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController extends BaseController {
     @Resource
     LoginFeignApi loginFeignApi;
-    @Resource
-    MapperFacade mapperFacade;
+
 
     @ApiOperation("用户登录")
     @PostMapping("/login")
