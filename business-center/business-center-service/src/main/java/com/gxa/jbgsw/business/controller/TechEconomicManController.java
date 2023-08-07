@@ -101,5 +101,10 @@ public class TechEconomicManController implements TechEconomicManApi {
         }
         return techEconomicManResponse;
     }
+
+    @Override
+    public List<String> getLabels() {
+        return techEconomicManService.getLabels();
+    }
 }
 

@@ -18,4 +18,5 @@ public enum DictionaryTypeEnum {
     professional,
     enterprise_type,
     hot_words,
+    collaborate_mode,
 }

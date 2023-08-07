@@ -160,10 +160,10 @@
         <if test="createAt != null ">
             <choose>
                 <when test="createAt == 0">
-                    a.create_at DESC
+                    a.seq_no ASC, a.create_at DESC
                 </when>
                 <otherwise>
-                    a.create_at ASC
+                    a.seq_no ASC, a.create_at ASC
                 </otherwise>
             </choose>
         </if>

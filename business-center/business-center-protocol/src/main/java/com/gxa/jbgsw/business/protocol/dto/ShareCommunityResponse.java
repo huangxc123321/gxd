@@ -10,7 +10,7 @@ import java.util.Date;
 @Data
 public class ShareCommunityResponse implements Serializable {
 
-    @ApiModelProperty(value = "分享ID: 新增的時候传null, 编辑传用户ID")
+    @ApiModelProperty(value = "分享ID")
     private Long id;
 
     @ApiModelProperty(value = "类型：0 文章  1 视频")

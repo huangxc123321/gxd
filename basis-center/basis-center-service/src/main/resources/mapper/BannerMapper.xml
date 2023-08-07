@@ -24,7 +24,7 @@
                 AND a.`status` = #{status}
             </if>
 
-        ORDER BY a.create_at DESC
+        ORDER BY a.seq_no ASC,  a.create_at DESC
 
 
     </select>

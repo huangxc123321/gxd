@@ -54,7 +54,6 @@ public class LoginController implements LoginApi {
 
         // long code = this.rand();
 
-        // TODO: 2023/8/2 0002
         //// 为测试需要，
         long code = 6666L;
         System.out.println("code: "+code);

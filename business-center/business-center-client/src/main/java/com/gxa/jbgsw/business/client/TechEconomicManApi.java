@@ -34,4 +34,7 @@ public interface TechEconomicManApi {
 
     @GetMapping("/tech/broker/getTechEconomicManById")
     TechEconomicManResponse getTechEconomicManById(@RequestParam(value = "id") Long id);
+
+    @GetMapping("/tech/broker/getLabels")
+    List<String> getLabels();
 }

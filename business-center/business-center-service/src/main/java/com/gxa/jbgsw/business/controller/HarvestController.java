@@ -192,7 +192,6 @@ public class HarvestController implements HarvestApi {
         if(CollectionUtils.isNotEmpty(harvests)){
             List<HarvestResponse> responses = mapperFacade.mapAsList(harvests, HarvestResponse.class);
             responses.forEach(s->{
-                // TODO: 2023/7/4 0004 暂时不转换
 
                 DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(""));
                 if(dictionaryDTO != null){

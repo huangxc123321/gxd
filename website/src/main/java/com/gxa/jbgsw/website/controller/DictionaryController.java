@@ -31,8 +31,7 @@ public class DictionaryController extends BaseController {
             @ApiImplicitParam(value = "字典类型", name = "typeCode", dataType = "String", paramType = "query"),
             @ApiImplicitParam(value = "字典值", name = "code", dataType = "String", paramType = "query")
     })
-    @GetMapping("/dictionary/getByCache")
-    public DictionaryDTO getByCache(@RequestParam("typeCode") String typeCode, @RequestParam("code") String code){
+    @GetMapping("/dictionary/getByCache") public DictionaryDTO getByCache(@RequestParam("typeCode") String typeCode, @RequestParam("code") String code){
         DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(typeCode, code);
         return dictionaryDTO;
     }

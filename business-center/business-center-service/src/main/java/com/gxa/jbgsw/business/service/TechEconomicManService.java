@@ -7,6 +7,8 @@ import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansResponse;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 
+import java.util.List;
+
 /**
  * <p>
  * 技术经济人 服务类
@@ -22,4 +24,6 @@ public interface TechEconomicManService extends IService<TechEconomicMan> {
     PageResult<TechEconomicMan> pageQuery(TechEconomicManRequest request);
 
     PageResult<SearchEconomicMansResponse> queryEconomicMans(SearchEconomicMansRequest searchTalentsRequest);
+
+    List<String> getLabels();
 }

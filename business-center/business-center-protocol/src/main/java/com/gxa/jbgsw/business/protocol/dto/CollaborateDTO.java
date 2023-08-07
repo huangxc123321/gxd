@@ -10,16 +10,16 @@ import java.util.Date;
 public class CollaborateDTO implements Serializable {
 
     @ApiModelProperty(value = "成果ID/帅才ID")
-    private String pid;
+    private Long pid;
 
     @ApiModelProperty(value = "合作类型：0 成果合作  1 需求合作")
     private Integer type;
 
     @ApiModelProperty(value = "需求合作:邀请揭榜的时候，选择榜单时候传的榜单ID，可以多个")
-    private Integer billboardId;
+    private Long[]  billboardIds;
 
-    @ApiModelProperty(value = "合作方式，用逗号分开")
-    private String mode;
+    @ApiModelProperty(value = "合作方式，用逗号分开, 名称见字典：collaborate_mode")
+    private String  mode;
 
     @ApiModelProperty(value = "详细说明")
     private String detail;
@@ -38,6 +38,9 @@ public class CollaborateDTO implements Serializable {
 
     @ApiModelProperty(value = "成果拥有者ID或者需求时填帅才ID")
     private Long harvestUserId;
+
+    @ApiModelProperty(value = "需求合作:邀请揭榜的时候，选择榜单时候传的榜单ID", hidden = true)
+    private Long  billboardId;
 
     @ApiModelProperty(value = "技术/产品方向，多个用逗号分开")
     private String techKeys;

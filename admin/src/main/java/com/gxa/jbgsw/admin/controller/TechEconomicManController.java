@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.Date;
+import java.util.List;
 
 @Api(tags = "技术经纪人管理")
 @RestController
@@ -36,6 +37,12 @@ public class TechEconomicManController extends BaseController {
     @Resource
     MapperFacade mapperFacade;
 
+
+    @ApiOperation(value = "获取专业标签", notes = "获取专业标签")
+    @GetMapping("/tech/broker/getLabels")
+    public List<String> getLabels(){
+        return techEconomicManFeignApi.getLabels();
+    }
 
     @ApiOperation(value = "批量删除技术经纪人", notes = "批量删除技术经纪人")
     @PostMapping("/tech/broker/deleteBatchIds")

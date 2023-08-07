@@ -1,19 +1,27 @@
 package com.gxa.jbgsw.business.service.impl;
 
-import com.gxa.jbgsw.business.entity.Billboard;
-import com.gxa.jbgsw.business.entity.Collaborate;
-import com.gxa.jbgsw.business.entity.Harvest;
-import com.gxa.jbgsw.business.entity.Message;
+import cn.hutool.core.util.CharUtil;
+import cn.hutool.core.util.StrUtil;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.business.entity.*;
+import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.CollaborateMapper;
 import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
-import com.gxa.jbgsw.business.protocol.enums.CollaborateTypeEnum;
-import com.gxa.jbgsw.business.protocol.enums.MessageOriginEnum;
-import com.gxa.jbgsw.business.protocol.enums.MessageTypeEnum;
+import com.gxa.jbgsw.business.protocol.dto.MyCollaborateHarvestResponse;
+import com.gxa.jbgsw.business.protocol.dto.MyCollaborateRequest;
+import com.gxa.jbgsw.business.protocol.dto.MyCollaborateTalentResponse;
+import com.gxa.jbgsw.business.protocol.enums.*;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.CollaborateService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.business.service.MessageService;
+import com.gxa.jbgsw.common.utils.PageResult;
+import ma.glasnost.orika.MapperFacade;
+import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -39,6 +47,10 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
     HarvestService harvestService;
     @Resource
     BillboardService billboardService;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    MapperFacade mapperFacade;
 
     @Override
     public List<HavestCollaborateDTO> getHavestCollaborates(Long havestId) {
@@ -80,5 +92,64 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
 
         messageService.save(message);
 
+    }
+
+    @Override
+    public void delete(Long id) {
+        collaborateMapper.deleteById(id);
+    }
+
+    @Override
+    public PageResult getCollaborateHarvest(MyCollaborateRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<MyCollaborateHarvestResponse> responses = collaborateMapper.getCollaborateHarvest(request);
+        if(CollectionUtils.isNotEmpty(responses)){
+            responses.stream().forEach(s->{
+                s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus()));
+                String[] strs = s.getMode().split(",");
+                StringBuffer sb = new StringBuffer();
+                for(int i=0; i<strs.length; i++){
+                    DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.collaborate_mode.name(), strs[i]);
+                    if(i == strs.length -1){
+                        sb.append(dic.getDicValue());
+                    }else{
+                        sb.append(dic.getDicValue()).append(CharUtil.COMMA);
+                    }
+                }
+            });
+        }
+        PageInfo<MyCollaborateHarvestResponse> pageInfo = new PageInfo<>(responses);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<MyCollaborateHarvestResponse>>() {
+        }.build(), new TypeBuilder<PageResult<MyCollaborateHarvestResponse>>() {}.build());
+    }
+
+    @Override
+    public PageResult getCollaborateTalent(MyCollaborateRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<MyCollaborateTalentResponse> responses = collaborateMapper.getCollaborateTalent(request);
+        if(CollectionUtils.isNotEmpty(responses)){
+            responses.stream().forEach(s->{
+                s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus()));
+                String[] strs = s.getMode().split(",");
+                StringBuffer sb = new StringBuffer();
+                for(int i=0; i<strs.length; i++){
+                    DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.collaborate_mode.name(), strs[i]);
+                    if(i == strs.length -1){
+                        sb.append(dic.getDicValue());
+                    }else{
+                        sb.append(dic.getDicValue()).append(CharUtil.COMMA);
+                    }
+                }
+            });
+        }
+        PageInfo<MyCollaborateTalentResponse> pageInfo = new PageInfo<>(responses);
+
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<MyCollaborateTalentResponse>>() {
+        }.build(), new TypeBuilder<PageResult<MyCollaborateTalentResponse>>() {}.build());
     }
 }

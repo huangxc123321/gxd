@@ -24,6 +24,7 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import org.springframework.web.bind.annotation.RestController;
@@ -251,6 +252,14 @@ public class BillboardController implements BillboardApi {
     public void batchInsert(BillboardDTO[] batchList) {
         List<BillboardDTO> list = Arrays.stream(batchList).collect(Collectors.toList());
         billboardService.batchInsert(list);
+    }
+
+    @Override
+    public List<BillboardDTO> batchQueryByIds(@RequestBody Long[] billboardIds) {
+        List<Long> ids = Arrays.stream(billboardIds).collect(Collectors.toList());
+
+        List<Billboard> billboards = billboardService.listByIds(ids);
+        return mapperFacade.mapAsList(billboardIds, BillboardDTO.class);
     }
 }
 

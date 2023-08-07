@@ -63,4 +63,14 @@ public class WebsiteBottom implements Serializable {
     @ApiModelProperty(value = "更新人")
     private Long updateBy;
 
+
+    @ApiModelProperty(value = "留言email")
+    private String lyEmail;
+
+    @ApiModelProperty(value = "留言手机")
+    private String lyPhone;
+
+    @ApiModelProperty(value = "二维码，如果有多个用逗号分隔")
+    private String lyWxQrCode;
+
 }

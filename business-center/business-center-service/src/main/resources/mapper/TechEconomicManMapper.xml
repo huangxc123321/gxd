@@ -16,7 +16,7 @@
                 a.email,
                 a.unit_name AS unitName,
                 a.agreements,
-                a.createAt,
+                a.create_at AS createAt ,
                 a.success_total AS successTotal
             FROM
                 t_tech_economic_man AS a
@@ -85,5 +85,9 @@
         ORDER BY a.create_at DESC
     </select>
 
+
+    <select id="getLabels" resultType="string">
+       SELECT DISTINCT a.label FROM t_tech_economic_man AS a
+    </select>
 
 </mapper>

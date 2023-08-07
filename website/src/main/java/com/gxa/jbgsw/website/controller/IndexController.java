@@ -178,14 +178,18 @@ public class IndexController extends BaseController {
     @PostMapping("/index/searchTalents")
     PageResult<SearchTalentsResponse> searchTalents(@RequestBody SearchTalentsRequest searchTalentsRequest) {
         PageResult<SearchTalentsResponse> pageResult = indexFeignApi.queryTalents(searchTalentsRequest);
-        List<SearchTalentsResponse> responses = pageResult.getList();
-        if(CollectionUtils.isNotEmpty(responses)){
-            responses.stream().forEach(s->{
-                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
-                if(dicProfessional != null){
-                    s.setProfessionalName(dicProfessional.getDicValue());
-                }
-            });
+
+        if(pageResult == null){
+            List<SearchTalentsResponse> responses = pageResult.getList();
+            if(CollectionUtils.isNotEmpty(responses)){
+                responses.stream().forEach(s->{
+                    DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                    if(dicProfessional != null){
+                        s.setProfessionalName(dicProfessional.getDicValue());
+                    }
+                });
+            }
+
         }
 
         return pageResult;

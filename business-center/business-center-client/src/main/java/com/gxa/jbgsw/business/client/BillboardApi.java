@@ -48,4 +48,7 @@ public interface BillboardApi {
 
     @PostMapping(value = "/billboard/batchInsert",consumes = MediaType.APPLICATION_JSON_VALUE)
     void batchInsert(@RequestBody BillboardDTO[] batchList);
+
+    @PostMapping(value = "/billboard/batchQueryByIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    List<BillboardDTO> batchQueryByIds(@RequestBody Long[] billboardIds);
 }

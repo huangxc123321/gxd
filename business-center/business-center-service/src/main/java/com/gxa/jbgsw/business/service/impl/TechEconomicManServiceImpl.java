@@ -63,4 +63,9 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchEconomicMansResponse>>() {
         }.build(), new TypeBuilder<PageResult<SearchEconomicMansResponse>>() {}.build());
     }
+
+    @Override
+    public List<String> getLabels() {
+        return techEconomicManMapper.getLabels();
+    }
 }

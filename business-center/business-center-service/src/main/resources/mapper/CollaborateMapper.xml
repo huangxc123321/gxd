@@ -16,5 +16,61 @@
             a.harvest_user_id = #{havestId}
     </select>
 
+    <select id="getCollaborateHarvest" parameterType="com.gxa.jbgsw.business.protocol.dto.MyCollaborateRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MyCollaborateHarvestResponse">
+            SELECT
+                a.id,
+                a.`status`,
+                a.detail,
+                a.`mode`,
+                a.effect_at AS effectAt,
+                b.`name`
+            FROM
+                t_collaborate AS a
+                LEFT JOIN t_harvest AS b ON a.pid = b.id
+            WHERE
+                1 = 1
+                <if test="initiate != null and initiate == 0 ">
+                   AND  a.launch_user_id = #{userId}
+                </if>
+
+                <if test="initiate != null and initiate == 1 ">
+                    AND  a.harvest_user_id = = #{userId}
+                </if>
+
+                AND a.type = #{type}
+                ORDER BY a.effect_at DESC
+    </select>
+
+
+    <select id="getCollaborateTalent" parameterType="com.gxa.jbgsw.business.protocol.dto.MyCollaborateRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MyCollaborateTalentResponse">
+            SELECT
+                a.id,
+                a.`status`,
+                b.`name`,
+                a.`mode`,
+                c.title,
+                a.tech_keys AS techDomainName,
+                a.detail,
+                a.effect_at as effectAt
+            FROM
+                t_collaborate AS a
+                LEFT JOIN t_talent_pool AS b ON a.harvest_user_id = b.id
+                LEFT JOIN t_billboard AS c ON a.billboard_id = c.id
+            WHERE
+                a.type = 1
+
+                <if test="initiate != null and initiate == 0 ">
+                    AND  a.launch_user_id = #{userId}
+                </if>
+
+                <if test="initiate != null and initiate == 1 ">
+                    AND  a.harvest_user_id = = #{userId}
+                </if>
+
+                ORDER BY a.effect_at DESC
+    </select>
+
 
 </mapper>

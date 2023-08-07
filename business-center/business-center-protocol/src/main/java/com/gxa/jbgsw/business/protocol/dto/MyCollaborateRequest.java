@@ -1,12 +1,13 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.gxa.jbgsw.common.utils.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
 
 @Data
-public class MyCollaborateRequest implements Serializable {
+public class MyCollaborateRequest  extends PageRequest implements Serializable {
 
     @ApiModelProperty(value = "发起方： 0 我发起， 1 我收到")
     private Integer initiate ;

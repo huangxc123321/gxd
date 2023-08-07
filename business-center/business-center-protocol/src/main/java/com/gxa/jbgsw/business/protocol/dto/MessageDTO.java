@@ -27,7 +27,7 @@ public class MessageDTO implements Serializable {
     @ApiModelProperty(value = "系统消息来源：0 揭榜申请 1 榜单推荐 2 合作发起")
     private Integer origin;
 
-    @ApiModelProperty(value = "消息生成时间", hidden = true)
+    @ApiModelProperty(value = "消息生成时间")
     private Date createAt;
 
     @ApiModelProperty(value = "消息ID")

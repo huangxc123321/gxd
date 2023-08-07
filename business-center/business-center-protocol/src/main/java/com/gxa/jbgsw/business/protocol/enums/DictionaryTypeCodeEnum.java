@@ -16,7 +16,10 @@ public enum DictionaryTypeCodeEnum {
     unit_nature,
     highest_edu,
     professional,
-    company_type,
+    enterprise_type,
+    hot_words,
+    patent_type,
+    collaborate_mode,
 
     ;
 

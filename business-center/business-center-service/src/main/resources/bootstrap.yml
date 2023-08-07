@@ -5,10 +5,10 @@ spring:
     name: business-center-service
   profiles:
     # 开发环境配置
-    active: local
+    #active: local
 
     # 测试环境
-    #active: dev
+    active: dev
 
 feign:
   httpclient:

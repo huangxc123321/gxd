@@ -21,4 +21,6 @@ public interface TechEconomicManMapper extends BaseMapper<TechEconomicMan> {
     List<TechEconomicMan> pageQuery(TechEconomicManRequest request);
 
     List<SearchEconomicMansResponse> queryEconomicMans(SearchEconomicMansRequest searchTalentsRequest);
+
+    List<String> getLabels();
 }
