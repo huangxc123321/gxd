@@ -261,5 +261,10 @@ public class BillboardController implements BillboardApi {
         List<Billboard> billboards = billboardService.listByIds(ids);
         return mapperFacade.mapAsList(billboardIds, BillboardDTO.class);
     }
+
+    @Override
+    public void audit(BillboardAuditDTO billboardAuditDTO) {
+        billboardService.updateAuditStatus(billboardAuditDTO);
+    }
 }
 

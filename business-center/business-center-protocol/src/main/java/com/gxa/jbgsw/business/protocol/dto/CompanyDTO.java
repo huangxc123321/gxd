@@ -31,6 +31,27 @@ public class CompanyDTO implements Serializable {
     @ApiModelProperty(value = "业及技术标签")
     private String techLabel;
 
+    @ApiModelProperty(value = "企业统一社会信用代码")
+    private String code;
+
+    @ApiModelProperty(value = "单位负责人")
+    private String director;
+
+    @ApiModelProperty(value = "电话")
+    private String mobile;
+
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    @ApiModelProperty(value = "公司网址")
+    private String url;
+
+    @ApiModelProperty(value = "公司简介")
+    private String remark;
+
+    @ApiModelProperty(value = "公司地址")
+    private String address;
+
     @ApiModelProperty(value = "状态")
     private Integer status;
 

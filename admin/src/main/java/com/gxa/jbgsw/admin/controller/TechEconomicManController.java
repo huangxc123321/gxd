@@ -16,11 +16,11 @@ import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Api(tags = "技术经纪人管理")
 @RestController
@@ -40,7 +40,22 @@ public class TechEconomicManController extends BaseController {
     @ApiOperation(value = "获取专业标签", notes = "获取专业标签")
     @GetMapping("/tech/broker/getLabels")
     public List<String> getLabels(){
-        return techEconomicManFeignApi.getLabels();
+        Map<String, String> map = new HashMap<>();
+        List<String> list = techEconomicManFeignApi.getLabels();
+        if(CollectionUtils.isNotEmpty(list)){
+            for(int i=0; i<list.size(); i++){
+                String val = list.get(i);
+                String[] vals = val.split(",");
+                for(int n=0; n<vals.length; n++){
+                    map.put(vals[n], vals[n]);
+                }
+            }
+
+            List<String> result = new ArrayList(map.keySet());
+            return result;
+        }
+
+        return null;
     }
 
     @ApiOperation(value = "批量删除技术经纪人", notes = "批量删除技术经纪人")
@@ -63,7 +78,7 @@ public class TechEconomicManController extends BaseController {
          */
         UserDTO user = userFeignApi.getUserByMobile(techEconomicManDTO.getMobile());
         if(user == null){
-            UserDTO userDTO = mapperFacade.map(user, UserDTO.class);
+            UserDTO userDTO = mapperFacade.map(techEconomicManDTO, UserDTO.class);
             userDTO.setNick(techEconomicManDTO.getName());
             userDTO.setAvatar(techEconomicManDTO.getAvatar());
             // 设置默认密码: 123456

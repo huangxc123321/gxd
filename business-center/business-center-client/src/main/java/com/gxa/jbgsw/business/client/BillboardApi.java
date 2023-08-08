@@ -51,4 +51,7 @@ public interface BillboardApi {
 
     @PostMapping(value = "/billboard/batchQueryByIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     List<BillboardDTO> batchQueryByIds(@RequestBody Long[] billboardIds);
+
+    @PostMapping("/billboard/audit")
+    void audit(@RequestBody BillboardAuditDTO billboardAuditDTO);
 }

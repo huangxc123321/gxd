@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.common.utils.RedisUtils;
+import com.gxa.jbgsw.gateway.props.AppAuthProperties;
 import com.gxa.jbgsw.gateway.props.AuthProperties;
 import com.gxa.jbgsw.gateway.props.WebAuthProperties;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
@@ -35,6 +36,8 @@ public class AuthFilter implements GlobalFilter, Ordered {
     @Resource
     WebAuthProperties webAuthProperties;
     @Resource
+    AppAuthProperties appAuthProperties;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     private static final String REQUEST_TIME_BEGIN = "requestTimeBegin";
@@ -56,7 +59,10 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-
+        // app URL 是否需要登录判断
+        if(StrUtil.isNotBlank(path) && !appAuthProperties.getUrl().contains(path)){
+            return chain.filter(exchange);
+        }
 
         if(request != null){
             HttpHeaders headers = request.getHeaders();

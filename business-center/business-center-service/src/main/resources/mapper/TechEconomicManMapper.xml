@@ -17,6 +17,8 @@
                 a.unit_name AS unitName,
                 a.agreements,
                 a.create_at AS createAt ,
+                a.requires,
+                a.attentions,
                 a.success_total AS successTotal
             FROM
                 t_tech_economic_man AS a

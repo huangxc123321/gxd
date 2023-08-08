@@ -23,7 +23,8 @@
                 a.`status`,
                 a.detail,
                 a.`mode`,
-                a.effect_at AS effectAt,
+                a.launch_user_name AS launchUserName,
+                DATE_FORMAT(a.effect_at, '%Y/%m/%d %H:%i') AS effectAt,
                 b.`name`
             FROM
                 t_collaborate AS a
@@ -53,7 +54,7 @@
                 c.title,
                 a.tech_keys AS techDomainName,
                 a.detail,
-                a.effect_at as effectAt
+                DATE_FORMAT(a.effect_at, '%Y/%m/%d %H:%i') AS effectAt
             FROM
                 t_collaborate AS a
                 LEFT JOIN t_talent_pool AS b ON a.harvest_user_id = b.id
@@ -66,7 +67,7 @@
                 </if>
 
                 <if test="initiate != null and initiate == 1 ">
-                    AND  a.harvest_user_id = = #{userId}
+                    AND  a.harvest_user_id = #{userId}
                 </if>
 
                 ORDER BY a.effect_at DESC

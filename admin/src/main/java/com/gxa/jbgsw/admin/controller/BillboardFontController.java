@@ -24,6 +24,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 
@@ -98,6 +99,19 @@ public class BillboardFontController extends BaseController {
     @GetMapping("/billboard/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
         billboardFeignApi.updateSeqNo(id, seqNo);
+    }
+
+    @ApiOperation(value = "榜单审核", notes = "榜单审核")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(value = "审核状态：  1 审核通过  2 审核不通过", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @PostMapping("/billboard/audit")
+    public void audit(@ RequestBody BillboardAuditDTO billboardAuditDTO){
+        billboardAuditDTO.setAuditCreateAt(new Date());
+        billboardAuditDTO.setAuditUserId(this.getUserId());
+
+        billboardFeignApi.audit(billboardAuditDTO);
     }
 
     @ApiOperation(value = "批量置顶", notes = "批量置顶")

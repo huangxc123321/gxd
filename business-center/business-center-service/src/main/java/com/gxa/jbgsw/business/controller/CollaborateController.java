@@ -84,7 +84,6 @@ public class CollaborateController implements CollaborateApi {
         // 成果
         if(request.getType().equals(CollaborateTypeEnum.GAIN.getCode())){
             PageResult pageResult =  collaborateService.getCollaborateHarvest(request);
-
             return pageResult;
         }else{
             // 需求合作

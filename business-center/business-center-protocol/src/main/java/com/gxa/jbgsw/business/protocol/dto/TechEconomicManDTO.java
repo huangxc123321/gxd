@@ -76,4 +76,15 @@ public class TechEconomicManDTO implements Serializable {
     @ApiModelProperty(value = "或者协议")
     private String agreements;
 
+    @ApiModelProperty(value = "需求派单：接单次数,系统向经纪人派单的次数")
+    private Integer requires;
+
+    @ApiModelProperty(value = "关注数: 有多少人关注了这个经纪人")
+    private Integer attentions;
+
+    @ApiModelProperty(value = "总促成:是指完成项目的总数量，完成项目以评价完成为准")
+    private Integer successTotal;
+
+
+
 }

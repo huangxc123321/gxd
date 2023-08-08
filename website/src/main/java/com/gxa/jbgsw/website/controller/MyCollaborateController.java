@@ -7,6 +7,7 @@ import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollaborateTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.*;
@@ -147,7 +148,10 @@ public class MyCollaborateController extends BaseController {
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
-        return collaborateFeignApi.pageQuery(request);
+        request.setUserId(userId);
+        PageResult page  = collaborateFeignApi.pageQuery(request);
+
+        return page;
     }
 
 

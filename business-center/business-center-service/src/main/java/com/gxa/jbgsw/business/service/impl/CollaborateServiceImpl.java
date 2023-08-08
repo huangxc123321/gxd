@@ -117,6 +117,7 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
                         sb.append(dic.getDicValue()).append(CharUtil.COMMA);
                     }
                 }
+                s.setModeName(sb.toString());
             });
         }
         PageInfo<MyCollaborateHarvestResponse> pageInfo = new PageInfo<>(responses);
@@ -144,6 +145,7 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
                         sb.append(dic.getDicValue()).append(CharUtil.COMMA);
                     }
                 }
+                s.setModeName(sb.toString());
             });
         }
         PageInfo<MyCollaborateTalentResponse> pageInfo = new PageInfo<>(responses);

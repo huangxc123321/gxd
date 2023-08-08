@@ -28,6 +28,7 @@
         <result column="status" property="status" jdbcType="INTEGER" />
         <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
         <result column="create_by" property="createBy" jdbcType="INTEGER" />
+        <result column="audit_status" property="auditStatus" jdbcType="INTEGER" />
     </resultMap>
 
 
@@ -90,6 +91,10 @@
         t_billboard AS a
         WHERE
         1 = 1
+
+        <if test="auditStatus != null ">
+            AND a.audit_status = #{auditStatus}
+        </if>
 
         <if test="searchFiled != null and searchFiled != '' ">
             AND a.query_keys like CONCAT('%',#{searchFiled},'%')

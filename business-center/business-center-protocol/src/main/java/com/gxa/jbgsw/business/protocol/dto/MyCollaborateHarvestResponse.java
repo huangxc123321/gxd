@@ -16,6 +16,9 @@ public class MyCollaborateHarvestResponse implements Serializable {
     @ApiModelProperty(value = "成果名称")
     private String name;
 
+    @ApiModelProperty(value = "发起人")
+    private String launchUserName;
+
     @ApiModelProperty(value = "合作方式，用逗号分开")
     private String mode;
 

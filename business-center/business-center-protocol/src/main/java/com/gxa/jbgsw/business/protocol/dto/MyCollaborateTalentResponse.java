@@ -39,6 +39,12 @@ public class MyCollaborateTalentResponse implements Serializable {
 
     @JsonFormat(pattern = "yyyy/MM/dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "合作发起时间")
-    private Date effectAt;
+    private String effectAt;
+
+    @ApiModelProperty(value = "需求用户名称")
+    private String unitName;
+
+    @ApiModelProperty(value = "需求用户logo图片")
+    private String logo;
 
 }

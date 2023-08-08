@@ -27,6 +27,28 @@ webauth:
     - /web/collection/deleteById
     - /web/havest/pageQuery
 
+
+appauth:
+  url:
+    - /app/index/addBillboardGain
+    - /app/collection/add
+    - /app/collaborate/add
+    - /app/user/center/queryMyPublish
+    - /app/user/center/addMyBillboard
+    - /app/user/center/updateMyBillboard
+    - /app/user/center/addAppraise
+    - /app/user/center/deleteMyBillboard
+    - /app/attention/pageQuery
+    - /app/attention/add
+    - /app/collection/pageQuery
+    - /app/collection/deleteById
+    - /app/havest/pageQuery
+
+
+
+
+
+
 # Tomcat
 server:
   port: 9527

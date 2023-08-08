@@ -110,4 +110,15 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "浏览量")
     private Integer views;
 
+    @ApiModelProperty(value = "审核状态： 0 待审核  1 审核通过  2 审核不通过")
+    private Integer auditStatus;
+
+    @ApiModelProperty(value = "审核不通过的原因")
+    private String reason;
+
+    @ApiModelProperty(value = "审核人ID")
+    private Long auditUserId;
+
+    @ApiModelProperty(value = "审核时间")
+    private Long auditCreateAt;
 }

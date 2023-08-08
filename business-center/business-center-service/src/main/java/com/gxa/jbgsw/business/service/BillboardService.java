@@ -50,4 +50,6 @@ public interface BillboardService extends IService<Billboard> {
     List<Billboard> getRelateBillboardByCategories(Integer categories, Integer type);
 
     void batchInsert(List<BillboardDTO> batchList);
+
+    void updateAuditStatus(BillboardAuditDTO billboardAuditDTO);
 }

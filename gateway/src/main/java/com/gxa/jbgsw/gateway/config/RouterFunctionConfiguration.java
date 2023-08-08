@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.gateway.config;
 
+import com.gxa.jbgsw.gateway.props.AppAuthProperties;
 import com.gxa.jbgsw.gateway.props.AuthProperties;
 import com.gxa.jbgsw.gateway.props.WebAuthProperties;
 import lombok.AllArgsConstructor;
@@ -21,7 +22,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 @Configuration
 @AllArgsConstructor
-@EnableConfigurationProperties({AuthProperties.class, WebAuthProperties.class})
+@EnableConfigurationProperties({AuthProperties.class, WebAuthProperties.class, AppAuthProperties.class})
 public class RouterFunctionConfiguration {
 
     /**

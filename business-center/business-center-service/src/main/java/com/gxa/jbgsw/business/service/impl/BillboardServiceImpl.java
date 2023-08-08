@@ -348,5 +348,19 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         this.saveBatch(billboards);
     }
 
+    @Override
+    public void updateAuditStatus(BillboardAuditDTO billboardAuditDTO) {
+        LambdaUpdateWrapper<Billboard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(Billboard::getAuditStatus, billboardAuditDTO.getAuditStatus());
+        if(billboardAuditDTO.getAuditStatus().equals(2)){
+            lambdaUpdateWrapper.set(Billboard::getReason, billboardAuditDTO.getReason());
+        }
+        lambdaUpdateWrapper.set(Billboard::getAuditUserId, billboardAuditDTO.getAuditUserId());
+        lambdaUpdateWrapper.set(Billboard::getAuditCreateAt, billboardAuditDTO.getAuditCreateAt());
+        lambdaUpdateWrapper.eq(Billboard::getId, billboardAuditDTO.getId());
+
+        billboardMapper.update(null, lambdaUpdateWrapper);
+    }
+
 
 }
