@@ -37,12 +37,10 @@
                 a.holder,
                 a.remark,
                 a.create_at AS createAt,
-                COUNT(b.id) AS collectNum,
-                COUNT(c.id) AS shareNum
+                (select count(1) from t_collection as b where a.id = b.pid) as collectNum,
+                (select count(1) from t_my_share as c where  a.id = c.pid) as shareNum
             FROM
                 t_harvest a
-            LEFT JOIN t_collection AS b ON a.id = b.pid
-            LEFT JOIN t_my_share AS c ON a.id = c.pid
             WHERE
                 1 = 1
                 <if test="searchFiled != null and searchFiled != '' ">

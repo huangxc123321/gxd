@@ -7,10 +7,10 @@ package com.gxa.jbgsw.business.protocol.enums;
  */
 public enum AuditingStatusEnum {
 
-    // 揭榜审核状态：0 待评审  1 已评审 2 未通过
-    WAIT(0, "待评审"),
-    PASS(1, "已评审"),
-    NO_PASS(2, "未通过"),
+    // 揭榜审核状态：0 待审核  1 审核通过 2 审核未通过
+    WAIT(0, "待审核"),
+    PASS(1, "审核通过"),
+    NO_PASS(2, "审核未通过"),
 
     ;
 

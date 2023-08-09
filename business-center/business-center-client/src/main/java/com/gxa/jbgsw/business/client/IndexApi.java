@@ -1,11 +1,14 @@
 package com.gxa.jbgsw.business.client;
 
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.List;
 
 /**
  * @Author Mr. huang
@@ -48,4 +51,7 @@ public interface IndexApi {
 
     @PostMapping("/index/searchTeamRequest")
     PageResult<SearchTeamsResponse> searchTeamRequest(@RequestBody CompanyRequest companyRequest);
+
+    @GetMapping("/index/searchNew")
+    List<BillboardResponse> searchNew(Integer num);
 }

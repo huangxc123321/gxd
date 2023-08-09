@@ -160,6 +160,7 @@
         a.is_top AS isTop
         FROM
         t_billboard AS a
+        where a.audit_status = 1
 
         ORDER BY
         <if test="createAt != null ">
@@ -279,7 +280,7 @@
             FROM
                 t_billboard a LEFT JOIN t_company b ON a.unit_name = b.`name`
             WHERE
-            1 = 1
+            a.audit_status = 1
 
             <if test="type != null ">
                 AND a.type =  #{type}

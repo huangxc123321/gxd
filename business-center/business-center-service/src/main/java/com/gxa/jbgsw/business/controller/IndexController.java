@@ -12,6 +12,7 @@ import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.*;
 import com.gxa.jbgsw.common.utils.ApiResult;
+import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,7 @@ import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.security.core.parameters.P;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -311,6 +313,11 @@ public class IndexController implements IndexApi {
         }
 
         return null;
+    }
+
+    @Override
+    public List<BillboardResponse> searchNew(Integer num) {
+        return billboardService.searchNew(num);
     }
 
 

@@ -10,10 +10,7 @@ import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.*;
 import com.gxa.jbgsw.common.exception.BizException;
-import com.gxa.jbgsw.common.utils.ApiResult;
-import com.gxa.jbgsw.common.utils.BaseController;
-import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.common.utils.*;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
@@ -62,6 +59,11 @@ public class IndexController extends BaseController {
     TechEconomicManAppraiseFeignApi techEconomicManAppraiseFeignApi;
 
 
+    @ApiOperation("获取最新的榜单信息")
+    @GetMapping("/index/searchNew")
+    public List<BillboardResponse> searchNew(@RequestParam("num") Integer num) {
+        return indexFeignApi.searchNew(num);
+    }
 
     @ApiOperation("获取首页榜单信息")
     @PostMapping("/index/search")
@@ -221,6 +223,8 @@ public class IndexController extends BaseController {
     PageResult<SearchEconomicMansResponse> searchEconomicMans(@RequestBody SearchEconomicMansRequest searchTalentsRequest) {
         return indexFeignApi.queryEconomicMans(searchTalentsRequest);
     }
+
+
     @ApiOperation("获取某个技术经纪人信息")
     @GetMapping("/index/getEconomicManById")
     TechEconomicManResponse getEconomicManById(@RequestParam(value = "id") Long id) {

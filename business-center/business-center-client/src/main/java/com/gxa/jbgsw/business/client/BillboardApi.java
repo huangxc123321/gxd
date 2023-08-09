@@ -54,4 +54,7 @@ public interface BillboardApi {
 
     @PostMapping("/billboard/audit")
     void audit(@RequestBody BillboardAuditDTO billboardAuditDTO);
+
+    @GetMapping("/billboard/getById")
+    BillboardDTO getById(@RequestParam("id") Long id);
 }

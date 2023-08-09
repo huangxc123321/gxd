@@ -1,15 +1,16 @@
 package com.gxa.jbgsw.admin.controller;
 
 
-import cn.hutool.core.util.CharUtil;
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
-import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.MessageLogInfo;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
@@ -46,6 +47,8 @@ public class BillboardFontController extends BaseController {
     @Resource
     CompanyFeignApi companyFeignApi;
     @Resource
+    MessageFeignApi messageFeignApi;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
@@ -80,8 +83,6 @@ public class BillboardFontController extends BaseController {
         return detailInfo;
     }
 
-
-
     @ApiOperation("获取榜单列表")
     @PostMapping("/billboard/pageQuery")
     PageResult<BillboardResponse> pageQuery(@RequestBody BillboardRequest request){
@@ -112,6 +113,24 @@ public class BillboardFontController extends BaseController {
         billboardAuditDTO.setAuditUserId(this.getUserId());
 
         billboardFeignApi.audit(billboardAuditDTO);
+
+        BillboardDTO billboardDTO = billboardFeignApi.getById(billboardAuditDTO.getId());
+        // 写系统消息
+        MessageDTO messageDTO = new MessageDTO();
+        // 时间
+        messageDTO.setCreateAt(new Date());
+        // 内容
+        String content = String.format(MessageLogInfo.billboard_auth,
+                       billboardDTO.getTitle(), AuditingStatusEnum.getNameByIndex(billboardAuditDTO.getAuditStatus()));
+        messageDTO.setContent(content);
+        // 榜单发布人
+        messageDTO.setUserId(billboardDTO.getCreateBy());
+        messageDTO.setTitle(content);
+        // 系统消息
+        messageDTO.setType(0);
+        // 榜单ID
+        messageDTO.setPid(billboardDTO.getId());
+        messageFeignApi.add(messageDTO);
     }
 
     @ApiOperation(value = "批量置顶", notes = "批量置顶")
@@ -157,6 +176,52 @@ public class BillboardFontController extends BaseController {
         billboardFeignApi.add(billboardDTO);
 
     }
+
+    @ApiOperation("成果手工推荐")
+    @PostMapping("/billboard/harvest/related/audit")
+    void auditHarvest(@RequestBody BillboardRelatedAuditDTO billboardHarvestAuditDTO){
+        billboardHarvestAuditDTO.setUserId(this.getUserId());
+        billboardHarvestAuditDTO.setUserName(this.getUserNick());
+        billboardHarvestRelatedFeignApi.audit(billboardHarvestAuditDTO);
+    }
+
+    @ApiOperation("帅才手工推荐")
+    @PostMapping("/billboard/talent/related/audit")
+    void auditTalent(@RequestBody BillboardRelatedAuditDTO billboardHarvestAuditDTO){
+        billboardHarvestAuditDTO.setUserId(this.getUserId());
+        billboardHarvestAuditDTO.setUserName(this.getUserNick());
+        billboardTalentRelatedFeignApi.audit(billboardHarvestAuditDTO);
+    }
+
+    @ApiOperation("手工派单")
+    @PostMapping("/billboard/economic/related/auditEconomic")
+    void auditEconomic(@RequestBody BillboardRelatedAuditDTO billboardHarvestAuditDTO){
+        billboardHarvestAuditDTO.setUserId(this.getUserId());
+        billboardHarvestAuditDTO.setUserName(this.getUserNick());
+        billboardEconomicRelatedFeignApi.audit(billboardHarvestAuditDTO);
+
+        // 写消息（派单： 系统在XXX时间给您派了一单，请立即查阅！）
+        BillboardEconomicRelatedDTO billboardEconomicRelatedDTO = billboardEconomicRelatedFeignApi.getById(billboardHarvestAuditDTO.getId());
+        if(billboardEconomicRelatedDTO != null){
+            // 写系统消息
+            MessageDTO messageDTO = new MessageDTO();
+            // 时间
+            messageDTO.setCreateAt(new Date());
+            String time = DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
+            // 内容
+            String content = String.format(MessageLogInfo.billboard_pd, time);
+            messageDTO.setContent(content);
+            // 榜单发布人
+            messageDTO.setUserId(billboardEconomicRelatedDTO.getEconomicId());
+            messageDTO.setTitle(content);
+            // 派单
+            messageDTO.setType(0);
+            // 榜单ID
+            messageDTO.setPid(billboardEconomicRelatedDTO.getBillboardId());
+            messageFeignApi.add(messageDTO);
+        }
+    }
+
 
     private UserResponse getUser(){
         Long userId = this.getUserId();

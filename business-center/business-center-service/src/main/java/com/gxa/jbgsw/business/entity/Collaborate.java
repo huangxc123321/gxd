@@ -63,4 +63,7 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "需求合作:邀请揭榜的时候，选择榜单时候传的榜单ID")
     private Long  billboardId;
+
+    @ApiModelProperty(value = "合作申请拒绝原因")
+    private String remark;
 }

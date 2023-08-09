@@ -13,6 +13,7 @@ import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
@@ -21,6 +22,7 @@ import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.business.service.CollectionService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
+import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.ApiModelProperty;
 import ma.glasnost.orika.MapperFacade;
@@ -309,7 +311,11 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
     private List<Billboard> getBizs() {
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 待审核
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
+        // 已审核
+        lambdaQueryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode());
+        // 企业吧榜
         lambdaQueryWrapper.eq(Billboard::getType, BillboardTypeEnum.BUS_BILLBOARD.getCode());
         lambdaQueryWrapper.orderByDesc(Billboard::getIsTop, Billboard::getCreateAt);
         // 轮播3条， 普通6条
@@ -321,7 +327,11 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
     private List<Billboard> getGovs() {
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 待揭榜
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
+        // 已审核
+        lambdaQueryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode());
+        // 政府榜
         lambdaQueryWrapper.eq(Billboard::getType, BillboardTypeEnum.GOV_BILLBOARD.getCode());
         lambdaQueryWrapper.orderByDesc(Billboard::getIsTop, Billboard::getCreateAt);
         // 轮播3条， 普通6条
@@ -333,7 +343,9 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
     private List<Billboard> getLast() {
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 已审核，待揭榜
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
+                          .eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode())
                           .orderByDesc(Billboard::getIsTop)
                           .orderByDesc(Billboard::getCreateAt)
                           .last("LIMIT  4");
@@ -360,6 +372,27 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         lambdaUpdateWrapper.eq(Billboard::getId, billboardAuditDTO.getId());
 
         billboardMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public List<BillboardResponse> searchNew(Integer num) {
+        LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 已审核通过
+        lambdaQueryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode());
+        // 待揭榜
+        lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
+        lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt);
+
+        int start = (num - 1) * 5;
+        int end = num * 5;
+
+        lambdaQueryWrapper.last("LIMIT  "+start+", "+end+" ");
+        List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
+
+        if(CollectionUtils.isNotEmpty(billboards)){
+            return  mapperFacade.mapAsList(billboards, BillboardResponse.class);
+        }
+        return null;
     }
 
 

@@ -35,4 +35,6 @@ public interface CollaborateApi {
     @PostMapping("/collaborate/pageQuery")
     PageResult pageQuery(@RequestBody MyCollaborateRequest request);
 
+    @PostMapping("/collaborate/apply")
+    void apply(@RequestBody MyCollaborateApplyDTO collaborateApply);
 }

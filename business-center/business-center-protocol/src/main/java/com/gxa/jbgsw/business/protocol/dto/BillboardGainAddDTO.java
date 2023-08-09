@@ -26,7 +26,6 @@ public class BillboardGainAddDTO implements Serializable {
     @ApiModelProperty(value = "揭榜单位", hidden = true)
     private String acceptBillboard;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "申请时间", hidden = true)
     private Date applyAt;
 

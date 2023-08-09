@@ -1,14 +1,17 @@
 package com.gxa.jbgsw.website.controller;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollaborateTypeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
-import com.gxa.jbgsw.common.utils.BaseController;
-import com.gxa.jbgsw.common.utils.PageRequest;
-import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.*;
+import com.gxa.jbgsw.user.protocol.dto.UserDTO;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
@@ -16,6 +19,7 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -39,7 +43,20 @@ public class MyCollaborateController extends BaseController {
     @Resource
     BillboardFeignApi billboardFeignApi;
     @Resource
+    UserFeignApi userFeignApi;
+    @Resource
+    MessageFeignApi messageFeignApi;
+    @Resource
     MapperFacade mapperFacade;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
+
+
+    @ApiOperation("合作申请(别人发起)")
+    @PostMapping("/collaborate/apply")
+    void apply(@RequestBody MyCollaborateApplyDTO collaborateApply) throws BizException {
+        collaborateFeignApi.apply(collaborateApply);
+    }
 
 
     @ApiOperation("需求合作查看")
@@ -83,13 +100,15 @@ public class MyCollaborateController extends BaseController {
         collaborateFeignApi.cancel(id);
     }
 
-    @ApiOperation("新增合作")
+    @ApiOperation("发起合作")
     @PostMapping("/collaborate/add")
     void add(@RequestBody CollaborateDTO collaborateDTO) throws BizException {
         Long userId = this.getUserId();
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
+
+        Long harvestUserId = null;
 
         collaborateDTO.setEffectAt(new Date());
         collaborateDTO.setLaunchUserId(userId);
@@ -98,6 +117,8 @@ public class MyCollaborateController extends BaseController {
         if(CollaborateTypeEnum.GAIN.getCode().equals(collaborateDTO.getType())){
             HavestDTO havest = havestFeignApi.getHavestById(collaborateDTO.getPid());
             collaborateDTO.setHarvestUserId(havest.getCreateBy());
+
+            harvestUserId = havest.getCreateBy();
         }
 
         if(CollaborateTypeEnum.REQUIREMENT.getCode().equals(collaborateDTO.getType())){
@@ -109,6 +130,44 @@ public class MyCollaborateController extends BaseController {
         }else {
             collaborateFeignApi.add(collaborateDTO);
         }
+
+        // 写消息（发起合作：（用户名）向您发起XXX（合作方式）的合作。）
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.collaborate_mode.name(), collaborateDTO.getMode());
+        UserResponse u = this.getUser();
+        // 写系统消息
+        MessageDTO messageDTO = new MessageDTO();
+        // 合作方式
+        String modeName = "";
+        if(dictionaryDTO != null){
+            modeName = dictionaryDTO.getDicValue();
+        }
+        // 内容
+        String content = String.format(MessageLogInfo.billboard_hz, u.getNick(), modeName);
+        messageDTO.setContent(content);
+        // 榜单发布人
+        if(CollaborateTypeEnum.GAIN.getCode().equals(collaborateDTO.getType())){
+            // 成果
+            messageDTO.setUserId(harvestUserId);
+        }else {
+            // 帅才ID
+            Long talentId = collaborateDTO.getPid();
+            TalentPoolDTO talentPool = talentPoolFeignApi.getTalentPoolById(talentId);
+            if(talentPool != null){
+                UserDTO userDTO = userFeignApi.getUserByMobile(talentPool.getMobie());
+                if(userDTO != null){
+                    messageDTO.setUserId(userDTO.getId());
+                }
+            }
+        }
+        messageDTO.setTitle(content);
+        // 发起合作
+        messageDTO.setType(3);
+        messageDTO.setThirdAvatar(u.getAvatar());
+        messageDTO.setThirdName(u.getNick());
+
+        // 榜单ID
+        messageDTO.setPid(collaborateDTO.getPid());
+        messageFeignApi.add(messageDTO);
     }
 
 
@@ -155,6 +214,14 @@ public class MyCollaborateController extends BaseController {
     }
 
 
-
+    private UserResponse getUser(){
+        Long userId = this.getUserId();
+        String userInfo = stringRedisTemplate.opsForValue().get(RedisKeys.USER_INFO+userId);
+        if(StrUtil.isBlank(userInfo)){
+            throw new BizException(UserErrorCode.LOGIN_CODE_ERROR);
+        }
+        UserResponse userResponse = JSONObject.parseObject(userInfo, UserResponse.class);
+        return userResponse;
+    }
 
 }

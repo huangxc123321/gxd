@@ -3,6 +3,7 @@ package com.gxa.jbgsw.business.service;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 
 import java.util.List;
@@ -52,4 +53,6 @@ public interface BillboardService extends IService<Billboard> {
     void batchInsert(List<BillboardDTO> batchList);
 
     void updateAuditStatus(BillboardAuditDTO billboardAuditDTO);
+
+    List<BillboardResponse> searchNew(Integer num);
 }

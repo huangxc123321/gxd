@@ -33,5 +33,9 @@ public class MessageDTO implements Serializable {
     @ApiModelProperty(value = "消息ID")
     private Long id;
 
+    @ApiModelProperty(value = "第三方名称")
+    private String thirdName;
 
+    @ApiModelProperty(value = "第三方头像")
+    private String thirdAvatar;
 }

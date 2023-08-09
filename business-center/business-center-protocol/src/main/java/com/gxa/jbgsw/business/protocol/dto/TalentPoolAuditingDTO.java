@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class TalentPoolAuditingDTO implements Serializable {
 
-    @ApiModelProperty(value = "用户ID: 新增的時候传null, 编辑传用户ID")
+    @ApiModelProperty(value = "ID")
     private Long id;
 
     @ApiModelProperty(value = "状态：0 正常， 1-注销")

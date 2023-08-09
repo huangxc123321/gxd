@@ -47,4 +47,11 @@ public class Message implements Serializable {
     @ApiModelProperty(value = "消息生成时间")
     private Date createAt;
 
+    @ApiModelProperty(value = "第三方名称")
+    private String thirdName;
+
+    @ApiModelProperty(value = "第三方头像")
+    private String thirdAvatar;
+
+
 }

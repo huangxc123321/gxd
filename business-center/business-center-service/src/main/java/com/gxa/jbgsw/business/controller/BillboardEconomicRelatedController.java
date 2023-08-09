@@ -2,11 +2,9 @@ package com.gxa.jbgsw.business.controller;
 
 
 import com.gxa.jbgsw.business.client.BillboardEconomicRelatedApi;
+import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
-import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedAuditDTO;
-import com.gxa.jbgsw.business.protocol.dto.BillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyBillboardEconomicManDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -64,6 +62,15 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
             return myBillboardEconomicManDTO;
         }
 
+        return null;
+    }
+
+    @Override
+    public BillboardEconomicRelatedDTO getById(Long id) {
+        BillboardEconomicRelated billboardEconomicRelated = billboardEconomicRelatedService.getById(id);
+        if(billboardEconomicRelated != null){
+            return mapperFacade.map(billboardEconomicRelated, BillboardEconomicRelatedDTO.class);
+        }
         return null;
     }
 

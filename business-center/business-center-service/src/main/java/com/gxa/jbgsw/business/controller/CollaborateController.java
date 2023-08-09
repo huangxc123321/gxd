@@ -92,5 +92,16 @@ public class CollaborateController implements CollaborateApi {
             return pageResult;
         }
     }
+
+    @Override
+    public void apply(MyCollaborateApplyDTO collaborateApply) {
+        Collaborate collaborate = collaborateService.getById(collaborateApply.getId());
+        if(collaborate != null){
+            collaborate.setStatus(collaborateApply.getStatus());
+            collaborate.setRemark(collaborateApply.getRemark());
+
+            collaborateService.updateById(collaborate);
+        }
+    }
 }
 

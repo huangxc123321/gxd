@@ -2,16 +2,15 @@ package com.gxa.jbgsw.admin.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.admin.feignapi.MessageFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TalentPoolFeignApi;
 import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.client.BillboardTalentRelatedApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
-import com.gxa.jbgsw.common.utils.BaseController;
-import com.gxa.jbgsw.common.utils.ConstantsUtils;
-import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.common.utils.*;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
@@ -40,6 +39,8 @@ public class TalentPoolFontController extends BaseController {
     BillboardTalentRelatedApi billboardTalentRelatedApi;
     @Resource
     UserFeignApi userFeignApi;
+    @Resource
+    MessageFeignApi messageFeignApi;
     @Resource
     MapperFacade mapperFacade;
 
@@ -121,6 +122,28 @@ public class TalentPoolFontController extends BaseController {
             talentPoolAuditingDTO.setAuditUserName(userResponse.getNick());
         }
         talentPoolFeignApi.updateStatus(talentPoolAuditingDTO);
+
+        // 写日志 帅才审核：
+        MessageDTO messageDTO = new MessageDTO();
+        // 时间
+        messageDTO.setCreateAt(new Date());
+        // 内容
+        String content = String.format(MessageLogInfo.talent_auth,
+                AuditingStatusEnum.getNameByIndex(talentPoolAuditingDTO.getStatus()));
+        messageDTO.setContent(content);
+        // 帅才ID-->user_id
+        TalentPoolDTO talentPool = talentPoolFeignApi.getTalentPoolById(talentPoolAuditingDTO.getId());
+        if(talentPool != null){
+            UserDTO userDTO =  userFeignApi.getUserByMobile(talentPool.getMobie());
+            if(userDTO != null){
+                messageDTO.setUserId(userDTO.getId());
+            }
+        }
+        messageDTO.setTitle(content);
+        // 系统消息
+        messageDTO.setType(0);
+        messageFeignApi.add(messageDTO);
+
     }
 
 
