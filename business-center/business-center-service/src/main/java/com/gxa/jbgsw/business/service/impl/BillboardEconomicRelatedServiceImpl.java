@@ -4,10 +4,13 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
 import com.gxa.jbgsw.business.entity.*;
+import com.gxa.jbgsw.business.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardEconomicRelatedMapper;
+import com.gxa.jbgsw.business.protocol.dto.AppRequiresAccepptDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
@@ -17,6 +20,7 @@ import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.gxa.jbgsw.common.utils.ComputeSimilarityRatio;
 import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -45,6 +49,8 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
     BillboardService billboardService;
     @Resource
     BillboardEconomicRelatedMapper billboardEconomicRelatedMapper;
+    @Resource
+    UserFeignApi userFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
@@ -137,6 +143,11 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 related.setEconomicId(s.getId());
                 related.setCreateAt(new Date());
 
+                UserDTO userDTO = userFeignApi.getUserByMobile(s.getMobile());
+                if(userDTO != null){
+                    related.setEconomicUserId(userDTO.getId());
+                }
+
                 finalRelateds.add(related);
             });
 
@@ -170,6 +181,15 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
         }
 
         return null;
+    }
+
+    @Override
+    public void updateRequireStatus(AppRequiresAccepptDTO requiresAccepptDTO) {
+        LambdaUpdateWrapper<BillboardEconomicRelated> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(BillboardEconomicRelated::getStatus, requiresAccepptDTO.getStatus())
+                           .set(BillboardEconomicRelated::getRemark, requiresAccepptDTO.getRemark())
+                           .eq(BillboardEconomicRelated::getId, requiresAccepptDTO.getId());
+        billboardEconomicRelatedMapper.update(null, lambdaUpdateWrapper);
     }
 
 

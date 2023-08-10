@@ -13,6 +13,7 @@ import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.MessageLogInfo;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
@@ -48,6 +49,10 @@ public class BillboardFontController extends BaseController {
     CompanyFeignApi companyFeignApi;
     @Resource
     MessageFeignApi messageFeignApi;
+    @Resource
+    TechEconomicManFeignApi techEconomicManFeignApi;
+    @Resource
+    UserFeignApi userFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
@@ -211,13 +216,17 @@ public class BillboardFontController extends BaseController {
             // 内容
             String content = String.format(MessageLogInfo.billboard_pd, time);
             messageDTO.setContent(content);
-            // 榜单发布人
-            messageDTO.setUserId(billboardEconomicRelatedDTO.getEconomicId());
+            // 派单接收人
+            TechEconomicManResponse t = techEconomicManFeignApi.getTechEconomicManById(billboardEconomicRelatedDTO.getEconomicId());
+            if(t != null){
+                UserDTO userDTO = userFeignApi.getUserByMobile(t.getMobile());
+                messageDTO.setUserId(userDTO.getId());
+            }
             messageDTO.setTitle(content);
-            // 派单
-            messageDTO.setType(0);
-            // 榜单ID
-            messageDTO.setPid(billboardEconomicRelatedDTO.getBillboardId());
+            // 派单： 类型为： 需求单
+            messageDTO.setType(2);
+            // 派单ID
+            messageDTO.setPid(billboardEconomicRelatedDTO.getId());
             messageFeignApi.add(messageDTO);
         }
     }

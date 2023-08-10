@@ -144,7 +144,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     public PageResult<MyPublishBillboardInfo> queryMyPublish(MyPublishBillboardRequest request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
 
-        List<MyPublishBillboardInfo> list = billboardMapper.queryMyPublish(request.getUserId(), request.getType());
+        List<MyPublishBillboardInfo> list = billboardMapper.queryMyPublish(request.getUserId(), request.getType(), request.getAuditStatus());
         if(CollectionUtils.isNotEmpty(list)){
             PageInfo<MyPublishBillboardInfo> pageInfo = new PageInfo<>(list);
 

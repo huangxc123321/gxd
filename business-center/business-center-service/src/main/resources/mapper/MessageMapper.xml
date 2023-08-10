@@ -2,11 +2,55 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.MessageMapper">
 
-   <select id="pageQUery" parameterType="com.gxa.jbgsw.business.protocol.dto.AppMessageRequest"
-           resultType="com.gxa.jbgsw.business.protocol.dto.AppMessageResponse">
-
-
-
+   <select id="getMyMessagesForRequires" parameterType="com.gxa.jbgsw.business.protocol.dto.AppMessageRequest"
+           resultType="com.gxa.jbgsw.business.protocol.dto.AppMessageRequiresDTO">
+         SELECT
+             b.id,
+             c.id AS billboardId,
+             c.title,
+             c.amount,
+             a.create_at AS createAt,
+             b.`status`,
+             a.read_flag AS readFlag
+         FROM
+             t_message a
+         LEFT JOIN t_billboard_economic_related AS b ON a.pid = b.id
+         LEFT JOIN t_billboard AS c ON c.id = b.billboard_id
+         WHERE
+             a.user_id = #{createBy}
+         AND a.type = #{type}
+         order by a.create_at desc
    </select>
+
+    <select id="getMyAllMessages" parameterType="com.gxa.jbgsw.business.protocol.dto.AppMessageRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.MessageDTO" >
+
+            SELECT
+                a.id,
+                a.user_id AS userId,
+                a.third_avatar AS thirdAvatar,
+                a.create_at AS createAt,
+                a.read_flag AS readFlag,
+                a.third_name AS thirdName,
+                a.type
+            FROM
+                t_message AS a
+             WHERE
+                 a.user_id = #{createBy}
+
+                <choose>
+                    <when test="type == 0  ">
+                        AND a.type = #{type}
+                    </when>
+                    <when test="type == 1">
+                        AND a.type = 0 AND read_flag = 0
+                    </when>
+                </choose>
+        order by a.create_at desc
+
+    </select>
+
+
+
 
 </mapper>

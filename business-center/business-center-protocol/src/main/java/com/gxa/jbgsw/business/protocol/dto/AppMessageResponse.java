@@ -10,16 +10,19 @@ import java.util.List;
 public class AppMessageResponse implements Serializable {
 
     @ApiModelProperty(value = "所有未读标识: true 有未读")
-    boolean allIsNoReadFlag;
+    boolean allIsNoReadFlag = false;
 
     @ApiModelProperty(value = "未读标识: true 有未读")
-    boolean noReadFlag;
+    boolean noReadFlag = false;
 
-    @ApiModelProperty(value = "需求未读标识")
-    long requiresNoReadFlag;
+    @ApiModelProperty(value = "需求未读标识: true 有未读")
+    boolean requiresNoReadFlag = false;
 
-    @ApiModelProperty(value = "榜单集合")
+    @ApiModelProperty(value = "消息")
     List<MessageDTO> messages;
+
+    @ApiModelProperty(value = "需求单")
+    List<AppMessageRequiresDTO> requires;
 
     @ApiModelProperty(notes = "页数（默认1）")
     private Integer pageNum;

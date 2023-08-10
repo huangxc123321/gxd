@@ -2,9 +2,7 @@ package com.gxa.jbgsw.business.mapper;
 
 import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansResponse;
-import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
 
 import java.util.List;
 
@@ -23,4 +21,6 @@ public interface TechEconomicManMapper extends BaseMapper<TechEconomicMan> {
     List<SearchEconomicMansResponse> queryEconomicMans(SearchEconomicMansRequest searchTalentsRequest);
 
     List<String> getLabels();
+
+    List<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request);
 }

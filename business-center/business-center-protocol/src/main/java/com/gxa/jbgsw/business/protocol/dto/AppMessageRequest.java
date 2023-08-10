@@ -10,7 +10,7 @@ import java.io.Serializable;
 public class AppMessageRequest extends PageRequest implements Serializable {
 
     @ApiModelProperty(value = "用户ID", hidden = true)
-    private Long userId;
+    private Long createBy;
 
     @ApiModelProperty(value = "查询类型: 0： 全部  1：未读  2 需求单")
     private Integer type;

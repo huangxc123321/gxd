@@ -106,5 +106,12 @@ public class TechEconomicManController implements TechEconomicManApi {
     public List<String> getLabels() {
         return techEconomicManService.getLabels();
     }
+
+    @Override
+    public PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request) {
+        return techEconomicManService.getEconomicManRequires(request);
+    }
+
+
 }
 

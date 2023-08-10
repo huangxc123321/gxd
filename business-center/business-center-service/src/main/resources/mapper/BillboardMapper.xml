@@ -225,6 +225,9 @@
         <if test="type != null">
             AND a.type = #{type}
         </if>
+        <if test="auditStatus != null">
+            AND a.audit_status = #{auditStatus}
+        </if>
 
         ORDER BY a.create_at DESC
 

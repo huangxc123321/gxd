@@ -28,7 +28,6 @@ public interface MessageApi {
     @GetMapping("/message/updateReadFlag")
     void updateReadFlag(@RequestParam("id") Long id);
 
-    @PostMapping("/msg/pageQUery")
-    AppMessageResponse pageQUery(@RequestBody AppMessageRequest request);
-
+    @PostMapping("/message/getMyMessages")
+    AppMessageResponse getMyMessages(@RequestBody AppMessageRequest appMessageRequest);
 }

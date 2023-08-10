@@ -92,4 +92,28 @@
        SELECT DISTINCT a.label FROM t_tech_economic_man AS a
     </select>
 
+    <select id="getEconomicManRequires" parameterType="com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequiresRequest"
+            resultType="com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequiresResponse">
+            SELECT
+              a.id,
+              b.id AS billboardId,
+              a.`status`,
+              b.title,
+              b.content,
+              b.unit_name,
+              b.start_at,
+              b.end_at,
+              a.h_start,
+              a.remark
+            FROM
+                t_billboard_economic_related AS a
+            LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+            WHERE 1 = 1
+             <if test="userId != null">
+                 AND a.user_id = #{createBy}
+             </if>
+              ORDER BY a.create_at DESC
+    </select>
+
+
 </mapper>

@@ -27,5 +27,5 @@ public interface MessageService extends IService<Message> {
 
     void updateReadFlag(Long id);
 
-    AppMessageResponse pageQUery(AppMessageRequest request);
+    AppMessageResponse getMyMessages(AppMessageRequest appMessageRequest);
 }

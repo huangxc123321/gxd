@@ -24,7 +24,7 @@ public class BillboardRelatedAuditDTO implements Serializable {
     @ApiModelProperty(value = "推荐时间", hidden = true)
     private Date recommendAt;
 
-    @ApiModelProperty(value = "推荐状态： 0 不推荐(取消) 1 推荐")
+    @ApiModelProperty(value = "推荐状态： 0 不推荐(取消) 1 推荐(派单)")
     private Integer status;
 
     @ApiModelProperty(value = "备注")

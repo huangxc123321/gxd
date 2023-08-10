@@ -1,18 +1,21 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import cn.hutool.core.util.CharUtil;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.gxa.jbgsw.business.mapper.TechEconomicManMapper;
-import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansRequest;
-import com.gxa.jbgsw.business.protocol.dto.SearchEconomicMansResponse;
-import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.BillboardEconomicRelatedStatusEnum;
+import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
+import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -32,6 +35,11 @@ import java.util.stream.Collectors;
 public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMapper, TechEconomicMan> implements TechEconomicManService {
     @Resource
     TechEconomicManMapper techEconomicManMapper;
+    @Resource
+    BillboardHarvestRelatedService billboardHarvestRelatedService;
+    @Resource
+    BillboardTalentRelatedService billboardTalentRelatedService;
+
     @Resource
     MapperFacade mapperFacade;
 
@@ -62,6 +70,52 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<SearchEconomicMansResponse>>() {
         }.build(), new TypeBuilder<PageResult<SearchEconomicMansResponse>>() {}.build());
+    }
+
+
+    @Override
+    public PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);
+        if(CollectionUtils.isNotEmpty(responses)){
+            responses.stream().forEach(s->{
+                s.setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(s.getStatus()));
+
+                // 相关成果
+                List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
+                StringBuffer sb = new StringBuffer();
+                if(CollectionUtils.isNotEmpty(bs)){
+                    for(int i=0; i<bs.size(); i++){
+                        if(i == bs.size() - 1){
+                            sb.append(bs.get(i).getName());
+                        }else{
+                            sb.append(bs.get(i).getName()).append(CharUtil.COMMA);
+                        }
+                    }
+                }
+                s.setHavests(sb.toString());
+
+                // 相关帅才
+                StringBuffer tbs = new StringBuffer();
+                List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
+                if(CollectionUtils.isNotEmpty(ts)){
+                    for(int i=0; i<ts.size(); i++){
+                        if(i == ts.size() - 1){
+                            tbs.append(ts.get(i).getName());
+                        }else{
+                            tbs.append(ts.get(i).getName()).append(CharUtil.COMMA);
+                        }
+                    }
+                }
+                s.setTalents(tbs.toString());
+            });
+        }
+
+        PageInfo<TechEconomicManRequiresResponse> pageInfo = new PageInfo<>(responses);
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<TechEconomicManRequiresResponse>>() {
+        }.build(), new TypeBuilder<PageResult<TechEconomicManRequiresResponse>>() {}.build());
     }
 
     @Override

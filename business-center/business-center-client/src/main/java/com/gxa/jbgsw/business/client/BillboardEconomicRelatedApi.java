@@ -27,4 +27,7 @@ public interface BillboardEconomicRelatedApi {
 
     @GetMapping("/billboard/economic/getById")
     BillboardEconomicRelatedDTO getById(@RequestParam("id") Long id);
+
+    @PostMapping("/message/update/requireStatus")
+    void updateRequireStatus(@RequestBody AppRequiresAccepptDTO requiresAccepptDTO);
 }

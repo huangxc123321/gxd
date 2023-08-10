@@ -21,7 +21,7 @@ public interface BillboardMapper extends BaseMapper<Billboard> {
 
     List<Billboard> LastBillboardSetData(LastBillboardRequest request);
 
-    List<MyPublishBillboardInfo> queryMyPublish(@Param("userId") Long userId, @Param("type") Integer type);
+    List<MyPublishBillboardInfo> queryMyPublish(@Param("userId") Long userId, @Param("type") Integer type, @Param("auditStatus") Integer auditStatus);
 
     int getMyReceiveBillboard(@Param("userId")Long userId,  @Param("type") Integer trueType);
 

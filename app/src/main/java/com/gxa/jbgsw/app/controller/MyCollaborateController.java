@@ -162,7 +162,7 @@ public class MyCollaborateController extends BaseController {
         }
         messageDTO.setTitle(content);
         // 发起合作
-        messageDTO.setType(3);
+        messageDTO.setType(0);
         messageDTO.setThirdAvatar(u.getAvatar());
         messageDTO.setThirdName(u.getNick());
 

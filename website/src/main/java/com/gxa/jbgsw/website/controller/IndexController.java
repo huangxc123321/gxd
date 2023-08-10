@@ -312,7 +312,7 @@ public class IndexController extends BaseController {
         messageDTO.setUserId(billboardDTO.getCreateBy());
         messageDTO.setTitle(content);
         // 立即揭榜
-        messageDTO.setType(2);
+        messageDTO.setType(0);
         messageDTO.setThirdAvatar(u.getAvatar());
         messageDTO.setThirdName(u.getNick());
 

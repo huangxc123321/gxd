@@ -74,6 +74,11 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
         return null;
     }
 
+    @Override
+    public void updateRequireStatus(AppRequiresAccepptDTO requiresAccepptDTO) {
+        billboardEconomicRelatedService.updateRequireStatus(requiresAccepptDTO);
+    }
+
 
 }
 

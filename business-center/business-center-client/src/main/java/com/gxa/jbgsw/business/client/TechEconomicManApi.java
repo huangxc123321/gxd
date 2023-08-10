@@ -37,4 +37,9 @@ public interface TechEconomicManApi {
 
     @GetMapping("/tech/broker/getLabels")
     List<String> getLabels();
+
+    @PostMapping("/tech/broker/getEconomicManRequires")
+    PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request);
+
+
 }

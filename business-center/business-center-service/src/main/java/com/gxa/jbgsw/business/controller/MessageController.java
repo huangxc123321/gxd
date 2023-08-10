@@ -79,7 +79,7 @@ public class MessageController implements MessageApi {
     }
 
     @Override
-    public AppMessageResponse pageQUery(AppMessageRequest request) {
-        return messageService.pageQUery(request);
+    public AppMessageResponse getMyMessages(AppMessageRequest appMessageRequest) {
+        return messageService.getMyMessages(appMessageRequest);
     }
 }

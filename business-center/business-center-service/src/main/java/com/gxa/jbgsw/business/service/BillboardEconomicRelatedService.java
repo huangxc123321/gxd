@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.gxa.jbgsw.business.protocol.dto.AppRequiresAccepptDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
 
 import java.util.List;
@@ -21,4 +22,6 @@ public interface BillboardEconomicRelatedService extends IService<BillboardEcono
     List<BillboardEconomicRelatedResponse> getEconomicRecommend(Long billboardId);
 
     BillboardEconomicRelated getMyEconomicMan(Long billboardId);
+
+    void updateRequireStatus(AppRequiresAccepptDTO requiresAccepptDTO);
 }

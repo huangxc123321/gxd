@@ -139,6 +139,11 @@ public class TechEconomicManController extends BaseController {
         techEconomicManAppraiseFeignApi.delete(id);
     }
 
+    @ApiOperation("获取技术经纪人的需求列表")
+    @PostMapping("/tech/broker/getEconomicManRequires")
+    PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request){
+        return techEconomicManFeignApi.getEconomicManRequires(request);
+    }
 
 
 }

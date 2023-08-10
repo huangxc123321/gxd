@@ -35,6 +35,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "榜单ID")
     private Long billboardId;
 
+    @ApiModelProperty(value = "经纪人用户ID")
+    private Long economicUserId;
+
     @ApiModelProperty(value = "经纪人ID")
     private Long economicId;
 

@@ -6,16 +6,16 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
 import com.gxa.jbgsw.business.entity.Message;
 import com.gxa.jbgsw.business.mapper.MessageMapper;
-import com.gxa.jbgsw.business.protocol.dto.AppMessageRequest;
-import com.gxa.jbgsw.business.protocol.dto.AppMessageResponse;
-import com.gxa.jbgsw.business.protocol.dto.MessageDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyMessageRequest;
+import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.BillboardEconomicRelatedStatusEnum;
 import com.gxa.jbgsw.business.service.MessageService;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -84,48 +84,83 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
     }
 
     @Override
-    public AppMessageResponse pageQUery(AppMessageRequest request) {
-        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+    public AppMessageResponse getMyMessages(AppMessageRequest appMessageRequest) {
+        AppMessageResponse response = new AppMessageResponse();
+        PageHelper.startPage(appMessageRequest.getPageNum(), appMessageRequest.getPageSize());
 
-        LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Message::getUserId, request.getUserId());
-        // 所有
-        if(request.getType() == 1){
-            lambdaQueryWrapper.eq(Message::getReadFlag, 0);
-        }
-        lambdaQueryWrapper.orderByDesc(Message::getCreateAt);
+       if(appMessageRequest.getType().equals(2)){
+           boolean requiresNoReadFlag = false;
+           // 需求单
+           List<AppMessageRequiresDTO> requires =  messageMapper.getMyMessagesForRequires(appMessageRequest);
+           if(CollectionUtils.isNotEmpty(requires)){
+               for(int i=0; i<requires.size(); i++){
+                   requires.get(i).setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(requires.get(i).getStatus()));
+                   if(requires.get(i).getReadFlag().equals(0)){
+                       requiresNoReadFlag = true;
+                   }
+               }
+               response.setRequiresNoReadFlag(requiresNoReadFlag);
+           }
+           PageInfo<AppMessageRequiresDTO> pageInfo = new PageInfo<>(requires);
+           response.setRequires(requires);
+           response.setTotal(pageInfo.getTotal());
+           response.setPageSize(pageInfo.getPageSize());
+           response.setPages(pageInfo.getPages());
+           response.setPageNum(pageInfo.getPageNum());
+           response.setSize(pageInfo.getSize());
 
-        List<Message> messages =  messageMapper.selectList(lambdaQueryWrapper);
+           // 判断消息是否有未读的
+           LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+           lambdaQueryWrapper.eq(Message::getUserId, appMessageRequest.getCreateBy());
+           // 未读
+           lambdaQueryWrapper.eq(Message::getReadFlag, 0);
+           // 系统消息
+           lambdaQueryWrapper.eq(Message::getType, 0);
+           lambdaQueryWrapper.orderByDesc(Message::getCreateAt);
+           List<Message> messages =  messageMapper.selectList(lambdaQueryWrapper);
+           if(messages != null && messages.size()>0){
+               response.setNoReadFlag(true);
+               response.setAllIsNoReadFlag(true);
+           }
+       }else {
+           // 消息
+           if(appMessageRequest.getType().equals(0)){
+               // 所有消息
+               boolean noReadFlag = false;
+               List<MessageDTO> messages =  messageMapper.getMyAllMessages(appMessageRequest);
+               if(CollectionUtils.isNotEmpty(messages)){
+                   for(int i=0; i<messages.size(); i++) {
+                       if(messages.get(i).getReadFlag().equals(0)){
+                           noReadFlag = true;
+                       }
+                   }
+               }
+               response.setNoReadFlag(noReadFlag);
+               response.setAllIsNoReadFlag(noReadFlag);
 
-        boolean noReadFlage = false;
-        if(request.getType() == 0){
-            for(Message m : messages){
-                if(m.getReadFlag().equals(0)){
-                    noReadFlage = true;
-                    break;
-                }
-            }
-        }
-
-        PageInfo<Message> pageInfo = new PageInfo<>(messages);
-
-        //类型转换
-        AppMessageResponse appMessageResponse = new AppMessageResponse();
-        appMessageResponse.setAllIsNoReadFlag(noReadFlage);
-        if(pageInfo != null && pageInfo.getList() != null && pageInfo.getList().size()>0){
-            List<MessageDTO> list = mapperFacade.mapAsList(messages, MessageDTO.class);
-            appMessageResponse.setMessages(list);
-        }
-        appMessageResponse.setNoReadFlag(noReadFlage);
-        appMessageResponse.setPageNum(pageInfo.getPageNum());
-        appMessageResponse.setPages(pageInfo.getPages());
-        appMessageResponse.setPageSize(pageInfo.getPageSize());
-        appMessageResponse.setTotal(pageInfo.getTotal());
-
-        // 获取是否有新需求单
+               PageInfo<MessageDTO> pageInfo = new PageInfo<>(messages);
+               response.setMessages(messages);
+               response.setTotal(pageInfo.getTotal());
+               response.setPageSize(pageInfo.getPageSize());
+               response.setPages(pageInfo.getPages());
+               response.setPageNum(pageInfo.getPageNum());
+               response.setSize(pageInfo.getSize());
 
 
-
+               // 判断需求是否有未读的
+               LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+               lambdaQueryWrapper.eq(Message::getUserId, appMessageRequest.getCreateBy());
+               // 未读
+               lambdaQueryWrapper.eq(Message::getReadFlag, 0);
+               // 需求消息
+               lambdaQueryWrapper.eq(Message::getType, 2);
+               lambdaQueryWrapper.orderByDesc(Message::getCreateAt);
+               List<Message> reqMessages =  messageMapper.selectList(lambdaQueryWrapper);
+               if(reqMessages != null && reqMessages.size()>0){
+                   response.setRequiresNoReadFlag(true);
+               }
+           }
+       }
 
 
         return null;

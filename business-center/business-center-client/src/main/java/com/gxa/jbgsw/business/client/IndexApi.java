@@ -53,5 +53,6 @@ public interface IndexApi {
     PageResult<SearchTeamsResponse> searchTeamRequest(@RequestBody CompanyRequest companyRequest);
 
     @GetMapping("/index/searchNew")
-    List<BillboardResponse> searchNew(Integer num);
+    List<BillboardResponse> searchNew(@RequestParam("num") Integer num);
+
 }
