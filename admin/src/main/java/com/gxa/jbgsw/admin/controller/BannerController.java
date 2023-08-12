@@ -69,8 +69,8 @@ public class BannerController extends BaseController {
 
     @ApiOperation(value = "修改排序", notes = "修改排序")
     @ApiImplicitParams({
-            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
-            @ApiImplicitParam(value = "当前序列号，每上下一次增加或者减少1", name = "seqNo", dataType = "Integer", paramType = "query")
+            @ApiImplicitParam(value = "广告位ID", name = "id", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(value = "当前序列号，每上下一次减少或者增加1", name = "seqNo", dataType = "Integer", paramType = "query")
     })
     @GetMapping("/banner/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
@@ -89,6 +89,17 @@ public class BannerController extends BaseController {
         }
         bannerFeignApi.add(bannerDTO);
     }
+
+
+    @ApiOperation("获取广告位信息")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "广告位ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/banner/getById")
+    BannerResponse getById(@RequestParam("id") Long id) throws BizException {
+         return bannerFeignApi.getById(id);
+    }
+
 
 
     @ApiOperation("更新广告位信息")

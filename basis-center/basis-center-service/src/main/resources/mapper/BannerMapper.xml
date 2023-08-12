@@ -23,8 +23,11 @@
             <if test="status != null">
                 AND a.`status` = #{status}
             </if>
+            <if test="type != null">
+                AND a.`type` = #{type}
+            </if>
 
-        ORDER BY a.seq_no ASC,  a.create_at DESC
+        ORDER BY a.`status` ASC, a.seq_no ASC,  a.create_at DESC
 
 
     </select>

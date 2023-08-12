@@ -2,6 +2,7 @@ package com.gxa.jbgsw.basis.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -46,11 +47,11 @@ public class BannerServiceImpl  extends ServiceImpl<BannerMapper, Banner> implem
 
     @Override
     public void updateSeqNo(Long id, Integer seqNo) {
-        LambdaUpdateWrapper<Banner> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
-        lambdaUpdateWrapper.set(Banner::getSeqNo, seqNo)
-                .eq(Banner::getId, id);
+        UpdateWrapper<Banner> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setSql("seq_no = seq_no +" + seqNo)
+                .eq("id", id);
 
-        bannerMapper.update(null, lambdaUpdateWrapper);
+        bannerMapper.update(null, updateWrapper);
     }
 
     @Override

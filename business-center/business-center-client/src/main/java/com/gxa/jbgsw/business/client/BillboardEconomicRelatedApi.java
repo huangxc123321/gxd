@@ -30,4 +30,7 @@ public interface BillboardEconomicRelatedApi {
 
     @PostMapping("/message/update/requireStatus")
     void updateRequireStatus(@RequestBody AppRequiresAccepptDTO requiresAccepptDTO);
+
+    @GetMapping("/message/getRequiresDetail")
+    MessageBillboardInfoResponse getRequiresDetail(@RequestParam("id")Long id, @RequestParam("billboardId")Long billboardId);
 }

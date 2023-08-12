@@ -8,15 +8,12 @@ import com.gxa.jbgsw.business.protocol.dto.BillboardlifecycleResponse;
 import com.gxa.jbgsw.business.service.BillboardLifecycleService;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.List;
 
-/**
- * @Author Mr. huang
- * @Date 2023/8/10 0010 18:09
- * @Version 2.0
- */
+@Service
 public class BillboardLifecycleServiceImpl extends ServiceImpl<BillboardlifecycleMapper, Billboardlifecycle> implements BillboardLifecycleService {
     @Resource
     BillboardlifecycleMapper billboardlifecycleMapper;
@@ -26,7 +23,7 @@ public class BillboardLifecycleServiceImpl extends ServiceImpl<Billboardlifecycl
     @Override
     public List<BillboardlifecycleResponse> selectList(Long pid) {
         LambdaQueryWrapper<Billboardlifecycle> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(Billboardlifecycle::getId, pid);
+        lambdaQueryWrapper.eq(Billboardlifecycle::getPid, pid);
         lambdaQueryWrapper.orderByDesc(Billboardlifecycle::getCreateAt);
         List<Billboardlifecycle> billboardlifecycles = billboardlifecycleMapper.selectList(lambdaQueryWrapper);
         if(CollectionUtils.isNotEmpty(billboardlifecycles)){

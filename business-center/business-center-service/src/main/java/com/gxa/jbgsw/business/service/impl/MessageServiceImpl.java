@@ -165,4 +165,13 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
 
         return null;
     }
+
+    @Override
+    public void updateAllReadFlag(Long userId, Integer type) {
+        LambdaUpdateWrapper<Message> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(Message::getReadFlag, 1)
+                           .eq(Message::getUserId, userId)
+                           .eq(Message::getType, type);
+        messageMapper.update(null, lambdaUpdateWrapper);
+    }
 }

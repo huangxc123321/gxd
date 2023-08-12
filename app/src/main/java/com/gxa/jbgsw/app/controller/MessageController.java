@@ -66,11 +66,36 @@ public class MessageController extends BaseController {
         messageFeignApi.updateReadFlag(id);
     }
 
+    @ApiOperation(value = "标记所有未读的消息为已读", notes = "标记所有未读的消息为已读")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "消息类型：0 系统消息  1 技术咨询 2 需求单", name = "type", dataType = "Long", paramType = "query")
+    })
+    @GetMapping("/message/updateAllReadFlag")
+    public void updateAllReadFlag(@RequestParam("type")Integer type){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        messageFeignApi.updateAllReadFlag(userId, type);
+    }
+
+
 
     @ApiOperation(value = "是否接受需求派单", notes = "是否接受需求派单")
     @PostMapping("/update/require/status")
     public void updateRequireStatus(@RequestBody AppRequiresAccepptDTO requiresAccepptDTO){
         billboardEconomicRelatedFeignApi.updateRequireStatus(requiresAccepptDTO);
+    }
+
+
+    @ApiOperation("点击需求获取详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "派单ID，后面接受操作使用", name = "id", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(value = "榜单ID", name = "billboardId", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/message/getRequiresInfo")
+    MessageBillboardInfoResponse getRequiresInfo(@RequestParam("id")Long id, @RequestParam("billboardId")Long billboardId){
+        return billboardEconomicRelatedFeignApi.getRequiresDetail(id, billboardId);
     }
 
 

@@ -1,14 +1,12 @@
-package com.gxa.jbgsw.admin.controller;
+package com.gxa.jbgsw.website.controller;
 
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;
-import com.gxa.jbgsw.admin.feignapi.BillboardLifecycleFeignApi;
-import com.gxa.jbgsw.business.client.BillboardLifecycleApi;
+import com.gxa.jbgsw.website.feignapi.BillboardLifecycleFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.BillboardlifecycleDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardlifecycleResponse;
 import com.gxa.jbgsw.common.utils.BaseController;
-import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;

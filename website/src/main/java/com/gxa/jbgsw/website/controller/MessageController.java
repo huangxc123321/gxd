@@ -74,4 +74,15 @@ public class MessageController extends BaseController {
     }
 
 
+    @ApiOperation("点击需求获取详情")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "派单ID，后面接受操作使用", name = "id", dataType = "Long", paramType = "query"),
+            @ApiImplicitParam(value = "榜单ID", name = "billboardId", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/message/getRequiresInfo")
+    MessageBillboardInfoResponse getRequiresInfo(@RequestParam("id")Long id, @RequestParam("billboardId")Long billboardId){
+        return billboardEconomicRelatedFeignApi.getRequiresDetail(id, billboardId);
+    }
+
+
 }

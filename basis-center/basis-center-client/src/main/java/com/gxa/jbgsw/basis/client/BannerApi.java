@@ -30,8 +30,8 @@ public interface BannerApi {
     @PostMapping("/banner/update")
     public void update(@RequestBody BannerDTO bannerDTO) throws BizException;
 
-    @GetMapping("/banner/getBannerById")
-    public BannerDTO getBannerById(@RequestParam("id") Long id) throws BizException;
+    @GetMapping("/banner/getById")
+    public BannerResponse getById(@RequestParam("id") Long id) throws BizException;
 
     @GetMapping("/banner/updateSeqNo")
     void updateSeqNo(@RequestParam("id") Long id, @RequestParam("seqNo") Integer seqNo);

@@ -82,4 +82,9 @@ public class MessageController implements MessageApi {
     public AppMessageResponse getMyMessages(AppMessageRequest appMessageRequest) {
         return messageService.getMyMessages(appMessageRequest);
     }
+
+    @Override
+    public void updateAllReadFlag(Long userId, Integer type) {
+        messageService.updateAllReadFlag(userId, type);
+    }
 }

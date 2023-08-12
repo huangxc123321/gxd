@@ -10,7 +10,7 @@ server:
       timeout: 43200m
 spring:
   application:
-    name: admin
+    name: app
   profiles:
     # 开发环境配置
     active: local

@@ -15,4 +15,8 @@ public class BannerRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "状态：0：已生效 1：待失效 2：已失传")
     private Integer status;
 
+    @ApiModelProperty(value = "类型： 0 pc , 1 app")
+    private Integer type;
+
+
 }

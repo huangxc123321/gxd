@@ -28,4 +28,6 @@ public interface MessageService extends IService<Message> {
     void updateReadFlag(Long id);
 
     AppMessageResponse getMyMessages(AppMessageRequest appMessageRequest);
+
+    void updateAllReadFlag(Long userId, Integer type);
 }

@@ -30,4 +30,7 @@ public interface MessageApi {
 
     @PostMapping("/message/getMyMessages")
     AppMessageResponse getMyMessages(@RequestBody AppMessageRequest appMessageRequest);
+
+    @GetMapping("/message/updateAllReadFlag")
+    void updateAllReadFlag(@RequestParam("userId") Long userId, @RequestParam("type") Integer type);
 }

@@ -78,7 +78,7 @@
         <if test="status != null ">
             AND a.`status` = #{status}
         </if>
-        ORDER BY a.seq_no ASC , a.create_at DESC
+        ORDER BY a.is_top DESC, a.seq_no ASC , a.create_at DESC
     </select>
 
 
@@ -129,7 +129,7 @@
             AND a.unit_name like CONCAT('%',#{unitName},'%')
         </if>
 
-        ORDER BY a.seq_no ASC , a.create_at DESC
+        ORDER BY a.is_top DESC, a.seq_no ASC , a.create_at DESC
         <if test="amountSort != null">
             <choose>
                 <when test="amountSort == 0">
@@ -162,14 +162,14 @@
         t_billboard AS a
         where a.audit_status = 1
 
-        ORDER BY
+        ORDER BY a.is_top DESC, a.seq_no ASC
         <if test="createAt != null ">
             <choose>
                 <when test="createAt == 0">
-                    a.seq_no ASC, a.create_at DESC
+                    , a.create_at DESC
                 </when>
                 <otherwise>
-                    a.seq_no ASC, a.create_at ASC
+                    , a.create_at ASC
                 </otherwise>
             </choose>
         </if>

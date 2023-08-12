@@ -5,7 +5,9 @@ import com.gxa.jbgsw.business.client.BillboardEconomicRelatedApi;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
+import com.gxa.jbgsw.business.service.BillboardService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -25,6 +27,8 @@ import java.util.List;
 public class BillboardEconomicRelatedController implements BillboardEconomicRelatedApi {
     @Resource
     BillboardEconomicRelatedService billboardEconomicRelatedService;
+    @Resource
+    BillboardService billboardService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -77,6 +81,20 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     @Override
     public void updateRequireStatus(AppRequiresAccepptDTO requiresAccepptDTO) {
         billboardEconomicRelatedService.updateRequireStatus(requiresAccepptDTO);
+    }
+
+    @Override
+    public MessageBillboardInfoResponse getRequiresDetail(Long id, Long billboardId) {
+        MessageBillboardInfoResponse response = new MessageBillboardInfoResponse();
+
+        Billboard billboard = billboardService.getById(billboardId);
+        if(billboard != null){
+            response = mapperFacade.map(billboard, MessageBillboardInfoResponse.class);
+            response.setId(id);
+            response.setStatusName(BillboardStatusEnum.getNameByIndex(billboard.getStatus()));
+        }
+
+        return response;
     }
 
 

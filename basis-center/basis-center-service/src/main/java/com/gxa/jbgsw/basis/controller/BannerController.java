@@ -55,10 +55,10 @@ public class BannerController implements BannerApi {
     }
 
     @Override
-    public BannerDTO getBannerById(Long id) throws BizException {
+    public BannerResponse getById(Long id) throws BizException {
         Banner banner = bannerService.getById(id);
-        BannerDTO bannerDTO = mapperFacade.map(banner, BannerDTO.class);
-        return bannerDTO;
+        BannerResponse bannerResponse = mapperFacade.map(banner, BannerResponse.class);
+        return bannerResponse;
     }
 
     @Override
