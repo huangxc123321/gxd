@@ -2,8 +2,10 @@ package com.gxa.jbgsw.website.controller;
 
 import com.gxa.jbgsw.business.protocol.dto.ShareCommuntiyRequest;
 import com.gxa.jbgsw.business.protocol.dto.CommunityResponse;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.ShareCommunityFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -28,7 +30,6 @@ public class SharecommunityController extends BaseController {
     @ApiOperation("获取分享列表")
     @PostMapping("/share/communtiy/getShareItems")
     PageResult<CommunityResponse> getShareItems(@RequestBody ShareCommuntiyRequest request){
-
         return shareCommunityFeignApi.getShareItems(request);
     }
 

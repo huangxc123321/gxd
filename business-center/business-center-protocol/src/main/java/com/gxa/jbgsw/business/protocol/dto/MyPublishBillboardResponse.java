@@ -14,10 +14,10 @@ public class MyPublishBillboardResponse implements Serializable {
     List<MyPublishBillboardInfo> billboards;
 
     @ApiModelProperty(value = "我发布的政府榜单总数量")
-    Integer govBillboardsNum = 0;
+    long govBillboardsNum = 0;
 
     @ApiModelProperty(value = "我发布的企业榜单总数量")
-    Integer busBillboardsNum = 0;
+    long busBillboardsNum = 0;
 
     @ApiModelProperty(notes = "页数（默认1）")
     private Integer pageNum = 1;

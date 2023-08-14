@@ -25,7 +25,7 @@ public class MessageController extends BaseController {
     @Resource
     BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
 
-    @ApiOperation("APP获取我的消息")
+    @ApiOperation("获取我的消息")
     @PostMapping("/message/getMyMessages")
     AppMessageResponse getMyMessages(@RequestBody AppMessageRequest appMessageRequest){
         Long userId = this.getUserId();
@@ -38,7 +38,9 @@ public class MessageController extends BaseController {
         return response;
     }
 
-    @ApiOperation("获取消息")
+
+    @Deprecated
+    @ApiOperation("获取消息(已经弃用)")
     @PostMapping("/message/pageQuery")
     MyMessagePageResult pageQuery(@RequestBody MyMessageRequest myMessageRequest){
         Long userId = this.getUserId();

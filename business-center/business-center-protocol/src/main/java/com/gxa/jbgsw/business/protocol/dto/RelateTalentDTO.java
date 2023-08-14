@@ -8,7 +8,7 @@ import java.io.Serializable;
 @Data
 public class RelateTalentDTO implements Serializable {
 
-    @ApiModelProperty(value = "用户ID")
+    @ApiModelProperty(value = "帅才ID")
     private Long id;
 
     @ApiModelProperty(value = "姓名")
@@ -22,6 +22,10 @@ public class RelateTalentDTO implements Serializable {
 
     @ApiModelProperty(value = "职称")
     private Long professional;
+
+    @ApiModelProperty(value = "职称显示名称")
+    private String professionalName;
+
 
     @ApiModelProperty(value = "研究方向")
     private String researchDirection;

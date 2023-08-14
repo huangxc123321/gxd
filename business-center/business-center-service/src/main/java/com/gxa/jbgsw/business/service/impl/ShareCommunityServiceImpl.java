@@ -100,7 +100,7 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     public void addlikes(Long id) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
-                           .setSql("'likes' = 'likes' + 1");
+                           .setSql("likes = likes + 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
     }

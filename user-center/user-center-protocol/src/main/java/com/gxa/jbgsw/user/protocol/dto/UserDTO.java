@@ -64,4 +64,8 @@ public class UserDTO implements Serializable {
 
     @ApiModelProperty(value = "职务")
     private String job;
+
+    @ApiModelProperty(value = "用户类型： 0 政府部门 1 企业 2 帅才 3 个人")
+    private Integer type;
+
 }

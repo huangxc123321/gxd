@@ -55,4 +55,6 @@ public interface IndexApi {
     @GetMapping("/index/searchNew")
     List<BillboardResponse> searchNew(@RequestParam("num") Integer num);
 
+    @PostMapping("/index/getRelatedTalentByKeys")
+    List<RelateTalentDTO> getRelatedTalentByKeys(@RequestBody SearchParamsDTO searchParams);
 }

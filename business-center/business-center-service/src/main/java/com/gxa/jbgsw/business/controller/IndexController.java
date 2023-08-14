@@ -320,5 +320,10 @@ public class IndexController implements IndexApi {
         return billboardService.searchNew(num);
     }
 
+    @Override
+    public List<RelateTalentDTO> getRelatedTalentByKeys(SearchParamsDTO searchParams) {
+        return billboardService.getRelatedTalentByKeys(searchParams);
+    }
+
 
 }

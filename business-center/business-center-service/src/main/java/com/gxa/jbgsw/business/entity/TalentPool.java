@@ -127,4 +127,8 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "审核是否通过原因")
     private String auditUserName;
+
+    @ApiModelProperty(value = "查询关键字： 职称+工信大类+技术关键词")
+    private String queryKeys;
+
 }

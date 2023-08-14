@@ -51,7 +51,7 @@ public class LastBillboardSetController extends BaseController {
             @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
             @ApiImplicitParam(value = "当前序列号，每上下一次减少或者增加1", name = "seqNo", dataType = "Integer", paramType = "query")
     })
-    @GetMapping("/billboard/updateSeqNo")
+    @GetMapping("/last/billboard/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
         billboardFeignApii.updateSeqNo(id, seqNo);
     }

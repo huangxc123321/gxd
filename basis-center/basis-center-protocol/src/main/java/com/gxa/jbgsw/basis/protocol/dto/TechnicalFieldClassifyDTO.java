@@ -13,7 +13,7 @@ public class TechnicalFieldClassifyDTO implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "父级技术领域分类id：如果没有分类默认为-1")
-    private String pid;
+    private Long pid;
 
     @ApiModelProperty(value = "技术领域分类名称")
     private String name;

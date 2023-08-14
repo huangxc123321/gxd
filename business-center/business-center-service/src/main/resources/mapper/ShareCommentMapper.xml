@@ -21,6 +21,7 @@
     <select id="getCommentById" resultMap="commentDTOMap">
       SELECT id,avatar,nick,create_at AS createAt,content,share_id AS shareId FROM t_share_comment
       WHERE  parent_id = #{parentId} AND share_id = #{shareId}
+      order by create_at desc
     </select>
 
 

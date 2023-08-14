@@ -34,4 +34,20 @@ public class MyCollectionResponse implements Serializable {
 
     @ApiModelProperty(value = "政策列表数据")
     List<MypolicyResponse> policys;
+
+
+    @ApiModelProperty(notes = "页数（默认1）")
+    private Integer pageNum;
+
+    @ApiModelProperty(notes = "纪录数（默认10）")
+    private Integer pageSize = 10;
+
+    @ApiModelProperty("总记录数")
+    private long total;
+
+    @ApiModelProperty("当前页的记录数量")
+    private int size;
+
+    @ApiModelProperty("总页数")
+    private int pages;
 }

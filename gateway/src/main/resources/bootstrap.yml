@@ -26,6 +26,9 @@ webauth:
     - /web/collection/pageQuery
     - /web/collection/deleteById
     - /web/havest/pageQuery
+    - /web/my/share/community/addlike
+    - /web/my/share/community/getMyShareCommunityPages
+    - /web/my/share/community/add
 
 
 appauth:
@@ -43,6 +46,9 @@ appauth:
     - /app/collection/pageQuery
     - /app/collection/deleteById
     - /app/havest/pageQuery
+    - /app/my/share/community/addlike
+    - /app/my/share/community/getMyShareCommunityPages
+    - /app/my/share/community/add
 
 
 

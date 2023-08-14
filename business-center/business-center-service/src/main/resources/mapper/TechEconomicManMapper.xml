@@ -100,10 +100,11 @@
               a.`status`,
               b.title,
               b.content,
-              b.unit_name,
-              b.start_at,
-              b.end_at,
-              a.h_start,
+              b.unit_name AS unitName,
+              b.unit_logo AS unitLogo,
+              b.start_at AS startAt,
+              b.end_at AS endAt,
+              a.h_start AS hStart,
               a.remark
             FROM
                 t_billboard_economic_related AS a
@@ -112,6 +113,10 @@
              <if test="userId != null">
                  AND a.user_id = #{createBy}
              </if>
+            <if test="type != null">
+                AND b.type = #{type}
+            </if>
+
               ORDER BY a.create_at DESC
     </select>
 

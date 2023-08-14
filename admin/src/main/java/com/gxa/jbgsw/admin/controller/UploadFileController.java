@@ -37,7 +37,7 @@ public class UploadFileController extends BaseController {
     String defalutBucketName;
     @Resource
     OssUtil ossUtil;
-    final static String commBucketName = "oss-gxa-common";
+    final static String commBucketName = "oss-gxa-pc-common";
 
     private static AuthTypeEnum authType = AuthTypeEnum.OBS;
     public static ObsClient obsClient;

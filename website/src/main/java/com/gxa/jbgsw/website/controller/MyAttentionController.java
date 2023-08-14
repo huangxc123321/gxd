@@ -45,7 +45,7 @@ public class MyAttentionController extends BaseController {
 
     @ApiOperation("关注/取消关注")
     @PostMapping("/attention/add")
-    void addAttention(AttentionDTO attentionDTO){
+    void addAttention(@RequestBody AttentionDTO attentionDTO){
         Long userId = this.getUserId();
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);

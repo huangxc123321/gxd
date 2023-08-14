@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.service.impl;
 
 import cn.hutool.core.util.CharUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
@@ -12,6 +13,7 @@ import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
+import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
@@ -21,6 +23,7 @@ import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.business.service.CollectionService;
+import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -50,6 +53,8 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     @Resource
     BillboardMapper billboardMapper;
     @Resource
+    TalentPoolMapper talentPoolMapper;
+    @Resource
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
     BillboardHarvestRelatedService billboardHarvestRelatedService;
@@ -57,6 +62,8 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     MapperFacade mapperFacade;
     @Resource
     CollectionService collectionService;
+    @Resource
+    TalentPoolService talentPoolService;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -393,6 +400,37 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
             return  mapperFacade.mapAsList(billboards, BillboardResponse.class);
         }
         return null;
+    }
+
+    @Override
+    public List<RelateTalentDTO> getRelatedTalentByKeys(SearchParamsDTO searchParams) {
+        List<RelateTalentDTO> relateTalents = new ArrayList<>();
+        List<TalentPool> talentPools = new ArrayList<>();
+        LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(StrUtil.isNotBlank(searchParams.getSearchFiled())){
+            lambdaQueryWrapper.like(TalentPool::getQueryKeys, searchParams.getSearchFiled());
+            lambdaQueryWrapper.orderByDesc(TalentPool::getCreateAt);
+            lambdaQueryWrapper.last("LIMIT "+searchParams.getPageNum()+"");
+            talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+        }
+
+        if(talentPools.size() == 0){
+            lambdaQueryWrapper.orderByDesc(TalentPool::getCreateAt);
+            lambdaQueryWrapper.last("LIMIT "+searchParams.getPageNum()+"");
+            talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+        }
+
+        if(talentPools != null){
+            int total = searchParams.getPageNum();
+            if(talentPools.size()<total){
+                total = talentPools.size();
+            }
+            for(int i=0; i<total; i++){
+                RelateTalentDTO relateTalent  = mapperFacade.map(talentPools.get(i), RelateTalentDTO.class);
+                relateTalents.add(relateTalent);
+            }
+        }
+        return relateTalents;
     }
 
 

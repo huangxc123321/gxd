@@ -186,6 +186,7 @@ public class BillboardController implements BillboardApi {
             response.setTotal(pageResult.getTotal());
             response.setPages(pageResult.getPages());
             response.setBusBillboardsNum(num);
+            response.setGovBillboardsNum(pageResult.getTotal());
         }else{
             // 获取我发布的企业榜列表
             PageResult<MyPublishBillboardInfo> pageResult = billboardService.queryMyPublish(request);
@@ -196,7 +197,7 @@ public class BillboardController implements BillboardApi {
             response.setSize(pageResult.getSize());
             response.setTotal(pageResult.getTotal());
             response.setPages(pageResult.getPages());
-            response.setBusBillboardsNum(num);
+            response.setBusBillboardsNum(pageResult.getTotal());
             response.setGovBillboardsNum(num);
         }
 

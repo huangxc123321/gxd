@@ -46,20 +46,23 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
         // 先统计另外类型的关注数量
         if(AttentionTypeEnum.GOV.getCode().equals(myAttentionRequest.getType())){
-            Integer bizNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.BUZ.getCode());
+            Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
+            Integer buzNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.BUZ.getCode());
             Integer talentNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.TALENT.getCode());
-
-            response.setBusBuzNum(bizNum);
+            response.setGovNum(govNum);
+            response.setBusBuzNum(buzNum);
             response.setTalentNum(talentNum);
+
             List<MyAttentionInfo> attentionInfos = attentionMapper.getMyAttentionInfos(myAttentionRequest);
             response.setBillboards(attentionInfos);
 
         }
         else if(AttentionTypeEnum.BUZ.getCode().equals(myAttentionRequest.getType())){
             Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
+            Integer buzNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.BUZ.getCode());
             Integer talentNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.TALENT.getCode());
-
             response.setGovNum(govNum);
+            response.setBusBuzNum(buzNum);
             response.setTalentNum(talentNum);
 
             List<MyAttentionInfo> attentionInfos = attentionMapper.getMyBuzAttentionInfos(myAttentionRequest);
@@ -68,9 +71,10 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
         } else if(AttentionTypeEnum.TALENT.getCode().equals(myAttentionRequest.getType())){
             Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
             Integer buzNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.BUZ.getCode());
-
+            Integer talentNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.TALENT.getCode());
             response.setGovNum(govNum);
             response.setBusBuzNum(buzNum);
+            response.setTalentNum(talentNum);
 
             List<MyAttentionInfo> attentionInfos = attentionMapper.getMyAttentionTalentInfos(myAttentionRequest);
             if(CollectionUtils.isNotEmpty(attentionInfos)){

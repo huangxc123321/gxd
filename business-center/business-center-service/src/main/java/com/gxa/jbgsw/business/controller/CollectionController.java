@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
 import com.gxa.jbgsw.business.client.CollectionApi;
 import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.entity.Collection;
@@ -54,7 +55,18 @@ public class CollectionController implements CollectionApi {
 
     @Override
     public MyCollectionResponse queryMyCollections(MyCollectionRequest myCollectionRequest) {
+        // 获取该类型下的分页数据
+        MyCollectionResponse response = collectionService.pageQuery(myCollectionRequest);
+
+        return response;
+    }
+
+
+    public MyCollectionResponse queryMyCollection_old(MyCollectionRequest myCollectionRequest) {
         MyCollectionResponse myCollectionResponse = new MyCollectionResponse();
+
+        // 获取该类型下的分页数据
+        PageHelper.startPage(myCollectionRequest.getPageNum() , myCollectionRequest.getPageSize());
 
         List<Collection> collections = collectionService.queryMyCollections(myCollectionRequest.getCreateBy());
         if(CollectionUtils.isNotEmpty(collections)){

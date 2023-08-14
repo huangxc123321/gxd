@@ -35,6 +35,9 @@ public class TechEconomicManRequiresResponse  implements Serializable {
     @ApiModelProperty(value = "榜单发布单位, 从登录信息中获取")
     private String unitName;
 
+    @ApiModelProperty(value = "发榜单位LOGO： 冗余字段，便于以后查询显示需要")
+    private String unitLogo;
+
     @ApiModelProperty(value = "有效开始时间")
     private Date startAt;
 

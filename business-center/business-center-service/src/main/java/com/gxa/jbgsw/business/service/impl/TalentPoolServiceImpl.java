@@ -1,9 +1,13 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.entity.TalentPool;
+import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
+import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.TalentPoolService;
@@ -37,6 +41,8 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     @Resource
     TalentPoolMapper talentPoolMapper;
     @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+    @Resource
     MapperFacade mapperFacade;
 
     @Override
@@ -50,6 +56,32 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         TalentPool talentPool = mapperFacade.map(talentPoolDTO, TalentPool.class);
         talentPool.setId(null);
         talentPool.setCreateAt(new Date());
+
+        StringBuffer sb = new StringBuffer();
+        StringBuffer ts = new StringBuffer();
+        TechnicalFieldClassifyDTO t = technicalFieldClassifyFeignApi.getById(talentPoolDTO.getTechDomain());
+        ts.append(t.getName());
+        if(t != null && !t.getPid().equals(-1)){
+            TechnicalFieldClassifyDTO t1 = technicalFieldClassifyFeignApi.getById(t.getPid());
+            ts.append(",").append(t1.getName());
+            if(t1 != null && !t1.getPid().equals(-1)){
+                TechnicalFieldClassifyDTO t2 = technicalFieldClassifyFeignApi.getById(t1.getPid());
+                ts.append(",").append(t2.getName());
+
+                if(t2!=null && !t2.getPid().equals(-1)){
+                    TechnicalFieldClassifyDTO t3 = technicalFieldClassifyFeignApi.getById(t2.getPid());
+                    ts.append(",").append(t3.getName());
+                }
+            }
+        }
+        // 技术领域
+        sb.append(ts.toString());
+
+        sb.append(talentPoolDTO.getName()).append(",").append(talentPoolDTO.getHighestEdu()).append(",")
+                .append(talentPoolDTO.getJob()).append(",").append(talentPoolDTO.getProfessionalName())
+                .append(",").append(talentPoolDTO.getResearchDirection());
+        talentPool.setQueryKeys(sb.toString());
+
         this.save(talentPool);
     }
 

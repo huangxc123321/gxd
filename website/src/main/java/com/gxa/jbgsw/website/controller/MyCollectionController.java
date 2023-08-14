@@ -15,9 +15,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 
-@Api(tags = "我的收藏")
+@Api(tags = "用户中心: 我的收藏")
 @RestController
 @Slf4j
+@ResponseBody
 public class MyCollectionController extends BaseController {
     @Resource
     CollectionFeignApi collectionFeignApi;

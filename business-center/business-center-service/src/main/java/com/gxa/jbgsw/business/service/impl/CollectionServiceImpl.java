@@ -2,12 +2,15 @@ package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.pagehelper.PageHelper;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.business.entity.Attention;
 import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.mapper.CollectionMapper;
-import com.gxa.jbgsw.business.protocol.dto.CollectionDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyCollectionBillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.MyHavestBillboardResponse;
-import com.gxa.jbgsw.business.protocol.dto.MypolicyResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AttentionTypeEnum;
+import com.gxa.jbgsw.business.protocol.enums.CollectionTypeEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.CollectionService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.apache.commons.collections4.CollectionUtils;
@@ -100,4 +103,80 @@ public class CollectionServiceImpl extends ServiceImpl<CollectionMapper, Collect
         Integer count = collectionMapper.selectCount(queryWrapper);
         return count;
     }
+
+    @Override
+    public MyCollectionResponse pageQuery(MyCollectionRequest myCollectionRequest) {
+        MyCollectionResponse response = new MyCollectionResponse();
+
+        // 获取该类型下的分页数据
+        PageHelper.startPage(myCollectionRequest.getPageNum(), myCollectionRequest.getPageSize());
+
+        // 0政府榜 1企业榜 2成果 3政策
+        if(CollectionTypeEnum.GOV.getCode().equals(myCollectionRequest.getCollectionType())){
+            Integer govNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.GOV.getCode());
+            Integer buzNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.BUZ.getCode());
+            Integer havestNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.HAVEST.getCode());
+            Integer policyNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.POC.getCode());
+            response.setGovBillboardsNum(govNum);
+            response.setBuzBillboardsNum(buzNum);
+            response.setHavestBillboardsNum(havestNum);
+            response.setPolicyNum(policyNum);
+
+            List<MyCollectionBillboardResponse> govs = collectionMapper.getMyCollectionBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+            response.setGovBillboards(govs);
+
+        }
+        else if(CollectionTypeEnum.BUZ.getCode().equals(myCollectionRequest.getCollectionType())){
+            Integer govNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.GOV.getCode());
+            Integer buzNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.BUZ.getCode());
+            Integer havestNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.HAVEST.getCode());
+            Integer policyNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.POC.getCode());
+            response.setGovBillboardsNum(govNum);
+            response.setBuzBillboardsNum(buzNum);
+            response.setHavestBillboardsNum(havestNum);
+            response.setPolicyNum(policyNum);
+
+            List<MyCollectionBillboardResponse> buzs = collectionMapper.getMyCollectionBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+            response.setBuzBillboards(buzs);
+        } else if(CollectionTypeEnum.HAVEST.getCode().equals(myCollectionRequest.getCollectionType())){
+            Integer govNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.GOV.getCode());
+            Integer buzNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.BUZ.getCode());
+            Integer havestNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.HAVEST.getCode());
+            Integer policyNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.POC.getCode());
+            response.setGovBillboardsNum(govNum);
+            response.setBuzBillboardsNum(buzNum);
+            response.setHavestBillboardsNum(havestNum);
+            response.setPolicyNum(policyNum);
+
+            List<MyHavestBillboardResponse> havests = collectionMapper.getMyHavestBillboardResponse(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+            response.setHavestBillboards(havests);
+        } else if(CollectionTypeEnum.POC.getCode().equals(myCollectionRequest.getCollectionType())){
+            Integer govNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.GOV.getCode());
+            Integer buzNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.BUZ.getCode());
+            Integer havestNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.HAVEST.getCode());
+            Integer policyNum = getCollectionNum(myCollectionRequest.getCreateBy(), CollectionTypeEnum.POC.getCode());
+            response.setGovBillboardsNum(govNum);
+            response.setBuzBillboardsNum(buzNum);
+            response.setHavestBillboardsNum(havestNum);
+            response.setPolicyNum(policyNum);
+
+            List<MypolicyResponse> policys = collectionMapper.getPolicys(myCollectionRequest.getCreateBy(), myCollectionRequest.getCollectionType());
+            response.setPolicys(policys);
+        }
+
+        return response;
+    }
+
+    Integer getCollectionNum(Long userId, Integer type){
+        QueryWrapper<Collection> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                .eq("collection_type", type)
+                .eq("user_id", userId);
+
+        Integer count = collectionMapper.selectCount(queryWrapper);
+        return count;
+    }
+
+
+
 }

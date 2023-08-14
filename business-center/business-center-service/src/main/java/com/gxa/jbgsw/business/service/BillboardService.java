@@ -55,4 +55,6 @@ public interface BillboardService extends IService<Billboard> {
     void updateAuditStatus(BillboardAuditDTO billboardAuditDTO);
 
     List<BillboardResponse> searchNew(Integer num);
+
+    List<RelateTalentDTO> getRelatedTalentByKeys(SearchParamsDTO searchParams);
 }

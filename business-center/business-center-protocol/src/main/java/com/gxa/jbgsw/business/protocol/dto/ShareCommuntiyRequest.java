@@ -10,7 +10,6 @@ import java.io.Serializable;
  */
 public class ShareCommuntiyRequest extends PageRequest implements Serializable {
 
-    @ApiModelProperty(value = "状态：  0 待审核  1 已审核  2 未通过" , hidden = true)
+    @ApiModelProperty(value = "状态：  0 待审核  1 已审核  2 未通过")
     private Integer status = 1;
-
 }

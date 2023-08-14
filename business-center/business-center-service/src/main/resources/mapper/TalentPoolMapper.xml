@@ -19,7 +19,7 @@
         WHERE 1 = 1
 
         <if test="searchFiled != null and searchFiled != '' ">
-            AND (a.`name` like CONCAT('%',#{searchFiled},'%') OR a.graduate_school like CONCAT('%',#{searchFiled},'%') OR a.tech_domain like '' OR a.research_direction like CONCAT('%',#{searchFiled},'%'))
+            AND a.query_keys like CONCAT('%',#{searchFiled},'%')
         </if>
 
         <if test="addrId != null and addrId != '' ">
@@ -27,7 +27,7 @@
         </if>
 
         <if test="techDomain != null and techDomain != '' ">
-            AND a.tech_domain like #{techDomain}
+            AND a.tech_domain like CONCAT('%',#{techDomain},'%')
         </if>
 
         <if test="highestEdu != null and highestEdu != '' ">
@@ -59,7 +59,7 @@
         WHERE 1 = 1
 
         <if test="searchFiled != null and searchFiled != '' ">
-            AND (a.`name` like CONCAT('%',#{searchFiled},'%') OR a.graduate_school like CONCAT('%',#{searchFiled},'%') OR a.tech_domain like '' OR a.research_direction like CONCAT('%',#{searchFiled},'%'))
+            AND a.query_keys like CONCAT('%',#{searchFiled},'%')
         </if>
 
         <if test="addrId != null and addrId != '' ">
@@ -67,7 +67,7 @@
         </if>
 
         <if test="techDomain != null and techDomain != '' ">
-            AND a.tech_domain like #{techDomain}
+            AND a.tech_domain like CONCAT('%',#{techDomain},'%')
         </if>
 
         <if test="highestEdu != null and highestEdu != '' ">
