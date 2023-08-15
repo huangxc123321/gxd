@@ -29,6 +29,7 @@ webauth:
     - /web/my/share/community/addlike
     - /web/my/share/community/getMyShareCommunityPages
     - /web/my/share/community/add
+    - /web/tech/broker/getEconomicManRequires
 
 
 appauth:
@@ -49,7 +50,7 @@ appauth:
     - /app/my/share/community/addlike
     - /app/my/share/community/getMyShareCommunityPages
     - /app/my/share/community/add
-
+    - /app/tech/broker/getEconomicManRequires
 
 
 

@@ -1,13 +1,16 @@
 package com.gxa.jbgsw.business.service.impl;
 
 import cn.hutool.core.util.CharUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
+import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
 import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.gxa.jbgsw.business.mapper.TechEconomicManMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardEconomicRelatedStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
@@ -74,7 +77,79 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
 
 
     @Override
-    public PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request) {
+    public MyOrderResponse getEconomicManRequires(TechEconomicManRequiresRequest request) {
+        MyOrderResponse myOrderResponse = new MyOrderResponse();
+
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+        List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);
+        if(CollectionUtils.isNotEmpty(responses)){
+            responses.stream().forEach(s->{
+                s.setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(s.getStatus()));
+
+                // 相关成果
+                List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
+                StringBuffer sb = new StringBuffer();
+                if(CollectionUtils.isNotEmpty(bs)){
+                    for(int i=0; i<bs.size(); i++){
+                        if(i == bs.size() - 1){
+                            sb.append(bs.get(i).getName());
+                        }else{
+                            sb.append(bs.get(i).getName()).append(CharUtil.COMMA);
+                        }
+                    }
+                }
+                s.setHavests(sb.toString());
+
+                // 相关帅才
+                StringBuffer tbs = new StringBuffer();
+                List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
+                if(CollectionUtils.isNotEmpty(ts)){
+                    for(int i=0; i<ts.size(); i++){
+                        if(i == ts.size() - 1){
+                            tbs.append(ts.get(i).getName());
+                        }else{
+                            tbs.append(ts.get(i).getName()).append(CharUtil.COMMA);
+                        }
+                    }
+                }
+                s.setTalents(tbs.toString());
+            });
+        }
+
+        PageInfo<TechEconomicManRequiresResponse> pageInfo = new PageInfo<>(responses);
+        myOrderResponse.setPageNum(pageInfo.getPageNum());
+        myOrderResponse.setPages(pageInfo.getPages());
+        myOrderResponse.setPageSize(pageInfo.getPageSize());
+        myOrderResponse.setSize(pageInfo.getSize());
+        myOrderResponse.setTotal(pageInfo.getTotal());
+        myOrderResponse.setRequires(pageInfo.getList());
+
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
+            // 查询企业榜的条数
+            TechEconomicManRequiresRequest x = new TechEconomicManRequiresRequest();
+            x.setType(BillboardTypeEnum.BUS_BILLBOARD.getCode());
+            long buzs = getOrders(request);
+            myOrderResponse.setBuzs(buzs);
+            myOrderResponse.setGovs(pageInfo.getTotal());
+        }else{
+            // 查询政府榜的条数
+            TechEconomicManRequiresRequest g = new TechEconomicManRequiresRequest();
+            g.setType(BillboardTypeEnum.GOV_BILLBOARD.getCode());
+            long govs = getOrders(request);
+            myOrderResponse.setGovs(govs);
+            myOrderResponse.setBuzs(pageInfo.getTotal());
+        }
+
+        return myOrderResponse;
+    }
+
+    @Override
+    public List<String> getLabels() {
+        return techEconomicManMapper.getLabels();
+    }
+
+    @Override
+    public PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(TechEconomicManRequiresRequest request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
 
         List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);
@@ -118,8 +193,16 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         }.build(), new TypeBuilder<PageResult<TechEconomicManRequiresResponse>>() {}.build());
     }
 
-    @Override
-    public List<String> getLabels() {
-        return techEconomicManMapper.getLabels();
+    private long getOrders(TechEconomicManRequiresRequest request) {
+        long num = 0;
+
+        num = techEconomicManMapper.getOrders(request);
+
+        return num;
     }
+
+
+
+
+
 }

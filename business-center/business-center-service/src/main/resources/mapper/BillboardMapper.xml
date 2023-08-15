@@ -157,6 +157,7 @@
         a.unit_logo AS unitLogo,
         a.unit_name AS unitName,
         a.categories,
+        a.seq_no AS seqNo,
         a.is_top AS isTop
         FROM
         t_billboard AS a
@@ -220,7 +221,7 @@
             t_billboard a
         WHERE 1 = 1
         <if test="userId != null and userId != '' ">
-            AND a.create_by = #{userId}#
+            AND a.create_by = #{userId}
         </if>
         <if test="type != null">
             AND a.type = #{type}

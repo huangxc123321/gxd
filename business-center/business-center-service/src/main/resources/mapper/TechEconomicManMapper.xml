@@ -110,14 +110,30 @@
                 t_billboard_economic_related AS a
             LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
             WHERE 1 = 1
-             <if test="userId != null">
-                 AND a.user_id = #{createBy}
+             <if test="createBy != null">
+                 AND a.economic_user_id = #{createBy}
              </if>
             <if test="type != null">
                 AND b.type = #{type}
             </if>
 
               ORDER BY a.create_at DESC
+    </select>
+
+
+    <select id="getOrders" parameterType="com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequiresRequest" resultType="long">
+        SELECT
+         count(1)
+        FROM
+        t_billboard_economic_related AS a
+        LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+        WHERE 1 = 1
+        <if test="createBy != null">
+            AND a.economic_user_id = #{createBy}
+        </if>
+        <if test="type != null">
+            AND b.type = #{type}
+        </if>
     </select>
 
 

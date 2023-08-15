@@ -117,7 +117,7 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
             }.build(), new TypeBuilder<PageResult<SearchTalentsResponse>>() {}.build());
         }
 
-        return null;
+        return new PageResult<SearchTalentsResponse>();
     }
 
     @Override
@@ -132,7 +132,7 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
             }.build(), new TypeBuilder<PageResult<TalentPoolResponse>>() {}.build());
         }
 
-        return null;
+        return new PageResult<TalentPoolResponse>();
     }
 
 }

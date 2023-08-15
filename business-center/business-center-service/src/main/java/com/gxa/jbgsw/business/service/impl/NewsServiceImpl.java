@@ -152,7 +152,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     public NewsRelatedDTO getLastRelated(Integer type, Date date) {
         LambdaQueryWrapper<News> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(News::getNewsPolicy, type);
-        lambdaQueryWrapper.le(News::getCreateAt, date);
+        lambdaQueryWrapper.lt(News::getCreateAt, date);
         lambdaQueryWrapper.orderByDesc(News::getCreateAt);
         lambdaQueryWrapper.last("limit 1");
 
@@ -168,7 +168,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     public NewsRelatedDTO getNextRelated(Integer type, Date date) {
         LambdaQueryWrapper<News> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(News::getNewsPolicy, type);
-        lambdaQueryWrapper.ge(News::getCreateAt, date);
+        lambdaQueryWrapper.gt(News::getCreateAt, date);
         lambdaQueryWrapper.orderByDesc(News::getCreateAt);
         lambdaQueryWrapper.last("limit 1");
 

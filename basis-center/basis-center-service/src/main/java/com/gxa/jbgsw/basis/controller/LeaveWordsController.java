@@ -4,6 +4,7 @@ import com.gxa.jbgsw.basis.client.LeaveWordsApi;
 import com.gxa.jbgsw.basis.entity.Banner;
 import com.gxa.jbgsw.basis.entity.LeaveWords;
 import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsDTO;
+import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsReplayDTO;
 import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsRequest;
 import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsResponse;
 import com.gxa.jbgsw.basis.protocol.enums.LeaveWordsReplayEnum;
@@ -57,10 +58,11 @@ public class LeaveWordsController implements LeaveWordsApi {
     }
 
     @Override
-    public void replay(LeaveWordsDTO leaveWordsDTO) throws BizException {
-        LeaveWords leaveWords = leaveWordsService.getById(leaveWordsDTO.getId());
+    public void replay(LeaveWordsReplayDTO leaveWordsReplayDTO) throws BizException {
+        LeaveWords leaveWords = leaveWordsService.getById(leaveWordsReplayDTO.getId());
 
-        BeanUtils.copyProperties(leaveWordsDTO, leaveWords, CopyPropertionIngoreNull.getNullPropertyNames(leaveWords));
+        leaveWords.setReply(LeaveWordsReplayEnum.SUCESS.getCode());
+        BeanUtils.copyProperties(leaveWordsReplayDTO, leaveWords, CopyPropertionIngoreNull.getNullPropertyNames(leaveWords));
         leaveWordsService.saveOrUpdate(leaveWords);
     }
 }

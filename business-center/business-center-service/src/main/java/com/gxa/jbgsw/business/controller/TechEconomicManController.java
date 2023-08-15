@@ -108,8 +108,13 @@ public class TechEconomicManController implements TechEconomicManApi {
     }
 
     @Override
-    public PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request) {
+    public MyOrderResponse getEconomicManRequires(TechEconomicManRequiresRequest request) {
         return techEconomicManService.getEconomicManRequires(request);
+    }
+
+    @Override
+    public PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(TechEconomicManRequiresRequest request) {
+        return techEconomicManService.queryEconomicManRequires(request);
     }
 
 

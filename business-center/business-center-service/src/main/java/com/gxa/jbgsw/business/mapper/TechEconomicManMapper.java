@@ -23,4 +23,6 @@ public interface TechEconomicManMapper extends BaseMapper<TechEconomicMan> {
     List<String> getLabels();
 
     List<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request);
+
+    long getOrders(TechEconomicManRequiresRequest request);
 }

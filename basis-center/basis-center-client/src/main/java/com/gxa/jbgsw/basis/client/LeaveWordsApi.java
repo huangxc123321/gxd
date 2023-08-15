@@ -29,6 +29,6 @@ public interface LeaveWordsApi {
     public LeaveWordsResponse getLeaveWordsById(@RequestParam("id") Long id) throws BizException;
 
     @PostMapping("/leavewords/replay")
-    public void replay(@RequestBody LeaveWordsDTO leaveWordsDTO) throws BizException;
+    public void replay(@RequestBody LeaveWordsReplayDTO leaveWordsReplayDTO) throws BizException;
 
 }

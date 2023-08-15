@@ -20,6 +20,7 @@ public class NewsResponse implements Serializable {
 
     @ApiModelProperty(value = "新闻/政策类型： 0 新闻资讯 1 公司公告 2 政策动态")
     private Integer type;
+
     @ApiModelProperty(value = "新闻/政策类型： 0 新闻资讯 1 公司公告 2 政策动态")
     private String typeName;
 
@@ -33,7 +34,7 @@ public class NewsResponse implements Serializable {
     private String regionScope;
 
     @ApiModelProperty(value = "来源于")
-    private String from;
+    private String origin;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "发布时间")

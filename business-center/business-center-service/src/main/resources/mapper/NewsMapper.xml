@@ -21,6 +21,7 @@
         <result column="create_by" property="createBy" jdbcType="INTEGER" />
         <result column="update_at" property="updateAt" jdbcType="TIMESTAMP" />
         <result column="update_by" property="updateBy" jdbcType="INTEGER" />
+        <result column="create_name" property="createName" jdbcType="VARCHAR" />
     </resultMap
     >
 

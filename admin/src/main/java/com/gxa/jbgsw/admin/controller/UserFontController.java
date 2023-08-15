@@ -26,6 +26,12 @@ public class UserFontController extends BaseController {
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
+    @ApiOperation("获取用户详情")
+    @GetMapping("/user/getUserById")
+    UserResponse getUserById(@RequestParam("id") Long id){
+        return userFeignApi.getUserById(id);
+    }
+
     @ApiOperation("获取用户列表")
     @PostMapping("/user/pageQuery")
     PageResult<UserResponse> pageQuery(@RequestBody UserRequest request){

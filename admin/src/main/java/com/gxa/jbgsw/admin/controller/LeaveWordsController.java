@@ -2,6 +2,7 @@ package com.gxa.jbgsw.admin.controller;
 
 import com.gxa.jbgsw.admin.feignapi.LeaveWordsFeignApi;
 import com.gxa.jbgsw.basis.protocol.dto.*;
+import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsReplayDTO;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -32,15 +33,15 @@ public class LeaveWordsController extends BaseController {
 
     @ApiOperation("回复留言")
     @PostMapping("/leavewords/replay")
-    void replay(@RequestBody LeaveWordsDTO leaveWordsDTO) throws BizException {
+    void replay(@RequestBody LeaveWordsReplayDTO leaveWordsReplayDTO) throws BizException {
         Long userId = this.getUserId();
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
-        leaveWordsDTO.setUpdateAt(new Date());
-        leaveWordsDTO.setUpdateBy(userId);
+        leaveWordsReplayDTO.setUpdateAt(new Date());
+        leaveWordsReplayDTO.setUpdateBy(userId);
 
-        leaveWordsFeignApi.replay(leaveWordsDTO);
+        leaveWordsFeignApi.replay(leaveWordsReplayDTO);
     }
 
     @ApiOperation("获取详情")

@@ -11,7 +11,7 @@
             a.mobile,
             a.nick,
             a.sex,
-            a.use_stauts AS useStatus,
+            a.use_stauts AS useStauts,
             a.create_at AS createAt,
             a.province_name AS provinceName,
             a.city_name AS cityName,

@@ -138,6 +138,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
         user.setUpdateBy(userDTO.getUpdateBy());
         user.setUpdateAt(new Date());
+        user.setTradeType(userDTO.getTradeType());
+        user.setType(userDTO.getType());
+        user.setJob(userDTO.getJob());
 
         this.updateById(user);
     }

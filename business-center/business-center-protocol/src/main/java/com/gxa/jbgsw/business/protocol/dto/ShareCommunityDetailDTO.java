@@ -14,6 +14,9 @@ public class ShareCommunityDetailDTO implements Serializable {
     @ApiModelProperty(value = "分享ID")
     private Long id;
 
+    @ApiModelProperty(value = "类型：0 文章  1 视频")
+    private Integer type;
+
     @ApiModelProperty(value = "分享标题")
     private String title;
 

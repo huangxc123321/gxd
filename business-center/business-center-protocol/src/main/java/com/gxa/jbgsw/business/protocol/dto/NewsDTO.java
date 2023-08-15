@@ -66,4 +66,5 @@ public class NewsDTO implements Serializable {
     @ApiModelProperty(value = "下一遍新闻")
     private NewsRelatedDTO next;
 
+
 }

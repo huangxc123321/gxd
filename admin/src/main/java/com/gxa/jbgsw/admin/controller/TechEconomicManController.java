@@ -140,10 +140,13 @@ public class TechEconomicManController extends BaseController {
     }
 
     @ApiOperation("获取技术经纪人的需求列表")
-    @PostMapping("/tech/broker/getEconomicManRequires")
-    PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request){
-        return techEconomicManFeignApi.getEconomicManRequires(request);
+    @PostMapping("/tech/broker/queryEconomicManRequires")
+    PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request){
+        return techEconomicManFeignApi.queryEconomicManRequires(request);
     }
+
+
+
 
 
 }

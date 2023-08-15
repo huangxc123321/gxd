@@ -1,9 +1,12 @@
 package com.gxa.jbgsw.website.controller;
 
+import com.gxa.jbgsw.business.protocol.dto.MyOrderResponse;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequiresRequest;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequiresResponse;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.TechEconomicManFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -26,8 +29,15 @@ public class MyOrderController extends BaseController {
 
     @ApiOperation("获取技术经纪人的需求列表")
     @PostMapping("/tech/broker/getEconomicManRequires")
-    PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request){
-        return techEconomicManFeignApi.getEconomicManRequires(request);
+    MyOrderResponse getEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        request.setCreateBy(userId);
+        MyOrderResponse  myOrderResponse = techEconomicManFeignApi.getEconomicManRequires(request);
+
+        return myOrderResponse;
     }
 
 

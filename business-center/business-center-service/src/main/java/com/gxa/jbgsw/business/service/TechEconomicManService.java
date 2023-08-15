@@ -23,7 +23,9 @@ public interface TechEconomicManService extends IService<TechEconomicMan> {
 
     PageResult<SearchEconomicMansResponse> queryEconomicMans(SearchEconomicMansRequest searchTalentsRequest);
 
-    PageResult<TechEconomicManRequiresResponse> getEconomicManRequires(TechEconomicManRequiresRequest request);
+    MyOrderResponse getEconomicManRequires(TechEconomicManRequiresRequest request);
 
     List<String> getLabels();
+
+    PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(TechEconomicManRequiresRequest request);
 }
