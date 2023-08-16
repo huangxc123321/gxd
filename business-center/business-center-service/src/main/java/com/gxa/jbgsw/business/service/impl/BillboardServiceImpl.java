@@ -28,11 +28,13 @@ import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.ApiModelProperty;
+import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StopWatch;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -48,6 +50,8 @@ import java.util.stream.Collectors;
  * @author huangxc
  * @since 2023-06-26
  */
+
+@Slf4j
 @Service
 public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard> implements BillboardService {
     @Resource
@@ -191,8 +195,8 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     }
 
     @Override
-    public int getMyReceiveBillboard(Long userId, Integer trueType) {
-        int num = billboardMapper.getMyReceiveBillboard(userId, trueType);
+    public long getMyReceiveBillboard(Long userId, Integer trueType) {
+        long num = billboardMapper.getMyReceiveBillboard(userId, trueType);
         return num;
     }
 
@@ -258,17 +262,33 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
     @Override
     public PageResult<BillboardIndexDTO> queryGovBillborads(SearchGovRequest searchGovRequest) {
+        StopWatch stopWatch = new StopWatch();
+
+        PageResult<BillboardIndexDTO> pageResult = new PageResult<BillboardIndexDTO>();
+
         PageHelper.startPage(searchGovRequest.getPageNum(), searchGovRequest.getPageSize());
 
+
+        log.error("##################查询开始##################");
+        stopWatch.start();
         List<BillboardIndexDTO> billboards = billboardMapper.queryGovBillborads(searchGovRequest);
+        stopWatch.stop();
+        log.error("##################查询结束##################");
+        log.error("花费的时间：{}", stopWatch.getTotalTimeMillis());
+
+
         if(CollectionUtils.isNotEmpty(billboards)){
             PageInfo<BillboardIndexDTO> pageInfo = new PageInfo<>(billboards);
 
-            return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<BillboardIndexDTO>>() {
-            }.build(), new TypeBuilder<PageResult<BillboardIndexDTO>>() {}.build());
+            pageResult.setList(billboards);
+            pageResult.setPageNum(searchGovRequest.getPageNum());
+            pageResult.setPages(pageInfo.getPages());
+            pageResult.setPageSize(pageInfo.getPageSize());
+            pageResult.setTotal(pageInfo.getTotal());
+            pageResult.setSize(pageInfo.getSize());
         }
 
-        return null;
+        return pageResult;
     }
 
     @Override

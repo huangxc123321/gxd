@@ -38,7 +38,7 @@ public class LastBillboardSetController extends BaseController {
     @Resource
     BillboardGainFeignApi billboardGainFeignApi;
     @Resource
-    BillboardFeignApi billboardFeignApii;
+    BillboardFeignApi billboardFeignApi;
     @Resource
     MessageFeignApi messageFeignApi;
     @Resource
@@ -53,7 +53,7 @@ public class LastBillboardSetController extends BaseController {
     })
     @GetMapping("/last/billboard/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
-        billboardFeignApii.updateSeqNo(id, seqNo);
+        billboardFeignApi.updateSeqNo(id, seqNo);
     }
 
 
@@ -138,7 +138,7 @@ public class LastBillboardSetController extends BaseController {
 
         // 写消息： 你的%s揭榜方案已经审核%s
         BillboardGainDTO billboardGainDTO =  billboardGainFeignApi.getBillboardGainById(billboardGainAuditDTO.getId());
-        BillboardDTO billboardDTO = billboardFeignApii.getById(billboardGainDTO.getPid());
+        BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainDTO.getPid());
         // 写系统消息
         MessageDTO messageDTO = new MessageDTO();
         // 时间

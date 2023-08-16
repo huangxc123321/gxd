@@ -23,6 +23,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -62,6 +63,7 @@ public class IndexController extends BaseController {
     TechEconomicManAppraiseFeignApi techEconomicManAppraiseFeignApi;
     @Resource
     MessageFeignApi messageFeignApi;
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 
     @ApiOperation("获取最新的榜单信息")
@@ -286,39 +288,50 @@ public class IndexController extends BaseController {
     @ApiOperation("立即揭榜")
     @PostMapping("/index/addBillboardGain")
     void addBillboardGain(@RequestBody BillboardGainAddDTO billboardGainAddDTO) throws BizException {
-        billboardGainAddDTO.setApplyAt(new Date());
-        UserResponse userResponse = getUser();
-        if(userResponse != null){
-            billboardGainAddDTO.setCreateByName(userResponse.getNick());
-            billboardGainAddDTO.setAcceptBillboard(userResponse.getUnitName());
-            billboardGainAddDTO.setCreateBy(userResponse.getCreateBy());
-            billboardGainAddDTO.setCreateAt(new Date());
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
-        billboardGainFeignApi.addBillboardGain(billboardGainAddDTO);
+        billboardGainAddDTO.setCreateBy(userId);
 
-        // 写消息（立即揭榜： （用户名）在XXX时间揭榜了您的XXXX榜单）
-        UserResponse u = this.getUser();
-        BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
-        // 写系统消息
-        MessageDTO messageDTO = new MessageDTO();
-        // 时间
-        messageDTO.setCreateAt(new Date());
-        String time = DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
-        // 内容
-        String content = String.format(MessageLogInfo.billboard_jb, userResponse.getNick(),
-                time, billboardDTO.getTitle());
-        messageDTO.setContent(content);
-        // 榜单发布人
-        messageDTO.setUserId(billboardDTO.getCreateBy());
-        messageDTO.setTitle(content);
-        // 立即揭榜
-        messageDTO.setType(0);
-        messageDTO.setThirdAvatar(u.getAvatar());
-        messageDTO.setThirdName(u.getNick());
+       try{
+           billboardGainAddDTO.setApplyAt(new Date());
+           UserResponse userResponse = getUser();
+           if(userResponse != null){
+               billboardGainAddDTO.setCreateByName(userResponse.getNick());
+               billboardGainAddDTO.setAcceptBillboard(userResponse.getUnitName());
+               billboardGainAddDTO.setCreateBy(userResponse.getCreateBy());
+               billboardGainAddDTO.setCreateAt(new Date());
+           }
+           billboardGainFeignApi.addBillboardGain(billboardGainAddDTO);
 
-        // 榜单ID
-        messageDTO.setPid(billboardDTO.getId());
-        messageFeignApi.add(messageDTO);
+           // 写消息（立即揭榜： （用户名）在XXX时间揭榜了您的XXXX榜单）
+           UserResponse u = this.getUser();
+           BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
+           // 写系统消息
+           MessageDTO messageDTO = new MessageDTO();
+           // 时间
+           messageDTO.setCreateAt(new Date());
+           String time = simpleDateFormat.format(new Date());
+           // 内容
+           String content = String.format(MessageLogInfo.billboard_jb, userResponse.getNick(),
+                   time, billboardDTO.getTitle());
+
+           messageDTO.setContent(content);
+           // 榜单发布人
+           messageDTO.setUserId(billboardDTO.getCreateBy());
+           messageDTO.setTitle(content);
+           // 立即揭榜
+           messageDTO.setType(0);
+           messageDTO.setThirdAvatar(u.getAvatar());
+           messageDTO.setThirdName(u.getNick());
+
+           // 榜单ID
+           messageDTO.setPid(billboardDTO.getId());
+           messageFeignApi.add(messageDTO);
+       }catch (Exception ex){
+           ex.printStackTrace();
+       }
 
     }
 

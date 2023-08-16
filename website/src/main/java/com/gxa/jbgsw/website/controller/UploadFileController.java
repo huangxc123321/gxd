@@ -2,8 +2,10 @@ package com.gxa.jbgsw.website.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.dto.UploadReslutDTO;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.obs.services.ObsClient;
 import com.obs.services.ObsConfiguration;
 import com.obs.services.model.AuthTypeEnum;
@@ -21,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.BindException;
 import java.util.UUID;
 
 @Api(tags = "文件上传管理")
@@ -45,6 +48,11 @@ public class UploadFileController extends BaseController {
     @ApiOperation("上传文件")
     @PostMapping(value = "/file/uploadfile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadReslutDTO uploadfile(@RequestParam("bucketName") String bucketName, @RequestParam("file") MultipartFile file) throws IOException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         if(!StrUtil.isNotBlank(bucketName)){
             bucketName = this.defalutBucketName;
         }
@@ -82,6 +90,11 @@ public class UploadFileController extends BaseController {
     @ApiOperation("上传文件")
     @PostMapping(value = "/file/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadReslutDTO fileUpload(@RequestParam("file") MultipartFile file) throws IOException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         String bucketName = this.defalutBucketName;
         return uploadfile(bucketName, file);
     }

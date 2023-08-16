@@ -25,7 +25,7 @@ public class MessageController extends BaseController {
     @Resource
     BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
 
-    @ApiOperation("APP获取我的消息")
+    @ApiOperation("获取我的消息")
     @PostMapping("/message/getMyMessages")
     AppMessageResponse getMyMessages(@RequestBody AppMessageRequest appMessageRequest){
         Long userId = this.getUserId();
@@ -38,7 +38,9 @@ public class MessageController extends BaseController {
         return response;
     }
 
-    @ApiOperation("获取消息")
+
+    @Deprecated
+    @ApiOperation("获取消息(已经弃用)")
     @PostMapping("/message/pageQuery")
     MyMessagePageResult pageQuery(@RequestBody MyMessageRequest myMessageRequest){
         Long userId = this.getUserId();
@@ -65,20 +67,6 @@ public class MessageController extends BaseController {
     public void updateReadFlag(@RequestParam("id")Long id){
         messageFeignApi.updateReadFlag(id);
     }
-
-    @ApiOperation(value = "标记所有未读的消息为已读", notes = "标记所有未读的消息为已读")
-    @ApiImplicitParams({
-            @ApiImplicitParam(value = "消息类型：0 系统消息  1 技术咨询 2 需求单", name = "type", dataType = "Long", paramType = "query")
-    })
-    @GetMapping("/message/updateAllReadFlag")
-    public void updateAllReadFlag(@RequestParam("type")Integer type){
-        Long userId = this.getUserId();
-        if(userId == null){
-            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
-        }
-        messageFeignApi.updateAllReadFlag(userId, type);
-    }
-
 
 
     @ApiOperation(value = "是否接受需求派单", notes = "是否接受需求派单")

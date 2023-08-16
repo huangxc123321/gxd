@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import java.util.Date;
 
-@Api(tags = "用户中心: 我的成果")
+@Api(tags = "用户中心: 我的分享")
 @RestController
 @Slf4j
 @ResponseBody
@@ -58,6 +58,12 @@ public class MyShareCommunityController extends BaseController {
     @ApiOperation("获取我的分享列表")
     @PostMapping("/my/share/community/getMyShareCommunityPages")
     PageResult<MyShareCommunityResponse> getMyShareCommunityPages(@RequestBody MyShareCommunityRequest request){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        request.setCreateBy(userId);
+
         return shareCommunityFeignApi.getMyShareCommunityPages(request);
     }
 

@@ -2,6 +2,7 @@ package com.gxa.jbgsw.website.controller;
 
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.protocol.dto.RelateDTO;
+import com.gxa.jbgsw.business.protocol.dto.RelateHavestDTO;
 import com.gxa.jbgsw.business.protocol.dto.RelateTalentDTO;
 import com.gxa.jbgsw.business.protocol.dto.SearchParamsDTO;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
@@ -43,6 +44,30 @@ public class RightRecommendController extends BaseController {
 
         return apiResult;
     }
+
+
+/*
+    @ApiOperation("根据榜单ID获取相关成果（榜单详情页使用,拆成三个接口）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedHavestByBillboardId")
+    ApiResult<RelateHavestDTO> getRelatedHavestByBillboardId(@RequestParam(value = "id") Long id) {
+        ApiResult<RelateHavestDTO> apiResult = new ApiResult<>();
+        RelateHavestDTO relateDTO = indexFeignApi.getRelatedHavestByBillboardId(id);
+        apiResult.setData(relateDTO);
+
+        return apiResult;
+    }
+*/
+
+
+
+
+
+
+
+
 
     @ApiOperation("根据成果ID获取相关成果、帅才推荐、榜单推荐信息， （成果详情页使用）")
     @ApiImplicitParams({

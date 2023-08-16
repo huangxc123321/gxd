@@ -28,7 +28,6 @@ public class SharecommunityController extends BaseController {
     @ApiOperation("获取分享列表")
     @PostMapping("/share/communtiy/getShareItems")
     PageResult<CommunityResponse> getShareItems(@RequestBody ShareCommuntiyRequest request){
-
         return shareCommunityFeignApi.getShareItems(request);
     }
 

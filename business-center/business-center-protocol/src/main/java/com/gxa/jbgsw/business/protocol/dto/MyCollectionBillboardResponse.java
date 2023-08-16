@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -31,6 +32,7 @@ public class MyCollectionBillboardResponse implements Serializable {
     @ApiModelProperty(value = "榜单发布单位Logo")
     private String unitLogo;
 
+    @JsonFormat(pattern = "yyyy.MM.dd",timezone = "GMT+8")
     @ApiModelProperty(value = "发布时间", hidden = true)
     private Date createAt;
 

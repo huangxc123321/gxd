@@ -1,5 +1,7 @@
 package com.gxa.jbgsw.app.controller;
 
+import cn.hutool.core.date.DatePattern;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.app.feignapi.*;
@@ -57,6 +59,8 @@ public class IndexController extends BaseController {
     AttentionFeignApi attentionFeignApi;
     @Resource
     TechEconomicManAppraiseFeignApi techEconomicManAppraiseFeignApi;
+    @Resource
+    MessageFeignApi messageFeignApi;
 
 
     @ApiOperation("获取最新的榜单信息")
@@ -290,6 +294,31 @@ public class IndexController extends BaseController {
             billboardGainAddDTO.setCreateAt(new Date());
         }
         billboardGainFeignApi.addBillboardGain(billboardGainAddDTO);
+
+        // 写消息（立即揭榜： （用户名）在XXX时间揭榜了您的XXXX榜单）
+        UserResponse u = this.getUser();
+        BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
+        // 写系统消息
+        MessageDTO messageDTO = new MessageDTO();
+        // 时间
+        messageDTO.setCreateAt(new Date());
+        String time = DateUtil.format(new Date(), DatePattern.PURE_DATETIME_PATTERN);
+        // 内容
+        String content = String.format(MessageLogInfo.billboard_jb, userResponse.getNick(),
+                time, billboardDTO.getTitle());
+        messageDTO.setContent(content);
+        // 榜单发布人
+        messageDTO.setUserId(billboardDTO.getCreateBy());
+        messageDTO.setTitle(content);
+        // 立即揭榜
+        messageDTO.setType(0);
+        messageDTO.setThirdAvatar(u.getAvatar());
+        messageDTO.setThirdName(u.getNick());
+
+        // 榜单ID
+        messageDTO.setPid(billboardDTO.getId());
+        messageFeignApi.add(messageDTO);
+
     }
 
     @ApiOperation("获取网站底部信息")
@@ -298,7 +327,8 @@ public class IndexController extends BaseController {
         return websiteBottomFeignApi.getWebsiteBottomInfo();
     }
 
-    @ApiOperation("榜单收藏")
+
+    @ApiOperation("收藏（榜单，成果，政策，帅才）")
     @PostMapping("/collection/add")
     void addCollection(@RequestBody CollectionDTO collectionDTO){
         Long userId = this.getUserId();
@@ -314,8 +344,6 @@ public class IndexController extends BaseController {
             collectionFeignApi.delete(collectionDTO);
         }
     }
-
-
 
 
     private UserResponse getUser(){

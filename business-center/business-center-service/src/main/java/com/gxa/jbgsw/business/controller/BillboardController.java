@@ -218,7 +218,7 @@ public class BillboardController implements BillboardApi {
         if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
             trueType = BillboardTypeEnum.BUS_BILLBOARD.getCode();
         }
-        int num = billboardService.getMyReceiveBillboard(request.getUserId(), trueType);
+        long num = billboardService.getMyReceiveBillboard(request.getUserId(), trueType);
 
         // 政府榜
         if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(request.getType())){
@@ -231,6 +231,7 @@ public class BillboardController implements BillboardApi {
             response.setSize(pageResult.getSize());
             response.setTotal(pageResult.getTotal());
             response.setPages(pageResult.getPages());
+            response.setGovBillboardsNum(pageResult.getTotal());
             response.setBusBillboardsNum(num);
         }else{
             // 获取我发布的企业榜列表
@@ -242,7 +243,7 @@ public class BillboardController implements BillboardApi {
             response.setSize(pageResult.getSize());
             response.setTotal(pageResult.getTotal());
             response.setPages(pageResult.getPages());
-            response.setBusBillboardsNum(num);
+            response.setBusBillboardsNum(pageResult.getTotal());
             response.setGovBillboardsNum(num);
         }
 

@@ -49,7 +49,7 @@
         FROM
         t_billboard AS a
         WHERE
-        1 = 1
+        a.audit_status = 1
         <if test="type != null ">
             AND a.type =  #{type}
         </if>
@@ -78,7 +78,8 @@
         <if test="status != null ">
             AND a.`status` = #{status}
         </if>
-        ORDER BY a.is_top DESC, a.seq_no ASC , a.create_at DESC
+        ORDER BY  a.create_at DESC
+
     </select>
 
 
@@ -211,6 +212,7 @@
             a.tech_keys AS techKeys,
             a.amount,
             a.content,
+            a.reason,
             a.status,
             a.start_at AS startAt,
             a.end_at AS endAt,
@@ -234,7 +236,7 @@
 
     </select>
 
-    <select id="getMyReceiveBillboard" resultType="int">
+    <select id="getMyReceiveBillboard" resultType="long">
         SELECT
             count(1) AS num
         FROM
@@ -256,6 +258,7 @@
                 a.attachment,
                 a.auditing_user_name AS auditingUserName,
                 a.reason,
+                b.type,
                 a.create_at createAt
             FROM
                 t_billboard_gain AS a

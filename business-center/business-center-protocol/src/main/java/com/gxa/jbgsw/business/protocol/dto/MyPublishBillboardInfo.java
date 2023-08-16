@@ -35,6 +35,9 @@ public class MyPublishBillboardInfo implements Serializable {
     @ApiModelProperty(value = "需求详情")
     private String content;
 
+    @ApiModelProperty(value = "审核不通过原因")
+    private String reason;
+
     @JsonFormat(pattern = "yyyy.MM.dd",timezone = "GMT+8")
     @ApiModelProperty(value = "有效开始时间")
     private Date startAt;

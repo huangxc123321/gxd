@@ -13,10 +13,10 @@ public class MyReceiveBillboardResponse implements Serializable {
     List<MyReceiveBillboardInfo> billboards;
 
     @ApiModelProperty(value = "我揭榜的政府榜单总数量")
-    Integer govBillboardsNum;
+    Long govBillboardsNum;
 
     @ApiModelProperty(value = "我揭榜的企业榜单总数量")
-    Integer busBillboardsNum;
+    Long busBillboardsNum;
 
     @ApiModelProperty(notes = "页数（默认1）")
     private Integer pageNum;

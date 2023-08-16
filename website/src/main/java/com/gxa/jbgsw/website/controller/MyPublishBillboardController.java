@@ -12,6 +12,7 @@ import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.MessageLogInfo;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
@@ -50,6 +51,8 @@ public class MyPublishBillboardController extends BaseController {
     BillboardTalentRelatedFeignApi billboardTalentRelatedFeignApi;
     @Resource
     BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
+    @Resource
+    MessageFeignApi messageFeignApi;
 
     @ApiOperation("获取我发布的榜单列表")
     @PostMapping("/user/center/queryMyPublish")
@@ -195,6 +198,38 @@ public class MyPublishBillboardController extends BaseController {
         return userResponse;
     }
 
+
+    @ApiOperation("揭榜方案评审提交")
+    @PostMapping("/user/center/publish/billboard/auditing")
+    public void update(@RequestBody BillboardGainAuditDTO billboardGainAuditDTO) throws BizException {
+        billboardGainAuditDTO.setAuditingUserId(this.getUserId());
+        UserResponse userResponse = getUser();
+        if(userResponse != null){
+            billboardGainAuditDTO.setAuditingUserName(userResponse.getNick());
+        }
+
+        billboardGainFeignApi.update(billboardGainAuditDTO);
+
+        // 写消息： 你的%s揭榜方案已经审核%s
+        BillboardGainDTO billboardGainDTO =  billboardGainFeignApi.getBillboardGainById(billboardGainAuditDTO.getId());
+        BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainDTO.getPid());
+        // 写系统消息
+        MessageDTO messageDTO = new MessageDTO();
+        // 时间
+        messageDTO.setCreateAt(new Date());
+        // 内容
+        String content = String.format(MessageLogInfo.billboard_jb_fa_auth,
+                billboardDTO.getTitle(), AuditingStatusEnum.getNameByIndex(billboardGainAuditDTO.getAuditingStatus()));
+        messageDTO.setContent(content);
+        // 揭榜人
+        messageDTO.setUserId(billboardGainDTO.getCreateBy());
+        messageDTO.setTitle(content);
+        // 系统消息
+        messageDTO.setType(0);
+        // 榜单ID
+        messageDTO.setPid(billboardDTO.getId());
+        messageFeignApi.add(messageDTO);
+    }
 
 
 }
