@@ -57,4 +57,13 @@ public interface IndexApi {
 
     @PostMapping("/index/getRelatedTalentByKeys")
     List<RelateTalentDTO> getRelatedTalentByKeys(@RequestBody SearchParamsDTO searchParams);
+
+    @GetMapping("/index/getRelatedHavestByBillboardId")
+    List<RelateHavestDTO> getRelatedHavestByBillboardId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedTalentByBillboardId")
+    List<RelateTalentDTO> getRelatedTalentByBillboardId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedBillboardByBillboardId")
+    List<RelateBillboardDTO> getRelatedBillboardByBillboardId(@RequestParam("id") Long id);
 }

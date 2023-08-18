@@ -92,6 +92,12 @@ public class MyPublishBillboardController extends BaseController {
         billboardFeignApi.deleteBatchIds(ids);
     }
 
+    @ApiOperation(value = "批量删除榜单", notes = "批量删除榜单")
+    @PostMapping("/user/center/deleteBatchIds")
+    public void deleteBatchIds(@RequestBody Long[] ids){
+        billboardFeignApi.deleteBatchIds(ids);
+    }
+
     @ApiOperation("我要发榜")
     @PostMapping("/user/center/addMyBillboard")
     void addMyBillboard(@RequestBody BillboardDTO billboardDTO) throws BizException {

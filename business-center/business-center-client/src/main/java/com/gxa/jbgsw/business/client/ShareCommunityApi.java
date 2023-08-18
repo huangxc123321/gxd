@@ -56,4 +56,7 @@ public interface ShareCommunityApi {
 
     @GetMapping("/my/share/community/getHotShare")
     List<CommunityResponse> getHotShare();
+
+    @GetMapping("/my/share/community/cancellikes")
+    void cancellikes(@RequestParam("id") Long id);
 }

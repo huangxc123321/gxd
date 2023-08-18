@@ -38,4 +38,6 @@ public interface ShareCommunityService extends IService<ShareCommunity> {
     PageResult<CommunityResponse> getShareItems(ShareCommuntiyRequest request);
 
     List<ShareCommunity> getHotShare();
+
+    void cancellikes(Long id);
 }

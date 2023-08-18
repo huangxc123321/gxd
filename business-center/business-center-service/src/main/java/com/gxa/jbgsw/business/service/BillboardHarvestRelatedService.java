@@ -25,4 +25,7 @@ public interface BillboardHarvestRelatedService extends IService<BillboardHarves
     List<BillboardResponse> getHarvestByHarvestId(Long harvestId);
 
     List<BillboardHarvestRelatedResponse> getBillboardstByHarvestId(Long harvestId);
+
+    List<RelateHavestDTO> getRelatedHavestByBillboardId(Long id);
+
 }

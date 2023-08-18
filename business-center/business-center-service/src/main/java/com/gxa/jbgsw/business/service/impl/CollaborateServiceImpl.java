@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.service.impl;
 
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
@@ -153,5 +154,18 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
         //类型转换
         return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<MyCollaborateTalentResponse>>() {
         }.build(), new TypeBuilder<PageResult<MyCollaborateTalentResponse>>() {}.build());
+    }
+
+    @Override
+    public Collaborate getCollaborateInfo(Long userId, Long id) {
+        LambdaQueryWrapper<Collaborate> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Collaborate::getLaunchUserId, userId);
+        lambdaQueryWrapper.eq(Collaborate::getPid, id);
+
+        List<Collaborate> collaborates = collaborateMapper.selectList(lambdaQueryWrapper);
+        if(CollectionUtils.isNotEmpty(collaborates)){
+            return collaborates.get(0);
+        }
+        return null;
     }
 }

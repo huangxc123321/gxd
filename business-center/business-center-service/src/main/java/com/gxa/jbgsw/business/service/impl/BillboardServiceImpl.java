@@ -66,8 +66,6 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     MapperFacade mapperFacade;
     @Resource
     CollectionService collectionService;
-    @Resource
-    TalentPoolService talentPoolService;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -263,20 +261,10 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     @Override
     public PageResult<BillboardIndexDTO> queryGovBillborads(SearchGovRequest searchGovRequest) {
         StopWatch stopWatch = new StopWatch();
-
-        PageResult<BillboardIndexDTO> pageResult = new PageResult<BillboardIndexDTO>();
+        PageResult<BillboardIndexDTO> pageResult = new PageResult<>();
 
         PageHelper.startPage(searchGovRequest.getPageNum(), searchGovRequest.getPageSize());
-
-
-        log.error("##################查询开始##################");
-        stopWatch.start();
         List<BillboardIndexDTO> billboards = billboardMapper.queryGovBillborads(searchGovRequest);
-        stopWatch.stop();
-        log.error("##################查询结束##################");
-        log.error("花费的时间：{}", stopWatch.getTotalTimeMillis());
-
-
         if(CollectionUtils.isNotEmpty(billboards)){
             PageInfo<BillboardIndexDTO> pageInfo = new PageInfo<>(billboards);
 
@@ -329,6 +317,8 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
             lambdaQueryWrapper.eq(Billboard::getType, BillboardTypeEnum.BUS_BILLBOARD.getCode());
         }
         lambdaQueryWrapper.eq(Billboard::getCategories, categories);
+        lambdaQueryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode());
+        lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
         lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt);
         lambdaQueryWrapper.last("LIMIT 5");
         List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
@@ -338,7 +328,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
     private List<Billboard> getBizs() {
         LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        // 待审核
+        // 待揭榜
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode());
         // 已审核
         lambdaQueryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode());
@@ -384,6 +374,29 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     @Override
     public void batchInsert(List<BillboardDTO> batchList) {
         List<Billboard> billboards = mapperFacade.mapAsList(batchList, Billboard.class);
+        if(CollectionUtils.isNotEmpty(billboards)){
+            billboards.stream().forEach(s->{
+                // 组装keys
+                StringBuffer sb = new StringBuffer();
+                // 标题
+                sb.append(s.getTitle());
+                sb.append(CharUtil.COMMA);
+                // 技术关键字（直接输入）s
+                sb.append(s.getTechKeys());
+                sb.append(CharUtil.COMMA);
+                // 工信大类
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    sb.append(dictionaryDTO.getDicValue());
+                }
+                sb.append(CharUtil.COMMA);
+                sb.append(s.getProvinceName()).append(CharUtil.COMMA)
+                        .append(s.getCityName()).append(CharUtil.COMMA)
+                        .append(s.getAreaName());
+                s.setQueryKeys(sb.toString());
+            });
+        }
+
         this.saveBatch(billboards);
     }
 
@@ -451,6 +464,18 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
             }
         }
         return relateTalents;
+    }
+
+    @Override
+    public List<RelateBillboardDTO> getRelatedBillboardByBillboardId(Long id) {
+        Billboard billboard = this.getById(id);
+        List<Billboard> billboards = getRelateBillboardByCategories(billboard.getCategories(), billboard.getType());
+        if(billboards != null){
+            List<RelateBillboardDTO> billboardList = mapperFacade.mapAsList(billboards, RelateBillboardDTO.class);
+            return billboardList;
+        }
+
+        return new ArrayList<>();
     }
 
 

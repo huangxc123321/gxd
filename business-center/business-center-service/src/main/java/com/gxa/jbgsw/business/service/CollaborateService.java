@@ -27,4 +27,6 @@ public interface CollaborateService extends IService<Collaborate> {
     PageResult getCollaborateHarvest(MyCollaborateRequest request);
 
     PageResult getCollaborateTalent(MyCollaborateRequest request);
+
+    Collaborate getCollaborateInfo(Long userId, Long id);
 }

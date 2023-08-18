@@ -100,7 +100,7 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     public void addlikes(Long id) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
-                           .setSql("likes = likes + 1");
+                           .setSql(" likes = likes + 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
     }
@@ -109,7 +109,7 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     public void addViews(Long id) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
-                .setSql("'views' = 'views' + 1");
+                .setSql(" views = views + 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
     }
@@ -118,7 +118,7 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     public void addComments(Long id) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
-                .setSql("'comments' = 'comments' + 1");
+                .setSql(" comments = comments + 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
     }
@@ -153,5 +153,14 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
         List<ShareCommunity>  shareCommunities = shareCommunityMapper.selectList(lambdaQueryWrapper);
 
         return shareCommunities;
+    }
+
+    @Override
+    public void cancellikes(Long id) {
+        LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
+                .setSql(" views = views - 1");
+
+        shareCommunityMapper.update(null, lambdaUpdateWrapper);
     }
 }

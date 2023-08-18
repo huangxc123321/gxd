@@ -8,6 +8,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
+import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.MessageLogInfo;
@@ -15,6 +17,7 @@ import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -168,12 +171,13 @@ public class BillboardFontController extends BaseController {
 
         // 判断是否政府发布政府榜单
         UserResponse userResponse = getUser();
-        // 如果榜单是政府榜单，但用户又不是政府部门，那么抛出异常
-        // TODO: 2023/6/29 0029 暂时不验证
-        /*if(billboardDTO.getType().equals(Integer.valueOf(0)) && !userResponse.getLevel().equals(Integer.valueOf(0))){
+/*        // 如果榜单是政府榜单，但用户又不是政府部门，那么抛出异常
+        if(billboardDTO.getType().equals(BillboardTypeEnum.GOV_BILLBOARD.getCode()) && !userResponse.getType().equals(UserTypeEnum.GOV.getCode())){
             throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
-        }
-        */
+        }else if(billboardDTO.getType().equals(BillboardTypeEnum.BUS_BILLBOARD.getCode()) && !userResponse.getType().equals(UserTypeEnum.BUZ.getCode())){
+            throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
+        }*/
+
         if(userResponse != null){
             billboardDTO.setUnitName(userResponse.getUnitName());
         }

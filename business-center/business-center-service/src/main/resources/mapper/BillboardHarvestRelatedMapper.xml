@@ -85,4 +85,19 @@
        ORDER BY a.create_at DESC
 
     </select>
+
+   <select id="getRelatedHavestByBillboardId" resultType="com.gxa.jbgsw.business.protocol.dto.RelateHavestDTO">
+            SELECT
+                b.id,
+                b.`name`,
+                b.guide_picture AS guidePicture,
+                b.appy_domain AS techDomain
+            FROM
+                t_billboard_harvest_related AS a
+            LEFT JOIN t_harvest AS b ON a.harvest_id = b.id
+            WHERE
+                a.billboard_id = #{billboardId}
+            ORDER BY a.s_star DESC
+               LIMIT 3
+    </select>
 </mapper>

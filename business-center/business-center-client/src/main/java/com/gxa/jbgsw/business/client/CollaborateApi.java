@@ -37,4 +37,7 @@ public interface CollaborateApi {
 
     @PostMapping("/collaborate/apply")
     void apply(@RequestBody MyCollaborateApplyDTO collaborateApply);
+
+    @GetMapping("/collaborate/getCollaborateInfo")
+    CollaborateDTO getCollaborateInfo(@RequestParam("userId") Long userId, @RequestParam("id") Long id);
 }

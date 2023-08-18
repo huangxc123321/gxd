@@ -32,6 +32,7 @@
                 a.create_at AS createAt,
                 a.read_flag AS readFlag,
                 a.third_name AS thirdName,
+                a.content,
                 a.type
             FROM
                 t_message AS a

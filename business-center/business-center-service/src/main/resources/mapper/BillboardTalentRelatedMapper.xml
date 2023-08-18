@@ -54,4 +54,23 @@
                 a.create_at DESC
 
     </select>
+
+    <select id="getRelatedTalentByBillboardId" resultType="com.gxa.jbgsw.business.protocol.dto.RelateTalentDTO">
+            SELECT
+                b.id,
+                b.`name`,
+                b.photo,
+                b.professional,
+                b.unit_name AS unitName,
+                b.research_direction AS researchDirection
+
+            FROM
+                t_billboard_talent_related AS a
+            LEFT JOIN t_talent_pool AS b ON a.talent_id = b.id
+            WHERE
+                a.billboard_id = #{billboardId}
+            ORDER BY
+                a.s_star DESC
+            LIMIT 1
+    </select>
 </mapper>

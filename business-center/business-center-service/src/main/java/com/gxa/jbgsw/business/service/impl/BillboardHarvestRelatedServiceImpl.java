@@ -20,6 +20,8 @@ import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.common.utils.ComputeSimilarityRatio;
 import com.gxa.jbgsw.common.utils.RedisKeys;
+import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -50,6 +52,8 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
     BillboardHarvestRelatedMapper billboardHarvestRelatedMapper;
     @Resource
     StringRedisTemplate stringRedisTemplate;
+    @Resource
+    MapperFacade mapperFacade;
 
     @Override
     public void addHarvestRelated(Long billboardId) {
@@ -164,6 +168,25 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
         return billboardHarvestRelatedMapper.getBillboardstByHarvestId(harvestId);
     }
 
+    @Override
+    public List<RelateHavestDTO> getRelatedHavestByBillboardId(Long id) {
+        List<RelateHavestDTO> relateHavests = billboardHarvestRelatedMapper.getRelatedHavestByBillboardId(id);
+        if(CollectionUtils.isEmpty(relateHavests)){
+            // 如果没有数据，就默认的取
+            Billboard billboard = billboardService.getById(id);
+            String[] keys = billboard.getTechKeys().split(",");
+            List<Harvest>  harvests = harvestService.getHarvesByTechDomain(keys[0]);
+            if(CollectionUtils.isNotEmpty(harvests)){
+                if(harvests.size()>=3){
+                    harvests = harvests.subList(0,2);
+                    List<RelateHavestDTO> havestDTOList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
+                    return havestDTOList;
+                }
+            }
+        }
+
+        return relateHavests;
+    }
 
     public DictionaryDTO getByCache(String typeCode, String code) {
         DictionaryDTO dictionary = new DictionaryDTO();

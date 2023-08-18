@@ -83,4 +83,11 @@ public class MyShareCommunityController extends BaseController {
         shareCommunityFeignApi.addlikes(id);
     }
 
+    @ApiOperation("取消点赞")
+    @GetMapping("/my/share/community/cancellikes")
+    void cancellikes(@RequestParam("id") Long id) throws BizException {
+        shareCommunityFeignApi.cancellikes(id);
+    }
+
+
 }

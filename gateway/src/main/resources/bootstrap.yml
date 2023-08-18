@@ -30,6 +30,7 @@ webauth:
     - /web/my/share/community/getMyShareCommunityPages
     - /web/my/share/community/add
     - /web/tech/broker/getEconomicManRequires
+    - /web/message/getMyMessages
 
 
 appauth:
@@ -51,7 +52,7 @@ appauth:
     - /app/my/share/community/getMyShareCommunityPages
     - /app/my/share/community/add
     - /app/tech/broker/getEconomicManRequires
-
+    - /app/message/getMyMessages
 
 
 

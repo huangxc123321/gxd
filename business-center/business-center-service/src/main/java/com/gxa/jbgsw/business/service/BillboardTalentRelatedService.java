@@ -2,10 +2,7 @@ package com.gxa.jbgsw.business.service;
 
 import com.gxa.jbgsw.business.entity.BillboardTalentRelated;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyBillboradCollaborateResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 
 import java.util.List;
 
@@ -28,4 +25,6 @@ public interface BillboardTalentRelatedService extends IService<BillboardTalentR
     List<HavestCollaborateDTO> getCollaborateByTalentId(Long id);
 
     List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(Long talentId);
+
+    List<RelateTalentDTO> getRelatedTalentByBillboardId(Long id);
 }

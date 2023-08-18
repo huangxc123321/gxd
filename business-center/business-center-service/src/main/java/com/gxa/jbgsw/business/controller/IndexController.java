@@ -312,7 +312,7 @@ public class IndexController implements IndexApi {
 
         }
 
-        return null;
+        return new PageResult<SearchTeamsResponse>();
     }
 
     @Override
@@ -323,6 +323,21 @@ public class IndexController implements IndexApi {
     @Override
     public List<RelateTalentDTO> getRelatedTalentByKeys(SearchParamsDTO searchParams) {
         return billboardService.getRelatedTalentByKeys(searchParams);
+    }
+
+    @Override
+    public List<RelateHavestDTO> getRelatedHavestByBillboardId(Long id) {
+        return billboardHarvestRelatedService.getRelatedHavestByBillboardId(id);
+    }
+
+    @Override
+    public List<RelateTalentDTO> getRelatedTalentByBillboardId(Long id) {
+        return billboardTalentRelatedService.getRelatedTalentByBillboardId(id);
+    }
+
+    @Override
+    public List<RelateBillboardDTO> getRelatedBillboardByBillboardId(Long id) {
+        return billboardService.getRelatedBillboardByBillboardId(id);
     }
 
 

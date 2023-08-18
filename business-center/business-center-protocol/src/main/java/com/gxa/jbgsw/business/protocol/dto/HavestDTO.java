@@ -75,6 +75,9 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "创建人")
     private Long createBy;
 
+    @ApiModelProperty(value = "是否合作： true：已合作  false: 未合作")
+    private boolean isCollaborate = false;
+
     @ApiModelProperty(value = "收藏状态： 0 已收藏  1 未收藏")
     private Integer collectionStatus = 1;
 

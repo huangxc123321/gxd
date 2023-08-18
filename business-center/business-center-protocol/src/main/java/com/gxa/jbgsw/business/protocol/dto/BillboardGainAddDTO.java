@@ -29,7 +29,7 @@ public class BillboardGainAddDTO implements Serializable {
     @ApiModelProperty(value = "申请时间", hidden = true)
     private Date applyAt;
 
-    @ApiModelProperty(value = "创建人", hidden = true)
+    @ApiModelProperty(value = "创建者", hidden = true)
     private Long createBy;
 
     @ApiModelProperty(value = "创建时间", hidden = true)

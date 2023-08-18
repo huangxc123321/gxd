@@ -48,11 +48,6 @@ public class UploadFileController extends BaseController {
     @ApiOperation("上传文件")
     @PostMapping(value = "/file/uploadfile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadReslutDTO uploadfile(@RequestParam("bucketName") String bucketName, @RequestParam("file") MultipartFile file) throws IOException {
-        Long userId = this.getUserId();
-        if(userId == null){
-            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
-        }
-
         if(!StrUtil.isNotBlank(bucketName)){
             bucketName = this.defalutBucketName;
         }
@@ -90,11 +85,6 @@ public class UploadFileController extends BaseController {
     @ApiOperation("上传文件")
     @PostMapping(value = "/file/upload",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadReslutDTO fileUpload(@RequestParam("file") MultipartFile file) throws IOException {
-        Long userId = this.getUserId();
-        if(userId == null){
-            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
-        }
-
         String bucketName = this.defalutBucketName;
         return uploadfile(bucketName, file);
     }

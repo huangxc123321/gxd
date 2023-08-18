@@ -45,5 +45,6 @@ public class HavestDetailInfo implements Serializable {
     @ApiModelProperty(value = "成熟度名称：字典中获取")
     private String maturityLevelName;
 
-
+    @ApiModelProperty(value = "是否或者：  true 已合作  false 未合作 ")
+    private boolean isCollaborate = false;
 }

@@ -103,5 +103,17 @@ public class CollaborateController implements CollaborateApi {
             collaborateService.updateById(collaborate);
         }
     }
+
+    @Override
+    public CollaborateDTO getCollaborateInfo(Long userId, Long id) {
+        CollaborateDTO collaborateDTO = null;
+
+        Collaborate collaborate = collaborateService.getCollaborateInfo(userId, id);
+        if(collaborate != null){
+            collaborateDTO = mapperFacade.map(collaborate, CollaborateDTO.class);
+        }
+
+        return collaborateDTO;
+    }
 }
 

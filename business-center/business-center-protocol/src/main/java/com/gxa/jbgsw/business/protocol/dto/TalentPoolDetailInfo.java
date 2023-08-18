@@ -57,4 +57,9 @@ public class TalentPoolDetailInfo implements Serializable {
     @ApiModelProperty(value = "关注状态： 0 已关注  1 未关注")
     private Integer attentionStatus = 1;
 
+    @ApiModelProperty(value = "是否合作： true：已合作  false: 未合作")
+    private boolean isCollaborate = false;
+
+
+
 }

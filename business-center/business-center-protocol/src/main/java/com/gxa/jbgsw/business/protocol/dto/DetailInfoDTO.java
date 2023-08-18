@@ -55,6 +55,32 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "需求详情")
     private String content;
 
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @ApiModelProperty(value = "有效开始时间")
+    private Date startAt;
+
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
+    @ApiModelProperty(value = "有效结束时间")
+    private Date endAt;
+
+    @ApiModelProperty(value = "省ID")
+    private Long provinceId;
+
+    @ApiModelProperty(value = "省名称")
+    private String provinceName;
+
+    @ApiModelProperty(value = "城市ID")
+    private Long cityId;
+
+    @ApiModelProperty(value = "城市名称")
+    private String cityName;
+
+    @ApiModelProperty(value = "地区ID")
+    private Long areaId;
+
+    @ApiModelProperty(value = "地区名称")
+    private String areaName;
+
     @ApiModelProperty(value = "收藏状态： 0 已收藏  1 未收藏")
     private Integer collectionStatus = 1;
 

@@ -218,6 +218,7 @@
             a.end_at AS endAt,
             a.unit_name AS unitName,
             a.unit_logo AS unitLogo,
+            a.audit_create_at AS auditDate,
             a.create_at AS createAt
         FROM
             t_billboard a

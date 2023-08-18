@@ -3,14 +3,13 @@ package com.gxa.jbgsw.business.service.impl;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
 import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.mapper.BillboardTalentRelatedMapper;
-import com.gxa.jbgsw.business.protocol.dto.BillboardTalentRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO;
-import com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO;
-import com.gxa.jbgsw.business.protocol.dto.MyBillboradCollaborateResponse;
+import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
@@ -19,6 +18,8 @@ import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.gxa.jbgsw.common.utils.ComputeSimilarityRatio;
 import com.gxa.jbgsw.common.utils.RedisKeys;
+import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +49,11 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
     @Resource
     BillboardTalentRelatedMapper billboardTalentRelatedMapper;
     @Resource
+    TalentPoolMapper talentPoolMapper;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
+    @Resource
+    MapperFacade mapperFacade;
 
     @Override
     public void addTalentRelated(Long billboardId) {
@@ -177,6 +182,36 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
     @Override
     public List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(Long talentId) {
         return billboardTalentRelatedMapper.getMyBillboradCollaborate(talentId);
+    }
+
+    @Override
+    public List<RelateTalentDTO> getRelatedTalentByBillboardId(Long id) {
+        List<RelateTalentDTO> relateTalents = billboardTalentRelatedMapper.getRelatedTalentByBillboardId(id);
+        if(CollectionUtils.isEmpty(relateTalents)){
+            Billboard billboard = billboardService.getById(id);
+            if(billboard != null){
+                String[] keys = billboard.getTechKeys().split(";");
+                if(keys.length == 0 || keys.length == 1){
+                   String[] keys2 = billboard.getTechKeys().split(",");
+                   if(keys2.length > 1){
+                       keys = keys2;
+                   }
+                }
+
+                LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                lambdaQueryWrapper.like(TalentPool::getQueryKeys, keys[0]);
+                lambdaQueryWrapper.last("LIMIT 1");
+
+                List<TalentPool> talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+                if(CollectionUtils.isNotEmpty(talentPools)){
+                    List<RelateTalentDTO> list = mapperFacade.mapAsList(talentPools, RelateTalentDTO.class);
+
+                    return list;
+                }
+            }
+        }
+
+        return relateTalents;
     }
 
 

@@ -97,6 +97,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
                    requires.get(i).setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(requires.get(i).getStatus()));
                    if(requires.get(i).getReadFlag().equals(0)){
                        requiresNoReadFlag = true;
+                       break;
                    }
                }
                response.setRequiresNoReadFlag(requiresNoReadFlag);
@@ -132,6 +133,7 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
                    for(int i=0; i<messages.size(); i++) {
                        if(messages.get(i).getReadFlag().equals(0)){
                            noReadFlag = true;
+                           break;
                        }
                    }
                }
@@ -160,10 +162,48 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
                    response.setRequiresNoReadFlag(true);
                }
            }
+           // 未读
+           else if(appMessageRequest.getType().equals(1)){
+                   // 所有消息
+                   boolean noReadFlag = false;
+                   List<MessageDTO> messages =  messageMapper.getMyAllMessages(appMessageRequest);
+                   if(CollectionUtils.isNotEmpty(messages)){
+                       for(int i=0; i<messages.size(); i++) {
+                           if(messages.get(i).getReadFlag().equals(0)){
+                               noReadFlag = true;
+                               break;
+                           }
+                       }
+                   }
+                   response.setNoReadFlag(noReadFlag);
+                   response.setAllIsNoReadFlag(noReadFlag);
+
+                   PageInfo<MessageDTO> pageInfo = new PageInfo<>(messages);
+                   response.setMessages(messages);
+                   response.setTotal(pageInfo.getTotal());
+                   response.setPageSize(pageInfo.getPageSize());
+                   response.setPages(pageInfo.getPages());
+                   response.setPageNum(pageInfo.getPageNum());
+                   response.setSize(pageInfo.getSize());
+
+
+                   // 判断需求是否有未读的
+                   LambdaQueryWrapper<Message> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+                   lambdaQueryWrapper.eq(Message::getUserId, appMessageRequest.getCreateBy());
+                   // 未读
+                   lambdaQueryWrapper.eq(Message::getReadFlag, 0);
+                   // 需求消息
+                   lambdaQueryWrapper.eq(Message::getType, 2);
+                   lambdaQueryWrapper.orderByDesc(Message::getCreateAt);
+                   List<Message> reqMessages =  messageMapper.selectList(lambdaQueryWrapper);
+                   if(reqMessages != null && reqMessages.size()>0){
+                       response.setRequiresNoReadFlag(true);
+                   }
+               }
        }
 
 
-        return null;
+        return response;
     }
 
     @Override

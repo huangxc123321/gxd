@@ -9,6 +9,7 @@ import com.gxa.jbgsw.business.protocol.dto.BillboardGainAddDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainAuditDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardGainResponse;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.MessageOriginEnum;
 import com.gxa.jbgsw.business.protocol.enums.MessageTypeEnum;
 import com.gxa.jbgsw.business.service.BillboardGainService;
@@ -64,6 +65,7 @@ public class BillboardGainController implements BillboardGainApi {
         if(billboard != null){
             billboardGainDTO.setTitle(billboard.getTitle());
         }
+        billboardGainDTO.setAuditingStatusName(AuditingStatusEnum.getNameByIndex(billboardGain.getAuditingStatus()));
 
         return  billboardGainDTO;
     }
@@ -84,6 +86,8 @@ public class BillboardGainController implements BillboardGainApi {
     @Override
     public void addBillboardGain(BillboardGainAddDTO billboardGainAddDTO) {
         BillboardGain billboardGain = mapperFacade.map(billboardGainAddDTO, BillboardGain.class);
+
+        System.out.println("billboardGain.getCreateBy(): "+billboardGain.getCreateBy());
 
         billboardGainService.save(billboardGain);
 

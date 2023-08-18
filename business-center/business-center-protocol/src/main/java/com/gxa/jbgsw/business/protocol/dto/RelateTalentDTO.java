@@ -26,7 +26,6 @@ public class RelateTalentDTO implements Serializable {
     @ApiModelProperty(value = "职称显示名称")
     private String professionalName;
 
-
     @ApiModelProperty(value = "研究方向")
     private String researchDirection;
 }

@@ -57,4 +57,6 @@ public interface BillboardService extends IService<Billboard> {
     List<BillboardResponse> searchNew(Integer num);
 
     List<RelateTalentDTO> getRelatedTalentByKeys(SearchParamsDTO searchParams);
+
+    List<RelateBillboardDTO> getRelatedBillboardByBillboardId(Long id);
 }

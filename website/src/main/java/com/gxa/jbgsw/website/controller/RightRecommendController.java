@@ -1,10 +1,7 @@
 package com.gxa.jbgsw.website.controller;
 
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
-import com.gxa.jbgsw.business.protocol.dto.RelateDTO;
-import com.gxa.jbgsw.business.protocol.dto.RelateHavestDTO;
-import com.gxa.jbgsw.business.protocol.dto.RelateTalentDTO;
-import com.gxa.jbgsw.business.protocol.dto.SearchParamsDTO;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
@@ -32,7 +29,8 @@ public class RightRecommendController extends BaseController {
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
 
-    @ApiOperation("根据榜单ID获取相关成果、帅才推荐、榜单推荐信息， （榜单详情页使用）")
+    @Deprecated
+    @ApiOperation("根据榜单ID获取相关成果、帅才推荐、榜单推荐信息， （榜单详情页使用）已经弃用")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
     })
@@ -46,20 +44,43 @@ public class RightRecommendController extends BaseController {
     }
 
 
-/*
-    @ApiOperation("根据榜单ID获取相关成果（榜单详情页使用,拆成三个接口）")
+    @ApiOperation("根据榜单ID获取相关榜单（榜单详情页使用,拆成三个接口）,相关榜单显示5条")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedBillboardByBillboardId")
+    List<RelateBillboardDTO> getRelatedBillboardByBillboardId(@RequestParam(value = "id") Long id) {
+        return indexFeignApi.getRelatedBillboardByBillboardId(id);
+    }
+
+    @ApiOperation("根据榜单ID获取相关帅才推荐（榜单详情页使用,拆成三个接口）,相关帅才推荐显示一条")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedTalentByBillboardId")
+    List<RelateTalentDTO> getRelatedTalentByBillboardId(@RequestParam(value = "id") Long id) {
+        List<RelateTalentDTO> relateTalents = indexFeignApi.getRelatedTalentByBillboardId(id);
+        if(CollectionUtils.isNotEmpty(relateTalents)){
+            relateTalents.stream().forEach(s->{
+                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                if(dicProfessional != null){
+                    s.setProfessionalName(dicProfessional.getDicValue());
+                }
+            });
+        }
+
+        return relateTalents;
+    }
+
+
+    @ApiOperation("根据榜单ID获取相关成果（榜单详情页使用,拆成三个接口）,相关成果显示三条")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
     })
     @GetMapping("/index/getRelatedHavestByBillboardId")
-    ApiResult<RelateHavestDTO> getRelatedHavestByBillboardId(@RequestParam(value = "id") Long id) {
-        ApiResult<RelateHavestDTO> apiResult = new ApiResult<>();
-        RelateHavestDTO relateDTO = indexFeignApi.getRelatedHavestByBillboardId(id);
-        apiResult.setData(relateDTO);
-
-        return apiResult;
+    List<RelateHavestDTO> getRelatedHavestByBillboardId(@RequestParam(value = "id") Long id) {
+        return indexFeignApi.getRelatedHavestByBillboardId(id);
     }
-*/
 
 
 

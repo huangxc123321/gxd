@@ -98,6 +98,11 @@ public class MyCollaborateController extends BaseController {
     @ApiOperation("取消合作")
     @GetMapping("/collaborate/cancel")
     void cancel(@RequestParam("id") Long id) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         collaborateFeignApi.cancel(id);
     }
 

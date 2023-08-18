@@ -152,5 +152,10 @@ public class ShareCommunityController implements ShareCommunityApi {
 
          return null;
     }
+
+    @Override
+    public void cancellikes(Long id) {
+        shareCommunityService.cancellikes(id);
+    }
 }
 

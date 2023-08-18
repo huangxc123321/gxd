@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.business.client.MessageApi;
 import com.gxa.jbgsw.business.entity.Message;
 import com.gxa.jbgsw.business.protocol.dto.*;
@@ -29,13 +30,16 @@ public class MessageController implements MessageApi {
     @Override
     public void add(MessageDTO messageDTO) {
         messageDTO.setCreateAt(new Date());
+        if(StrUtil.isBlank(messageDTO.getContent())){
+            messageDTO.setContent(messageDTO.getTitle());
+        }
         Message message = mapperFacade.map(messageDTO, Message.class);
 
         messageService.save(message);
     }
 
     @Override
-    public Integer getMessages(Long userId, Integer type) {
+        public Integer getMessages(Long userId, Integer type) {
         return messageService.getMessages(userId, type);
     }
 
