@@ -114,4 +114,9 @@ public class UserController implements UserApi {
         }
         return null;
     }
+
+    @Override
+    public void updateUserAdmin(UserDTO userDTO) {
+        userService.updateUserAdmin(userDTO);
+    }
 }

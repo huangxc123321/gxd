@@ -1,15 +1,17 @@
 package com.gxa.jbgsw.business.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.ProvinceCityDistrictVO;
 import com.gxa.jbgsw.business.client.CompanyApi;
 import com.gxa.jbgsw.business.entity.Company;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
-import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
-import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
-import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
-import com.gxa.jbgsw.business.protocol.dto.HarvestResponse;
+import com.gxa.jbgsw.business.feignapi.ProvinceCityDistrictFeignApi;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.CompanyService;
+import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.common.utils.PageResult;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +32,36 @@ public class CompanyController implements CompanyApi {
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
+    ProvinceCityDistrictFeignApi provinceCityDistrictFeignApi;
+    @Resource
+    BillboardService billboardService;
+    @Resource
+    HarvestService harvestService;
+    @Resource
     MapperFacade mapperFacade;
 
     @Override
     public void add(CompanyDTO companyDTO) {
         Company company = mapperFacade.map(companyDTO, Company.class);
         company.setCreateAt(new Date());
+        if(company.getProvinceId() != null && StrUtil.isNotBlank(company.getProvinceName())){
+            ProvinceCityDistrictVO p = provinceCityDistrictFeignApi.getProvinceCityDistrictById(company.getProvinceId());
+            if(p != null){
+                company.setProvinceName(p.getProvinceName());
+            }
+        }
+        if(company.getCityId() != null && StrUtil.isNotBlank(company.getCityName())){
+            ProvinceCityDistrictVO c = provinceCityDistrictFeignApi.getProvinceCityDistrictById(company.getCityId());
+            if(c != null){
+                company.setCityName(c.getCityName());
+            }
+        }
+        if(company.getAreaId() != null && StrUtil.isNotBlank(company.getAreaName())){
+            ProvinceCityDistrictVO a = provinceCityDistrictFeignApi.getProvinceCityDistrictById(company.getAreaId());
+            if(a != null){
+                company.setAreaName(a.getAreaName());
+            }
+        }
 
         companyService.save(company);
     }
@@ -51,10 +77,19 @@ public class CompanyController implements CompanyApi {
     }
 
     @Override
-    public CompanyDTO getCompanyById(Long id) {
+    public CompanyResponse getCompanyById(Long id) {
         Company company = companyService.getById(id);
-        CompanyDTO companyDTO = mapperFacade.map(company, CompanyDTO.class);
-        return companyDTO;
+        CompanyResponse companyResponse = mapperFacade.map(company, CompanyResponse.class);
+        DictionaryDTO tradeType = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), companyResponse.getTradeType());
+        if(tradeType != null){
+            companyResponse.setTradeTypeName(tradeType.getDicValue());
+        }
+        DictionaryDTO t = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.enterprise_type.name(), String.valueOf(companyResponse.getType()));
+        if(t != null){
+            companyResponse.setTypeName(t.getDicValue());
+        }
+
+        return companyResponse;
     }
 
     @Override
@@ -66,12 +101,14 @@ public class CompanyController implements CompanyApi {
         if(CollectionUtils.isNotEmpty(list)){
             List<CompanyResponse> responses = mapperFacade.mapAsList(list, CompanyResponse.class);
             responses.forEach(s->{
-                // TODO: 2023/7/4 0004 暂时不转换
                 DictionaryDTO tradeType = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), s.getTradeType());
                 if(tradeType != null){
                     s.setTradeTypeName(tradeType.getDicValue());
                 }
-
+                DictionaryDTO t = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.enterprise_type.name(), String.valueOf(s.getType()));
+                if(t != null){
+                    s.setTypeName(t.getDicValue());
+                }
             });
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());
@@ -81,5 +118,29 @@ public class CompanyController implements CompanyApi {
             pages.setTotal(pageResult.getTotal());
         }
         return pages;
+    }
+
+    @Override
+    public CompanyPCResponse getCompanyById4Pc(Long id) {
+        Company company = companyService.getById(id);
+        CompanyPCResponse companyPCResponse = mapperFacade.map(company, CompanyPCResponse.class);
+        DictionaryDTO tradeType = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), companyPCResponse.getTradeType());
+        if(tradeType != null){
+            companyPCResponse.setTradeTypeName(tradeType.getDicValue());
+        }
+        DictionaryDTO t = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.enterprise_type.name(), String.valueOf(companyPCResponse.getType()));
+        if(t != null){
+            companyPCResponse.setTypeName(t.getDicValue());
+        }
+
+        // 发布榜单
+        List<BillboardResponse> billboards = billboardService.getBillboardByUnitName(company.getName());
+        companyPCResponse.setBillboards(billboards);
+
+        // 发布成果
+        List<HarvestResponse> harvests = harvestService.getHarvestByUnitName(company.getName());
+        companyPCResponse.setHarvests(harvests);
+
+        return companyPCResponse;
     }
 }

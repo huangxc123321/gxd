@@ -59,4 +59,6 @@ public interface BillboardService extends IService<Billboard> {
     List<RelateTalentDTO> getRelatedTalentByKeys(SearchParamsDTO searchParams);
 
     List<RelateBillboardDTO> getRelatedBillboardByBillboardId(Long id);
+
+    List<BillboardResponse> getBillboardByUnitName(String name);
 }

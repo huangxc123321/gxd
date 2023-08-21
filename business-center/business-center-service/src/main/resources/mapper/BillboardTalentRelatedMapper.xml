@@ -25,13 +25,41 @@
     <select id="getBillboardRecommendByTalentId"
             resultType="com.gxa.jbgsw.business.protocol.dto.HarvestBillboardRelatedDTO">
 
-
+            SELECT
+                b.id,
+                b.title,
+                b.content,
+                b.unit_name AS unitName ,
+                b.start_at AS startAt,
+                b.end_at AS endAt,
+                a.s_star AS sStar,
+                b.categories,
+              b.tech_keys AS techKeys
+            FROM
+                t_billboard_talent_related AS a
+            LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+            WHERE
+                a.talent_id = #{talentId}
+               ORDER BY a.s_star DESC
 
 
     </select>
 
     <select id="getCollaborateByTalentId" resultType="com.gxa.jbgsw.business.protocol.dto.HavestCollaborateDTO">
 
+        SELECT
+            a.launch_user_name AS launchUserName,
+           a.launch_user_id AS launchUserId,
+            a.`mode`,
+          a.type,
+            a.detail,
+            a.effect_at AS effectAt,
+            a.`status`,
+            a.id
+        FROM
+            t_collaborate AS a
+         WHERE a.launch_user_id = #{talentId} OR a.pid = #{talentId}
+         order by effect_at desc
 
 
     </select>
@@ -67,8 +95,7 @@
             FROM
                 t_billboard_talent_related AS a
             LEFT JOIN t_talent_pool AS b ON a.talent_id = b.id
-            WHERE
-                a.billboard_id = #{billboardId}
+            WHERE  b.status = 1 AND a.billboard_id = #{billboardId}
             ORDER BY
                 a.s_star DESC
             LIMIT 1

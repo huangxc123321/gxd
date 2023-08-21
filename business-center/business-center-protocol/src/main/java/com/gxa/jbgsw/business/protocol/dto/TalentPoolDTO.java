@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -20,6 +21,7 @@ public class TalentPoolDTO implements Serializable {
     @ApiModelProperty(value = "联系电话")
     private String mobie;
 
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @ApiModelProperty(value = "出生年月")
     private Date birthday;
 
@@ -89,9 +91,11 @@ public class TalentPoolDTO implements Serializable {
     @ApiModelProperty(value = "审核人ID")
     private Long auditUserId;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "审核时间")
     private Date auditDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "上次登录时间")
     private Date lastLoginTime;
 

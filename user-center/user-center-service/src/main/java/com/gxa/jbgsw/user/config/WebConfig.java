@@ -1,68 +1,40 @@
+
 package com.gxa.jbgsw.user.config;
 
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.context.annotation.Primary;
+import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 
 @Configuration
 public class WebConfig extends WebMvcConfigurationSupport {
 
-/*    @Bean
-    public HttpMessageConverters fastJsonHttpMessageConverter() {
-        return new HttpMessageConverters(new FastJsonHttpMessageConverter());
-    }*/
-
     /**
-     * 修改自定义消息转换器
-     * @param converters 消息转换器列表
+     * 初始化对象
+     * @param builder
      */
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters)
-    {
-        //调用父类配置
-        super.configureMessageConverters(converters);
-        //创建消息转换器
-        FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
-
-        //升级最新版本需加=================================================
-        List<MediaType> supportedMediaTypes = new ArrayList<>();
-        supportedMediaTypes.add(MediaType.APPLICATION_JSON);
-        supportedMediaTypes.add(MediaType.APPLICATION_JSON_UTF8);
-        supportedMediaTypes.add(MediaType.APPLICATION_ATOM_XML);
-        supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
-        supportedMediaTypes.add(MediaType.APPLICATION_OCTET_STREAM);
-        supportedMediaTypes.add(MediaType.APPLICATION_PDF);
-        supportedMediaTypes.add(MediaType.APPLICATION_RSS_XML);
-        supportedMediaTypes.add(MediaType.APPLICATION_XHTML_XML);
-        supportedMediaTypes.add(MediaType.APPLICATION_XML);
-        supportedMediaTypes.add(MediaType.IMAGE_GIF);
-        supportedMediaTypes.add(MediaType.IMAGE_JPEG);
-        supportedMediaTypes.add(MediaType.IMAGE_PNG);
-        supportedMediaTypes.add(MediaType.TEXT_EVENT_STREAM);
-        supportedMediaTypes.add(MediaType.TEXT_HTML);
-        supportedMediaTypes.add(MediaType.TEXT_MARKDOWN);
-        supportedMediaTypes.add(MediaType.TEXT_PLAIN);
-        supportedMediaTypes.add(MediaType.TEXT_XML);
-        fastConverter.setSupportedMediaTypes(supportedMediaTypes);
-
-        //创建配置类
-        FastJsonConfig fastJsonConfig = new FastJsonConfig();
-        //返回内容的过滤
-        fastJsonConfig.setSerializerFeatures(
-                SerializerFeature.DisableCircularReferenceDetect,//消除对同一对象循环引用的问题，默认为false（如果不配置有可能会进入死循环）
-                SerializerFeature.WriteMapNullValue,//是否输出值为null的字段,默认为false。
-                SerializerFeature.WriteNullStringAsEmpty//数据库字段设置了NULL时，前端返回json为""替代null
-        );
-        fastConverter.setFastJsonConfig(fastJsonConfig);
-        //将fastjson添加到视图消息转换器列表内
-        converters.add(fastConverter);
+    @Bean
+    @Primary
+    public ObjectMapper jacksonObjectMapper(Jackson2ObjectMapperBuilder builder) {
+        final JavaTimeModule simpleModule = new JavaTimeModule();
+        //添加Long类型
+        simpleModule.addSerializer(Long.class, ToStringSerializer.instance);
+        simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
+        SimpleModule bigIntegerModule = new SimpleModule();
+        //添加BigInteger类型
+        bigIntegerModule.addSerializer(BigInteger.class, ToStringSerializer.instance);
+        SimpleModule bigDecimalModule = new SimpleModule();
+        //添加BigDecimal类型
+        bigDecimalModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
+        return builder.createXmlMapper(false).modulesToInstall(simpleModule).build();
     }
 
 

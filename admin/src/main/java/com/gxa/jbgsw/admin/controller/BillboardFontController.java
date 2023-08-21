@@ -186,6 +186,21 @@ public class BillboardFontController extends BaseController {
 
     }
 
+
+    @ApiOperation("编辑我发布的榜单信息")
+    @PostMapping("/user/center/updateMyBillboard")
+    void updateMyBillboard(@RequestBody BillboardDTO billboardDTO) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
+        if(billboardDTO.getId() == null){
+            throw new BizException(BusinessErrorCode.BUSINESS_PARAMS_ERROR);
+        }
+        billboardFeignApi.updateMyBillboard(billboardDTO);
+    }
+
     @ApiOperation("成果手工推荐")
     @PostMapping("/billboard/harvest/related/audit")
     void auditHarvest(@RequestBody BillboardRelatedAuditDTO billboardHarvestAuditDTO){

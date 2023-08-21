@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.client;
 
 import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
+import com.gxa.jbgsw.business.protocol.dto.CompanyPCResponse;
 import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
 import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -27,9 +28,11 @@ public interface CompanyApi {
     void update(@RequestBody CompanyDTO companyDTO);
 
     @GetMapping("/company/getCompanyById")
-    CompanyDTO getCompanyById(@RequestParam("id") Long id);
+    CompanyResponse getCompanyById(@RequestParam("id") Long id);
 
     @PostMapping("/company/pageQuery")
     PageResult<CompanyResponse> pageQuery(@RequestBody CompanyRequest request);
 
+    @GetMapping("/company/getCompanyById4Pc")
+    CompanyPCResponse getCompanyById4Pc(Long id);
 }

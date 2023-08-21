@@ -67,12 +67,13 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         }
 
         // 是否定时发布:  0 不定时  1定时
-        if(IsFixedEnum.SIGNED.equals(newsDTO.getIsFixed())){
+        if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
             // 写定时任务
             String key = RedisKeys.NEWS_PUBLIS_TIME + news.getId();
             // 过期时间
             long timeout = DateUtil.between(new Date(), newsDTO.getFixedAt(), DateUnit.MINUTE);
             stringRedisTemplate.opsForValue().set(key, String.valueOf(news.getId()), timeout, TimeUnit.MINUTES);
+            news.setFixedAt(newsDTO.getFixedAt());
         }else{
             news.setFixedAt(null);
         }
@@ -81,14 +82,17 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
 
     private String getUrl(String content){
         int index = content.indexOf("<img src=");
-        // 剩下的内容
-        String subContent = content.substring(index);
-        // 第一张图片的结束地址
-        int oneEnd = subContent.indexOf("/>");
-        String imageUrl = subContent.substring(10, oneEnd-1);
-        // 判断是否有引号
-        imageUrl = imageUrl.replace("\"", "");
-        return imageUrl;
+        if( index != -1){
+            // 剩下的内容
+            String subContent = content.substring(index);
+            // 第一张图片的结束地址
+            int oneEnd = subContent.indexOf("/>");
+            String imageUrl = subContent.substring(10, oneEnd-1);
+            // 判断是否有引号
+            imageUrl = imageUrl.replace("\"", "");
+            return imageUrl;
+        }
+        return null;
     }
 
 

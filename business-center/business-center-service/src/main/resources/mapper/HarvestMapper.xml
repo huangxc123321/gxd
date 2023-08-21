@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.business.mapper.HarvestMapper">
 
-    <resultMap id="BaseResultMap" type="com.gxa.jbgsw.business.entity.Harvest" >
+    <!--<resultMap id="BaseResultMap" type="com.gxa.jbgsw.business.entity.Harvest" >
         <id column="id" property="id" jdbcType="INTEGER" />
         <result column="name" property="name" jdbcType="VARCHAR" />
         <result column="unit_name" property="unitName" jdbcType="VARCHAR" />
@@ -23,11 +23,14 @@
         <result column="create_at" property="createAt" jdbcType="TIMESTAMP" />
         <result column="create_by" property="createBy" jdbcType="INTEGER" />
     </resultMap>
+-->
+
+
 
 
 
     <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.HarvestRequest"
-            resultType="com.gxa.jbgsw.business.entity.Harvest" >
+            resultType="com.gxa.jbgsw.business.protocol.dto.HarvestResponse" >
             SELECT
                 a.id,
                 a.NAME,
@@ -37,8 +40,8 @@
                 a.holder,
                 a.remark,
                 a.create_at AS createAt,
-                (select count(1) from t_collection as b where a.id = b.pid) as collectNum,
-                (select count(1) from t_my_share as c where  a.id = c.pid) as shareNum
+                (select count(1) from t_collection as b where a.id = b.pid AND b.collection_type = 2) as collectNum,
+                (select count(1) from t_my_share as c where  a.id = c.pid AND c.share_type = 2 ) as shareNum
             FROM
                 t_harvest a
             WHERE
@@ -47,7 +50,7 @@
                     AND a.`query_keys` LIKE CONCAT('%',#{searchFiled},'%')
                 </if>
 
-                <if test="tradeType != null ">
+                <if test="tradeType != null and tradeType != '' ">
                     AND a.trade_type =  #{tradeType}
                 </if>
 
@@ -67,11 +70,11 @@
                     AND a.create_by = #{createBy}
                 </if>
 
-
                 ORDER BY
                     a.create_at DESC
 
     </select>
+
 
     <select id="queryHarvests" parameterType="com.gxa.jbgsw.business.protocol.dto.SearchHarvestsRequest"
             resultType="com.gxa.jbgsw.business.protocol.dto.SearchHavestResponse">

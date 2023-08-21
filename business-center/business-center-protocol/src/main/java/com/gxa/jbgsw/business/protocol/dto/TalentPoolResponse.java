@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -42,18 +43,23 @@ public class TalentPoolResponse implements Serializable {
     private String harvest;
 
     @ApiModelProperty(value = "被关注数")
-    private String attentionNum;
+    private Integer attentionNum = 0;
 
     @ApiModelProperty(value = "分享次数")
-    private String shareNum;
+    private Integer shareNum = 0;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "申请时间")
     private Date applyDate;
 
     @ApiModelProperty(value = "审核人")
-    private String auth;
+    private String auditUserName;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "审核时间")
     private Date authDate;
+
+    @ApiModelProperty(value = "审核拒绝理由")
+    private String auditReason;
 
 }

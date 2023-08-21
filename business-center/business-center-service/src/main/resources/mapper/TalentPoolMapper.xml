@@ -16,7 +16,7 @@
           a.status
         FROM
             t_talent_pool a
-        WHERE 1 = 1
+        WHERE a.status = 1
 
         <if test="searchFiled != null and searchFiled != '' ">
             AND a.query_keys like CONCAT('%',#{searchFiled},'%')
@@ -45,15 +45,21 @@
     <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.TalentPoolRequest"
             resultType="com.gxa.jbgsw.business.protocol.dto.TalentPoolResponse">
         SELECT
-        a.id,
-        a.`name`,
-        a.professional,
-        a.photo,
-        a.highest_edu AS highestEdu,
-        a.unit_name AS unitName,
-        a.research_direction AS researchDirection,
-        a.tech_domain AS techDomain,
-        a.status
+            a.id,
+            a.`name`,
+            a.professional,
+            a.photo,
+            a.highest_edu AS highestEdu,
+            a.unit_name AS unitName,
+            a.research_direction AS researchDirection,
+            a.tech_domain AS techDomain,
+            a.status,
+            a.audit_reason AS auditReason,
+            a.audit_date AS auditDate,
+            a.audit_user_name AS auditUserName,
+            a.create_at createAt,
+            (SELECT count(1) FROM t_attention AS b WHERE a.id = b.pid AND b.type = 2  ) AS attentionNum,
+            (SELECT count(1) FROM t_my_share AS c WHERE a.id = c.pid AND c.share_type = 4 ) AS shareNum
         FROM
         t_talent_pool a
         WHERE 1 = 1

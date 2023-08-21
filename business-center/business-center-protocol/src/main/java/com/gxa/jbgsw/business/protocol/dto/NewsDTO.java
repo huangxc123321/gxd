@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -33,19 +34,22 @@ public class NewsDTO implements Serializable {
     @ApiModelProperty(value = "来源于")
     private String origin;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "发布时间")
     private Date publishAt;
 
     @ApiModelProperty(value = "是否定时发布 0 不定时  1定时")
     private Integer isFixed;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "定时发布时间")
     private Date fixedAt;
 
     @ApiModelProperty(value = "状态：0 发布， 1 待发布", hidden = true)
     private Integer status;
 
-    @ApiModelProperty(value = "创建时间", hidden = true)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "创建时间" )
     private Date createAt;
 
     @ApiModelProperty(value = "创建人", hidden = true)

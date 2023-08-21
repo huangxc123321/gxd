@@ -21,7 +21,7 @@ public interface HarvestService extends IService<Harvest> {
 
     void deleteBatchIds(Long[] ids);
 
-    PageResult<Harvest> pageQuery(HarvestRequest request);
+    PageResult<HarvestResponse> pageQuery(HarvestRequest request);
 
     PageResult<SearchHavestResponse> queryHarvests(SearchHarvestsRequest searchHarvestsRequest);
 
@@ -30,4 +30,8 @@ public interface HarvestService extends IService<Harvest> {
     List<RecommendHavestResponse> getRecommendHavest();
 
     PageResult<Harvest> pageMyHarvestQuery(HarvestRequest request);
+
+    List<HarvestResponse> getHarvestByUnitName(String name);
+
+    List<String> getHolders(String holder);
 }

@@ -12,7 +12,7 @@ public class TalentPoolAuditingDTO implements Serializable {
     @ApiModelProperty(value = "ID")
     private Long id;
 
-    @ApiModelProperty(value = "状态：0 正常， 1-注销")
+    @ApiModelProperty(value = "状态：0 待审核, 1 已审核, 2未通过")
     private Integer status;
 
     @ApiModelProperty(value = "审核是否通过原因")

@@ -31,7 +31,7 @@ public class ShareCommunityResponse implements Serializable {
     @ApiModelProperty(value = "状态名称")
     private String statusName;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "分享时间")
     private Date createAt;
 
@@ -62,7 +62,7 @@ public class ShareCommunityResponse implements Serializable {
     @ApiModelProperty(value = "审核人名称")
     private String auditUserName;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "审核时间")
     private Date auditAt;
 

@@ -3,6 +3,7 @@ package com.gxa.jbgsw.business.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.gxa.jbgsw.business.entity.Company;
 import com.gxa.jbgsw.business.protocol.dto.CompanyRequest;
+import com.gxa.jbgsw.business.protocol.dto.CompanyResponse;
 
 import java.util.List;
 

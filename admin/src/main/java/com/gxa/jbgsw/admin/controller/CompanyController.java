@@ -31,7 +31,7 @@ public class CompanyController extends BaseController {
             @ApiImplicitParam(value = "企业ID", name = "id", dataType = "Long", paramType = "query"),
     })
     @GetMapping("/company/getCompanyById")
-    public CompanyDTO getCompanyById(@RequestParam("id")Long id){
+    public CompanyResponse getCompanyById(@RequestParam("id")Long id){
         return companyFeignApi.getCompanyById(id);
     }
 

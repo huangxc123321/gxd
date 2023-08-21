@@ -47,7 +47,7 @@ public class ProvinceCityDistrictController implements ProvinceCityDistrictApi {
 
     @Override
     @ApiOperation(value = "获取上一级地址", notes = "获取上一级地址")
-    public ProvinceCityDistrictVO getProvinceCityDistrictById(Integer id) {
+    public ProvinceCityDistrictVO getProvinceCityDistrictById(Long id) {
         return provinceCityDistrictService.getProvinceCityDistrictById(id);
     }
 

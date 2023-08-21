@@ -26,4 +26,6 @@ public interface UserService extends IService<User> {
     UserResponse getUserByValidateCode(String mobile, String validateCode);
 
     void updatePassword(String mobile, String password);
+
+    void updateUserAdmin(UserDTO userDTO);
 }

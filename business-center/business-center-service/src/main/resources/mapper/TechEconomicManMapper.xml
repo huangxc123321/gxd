@@ -41,7 +41,7 @@
                 AND a.`level`  = #{level}
             </if>
 
-            <if test="type != null ">
+            <if test="type != null and type != ''">
                 AND a.`type`  = #{type}
             </if>
 

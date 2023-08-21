@@ -75,7 +75,7 @@ public class ProvinceCityDistrictServiceImpl extends ServiceImpl<ProvinceCityDis
     }
 
     @Override
-    public ProvinceCityDistrictVO getProvinceCityDistrictById(Integer id) {
+    public ProvinceCityDistrictVO getProvinceCityDistrictById(Long id) {
         ProvinceCityDistrictVO provinceCityDistrictVO = new ProvinceCityDistrictVO();
 
         // 根据条件查询

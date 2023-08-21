@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.net.BindException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -133,6 +134,26 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         }
 
         return new PageResult<TalentPoolResponse>();
+    }
+
+    @Override
+    public List<String> getUnits(String unitName) {
+        LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(StrUtil.isNotBlank(unitName)){
+            lambdaQueryWrapper.like(TalentPool::getUnitName, unitName);
+        }
+
+        List<TalentPool> talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+        if(talentPools != null && talentPools.size() >0){
+            List<String> units = new ArrayList<>();
+            talentPools.stream().forEach(s->{
+                units.add(s.getUnitName());
+            });
+            // 去重返回
+            return units.stream().distinct().collect(Collectors.toList());
+        }
+
+        return null;
     }
 
 }

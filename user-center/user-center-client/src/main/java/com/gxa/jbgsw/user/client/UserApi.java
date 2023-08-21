@@ -41,5 +41,8 @@ public interface UserApi {
 
     @GetMapping("/user/getUserByMobile")
     UserDTO getUserByMobile(@RequestParam("mobie")String mobie);
+
+    @PostMapping("/user/updateUserAdmin")
+    void updateUserAdmin(@RequestBody UserDTO userDTO);
 }
 

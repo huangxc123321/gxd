@@ -27,12 +27,13 @@ public class BannerResponse implements Serializable {
 
     @ApiModelProperty(value = "图片链接地址")
     private String links;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "生效时间")
     private Date effectAt;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
-    @ApiModelProperty(value = "生效时间")
+    @ApiModelProperty(value = "创建时间")
     private Date createAt;
 
     @ApiModelProperty(value = "状态: 0 生效  1 失效")

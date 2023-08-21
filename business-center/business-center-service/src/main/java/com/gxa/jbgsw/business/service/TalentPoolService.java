@@ -28,4 +28,6 @@ public interface TalentPoolService extends IService<TalentPool> {
     PageResult<SearchTalentsResponse> queryTalents(SearchTalentsRequest searchTalentsRequest);
 
     PageResult<TalentPoolResponse> pageQuery(TalentPoolRequest request);
+
+    List<String> getUnits(String unitName);
 }

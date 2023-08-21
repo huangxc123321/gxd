@@ -47,6 +47,27 @@ public class UserFontController extends BaseController {
         userFeignApi.deleteBatchIds(ids);
     }
 
+
+    @ApiOperation("后台新增用户信息")
+    @PostMapping("/user/addAdmin")
+    void addAdmin(@RequestBody UserDTO userDTO) throws BizException {
+        boolean isValidate = false;
+
+        // 判断手机号码是否注册
+        UserRequest userRequest = new UserRequest();
+        userRequest.setSearchFiled(userDTO.getMobile());
+        PageResult<UserResponse> pageResult = userFeignApi.pageQuery(userRequest);
+        if(pageResult.getTotal()>0){
+            throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);
+        }
+
+        userDTO.setCreateBy(this.getUserId());
+        // 设置默认密码: 123456
+        userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+        userFeignApi.add(userDTO);
+    }
+
+
     @ApiOperation("新增用户信息")
     @PostMapping("/user/add")
     void add(@RequestBody UserDTO userDTO) throws BizException {
@@ -85,7 +106,7 @@ public class UserFontController extends BaseController {
             throw new BizException(UserErrorCode.USER_PARAMS_ERROR);
         }
         userDTO.setUpdateBy(this.getUserId());
-        userFeignApi.update(userDTO);
+        userFeignApi.updateUserAdmin(userDTO);
     }
 
     @ApiOperation("修改用户使用状态: 使用状态： 0 已使用  1 停用")

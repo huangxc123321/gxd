@@ -82,6 +82,59 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         userMapper.update(null, lambdaUpdateWrapper);
     }
 
+
+    @Override
+    public void updateUserAdmin(UserDTO userDTO) {
+        LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        User user = this.getById(userDTO.getId());
+
+        // 判断电话是否一致
+        if(user.getMobile() != null && !userDTO.getMobile().equals(user.getMobile())){
+            // 判断手机号码是否注册
+            UserRequest userRequest = new UserRequest();
+            userRequest.setSearchFiled(userDTO.getMobile());
+            PageResult<UserResponse> pageResult = this.pageQuery(userRequest);
+            if(pageResult.getTotal()>0){
+                throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);
+            }
+
+            user.setMobile(userDTO.getMobile());
+        }
+
+        // 判断头像是否一致
+        if((userDTO.getAvatar()!= null && !userDTO.getAvatar().equals(user.getAvatar())) || userDTO.getAvatar() == null ){
+            user.setAvatar(userDTO.getAvatar());
+        }
+        // 判断昵称是否一致
+        if((userDTO.getNick() != null && !userDTO.getNick().equals(user.getNick()))  || userDTO.getNick() == null ){
+            user.setNick(userDTO.getNick());
+        }
+
+        // 判断地区是否一致
+        if((userDTO.getAreaId() != null && !userDTO.getAreaId().equals(user.getAreaId())) || userDTO.getAreaId() == null ){
+            user.setAreaId(userDTO.getAreaId());
+            user.setAreaName(userDTO.getAreaName());
+            user.setCityId(userDTO.getCityId());
+            user.setCityName(userDTO.getCityName());
+            user.setProvinceId(userDTO.getProvinceId());
+            user.setProvinceName(userDTO.getProvinceName());
+        }
+
+        // 判断性别是否一致
+        if((userDTO.getSex() != null && !userDTO.getSex().equals(user.getSex())) || userDTO.getSex() == null){
+            user.setSex(userDTO.getSex());
+        }
+        user.setUpdateBy(userDTO.getUpdateBy());
+        user.setUpdateAt(new Date());
+        user.setTradeType(userDTO.getTradeType());
+        user.setType(userDTO.getType());
+        user.setJob(userDTO.getJob());
+
+        this.updateById(user);
+    }
+
+
+
     @Override
     public void updateUser(UserDTO userDTO) {
         LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();

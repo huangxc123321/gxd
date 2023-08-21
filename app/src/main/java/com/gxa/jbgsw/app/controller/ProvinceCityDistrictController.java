@@ -36,7 +36,7 @@ public class ProvinceCityDistrictController extends BaseController {
     @GetMapping("/address/getProvinceCityDistrictById")
     @ApiOperation(value = "获取上一级地址", notes = "获取上一级地址")
     public ProvinceCityDistrictVO getProvinceCityDistrictById(@RequestParam("id") Integer id){
-        return provinceCityDistrictFeignApi.getProvinceCityDistrictById(id);
+        return provinceCityDistrictFeignApi.getProvinceCityDistrictById(Long.valueOf(id));
     }
 
     @GetMapping("/address/getProvinceCityDistrictByName")

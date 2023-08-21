@@ -50,20 +50,30 @@ public class HarvestController implements HarvestApi {
     public PageResult<HarvestResponse> pageQuery(HarvestRequest request) {
         PageResult<HarvestResponse> pages = new PageResult<>();
 
-        PageResult<Harvest> pageResult = harvestService.pageQuery(request);
-        List<Harvest> harvests = pageResult.getList();
+        PageResult<HarvestResponse> pageResult = harvestService.pageQuery(request);
+        List<HarvestResponse> harvests = pageResult.getList();
         if(CollectionUtils.isNotEmpty(harvests)){
-            List<HarvestResponse> responses = mapperFacade.mapAsList(harvests, HarvestResponse.class);
-            responses.forEach(s->{
-                // TODO: 2023/7/4 0004 暂时不转换
-                
-                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(""));
-                if(dictionaryDTO != null){
-              
-
+            harvests.forEach(s->{
+                // 技术领域
+                StringBuffer sb = new StringBuffer();
+                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                if(tfc1 != null){
+                    sb.append(tfc1.getName());
+                    sb.append(CharUtil.COMMA);
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName());
+                        sb.append(CharUtil.COMMA);
+                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                        if(tfc3 != null){
+                            sb.append(tfc3.getName());
+                        }
+                    }
                 }
+                s.setTechDomainName(sb.toString().replace("所有分类,", ""));
+
             });
-            pages.setList(responses);
+            pages.setList(harvests);
             pages.setPageNum(pageResult.getPageNum());
             pages.setPages(pageResult.getPages());
             pages.setPageSize(pageResult.getPageSize());
@@ -208,6 +218,11 @@ public class HarvestController implements HarvestApi {
         }
 
         return pages;
+    }
+
+    @Override
+    public List<String> getHolders(String holder) {
+        return harvestService.getHolders(holder);
     }
 
 }

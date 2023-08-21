@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ public class ShareCommunityDetailDTO implements Serializable {
     @ApiModelProperty(value = "分享人昵称")
     private String nick;
 
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "分享时间")
     private Date createAt;
 
@@ -40,5 +42,12 @@ public class ShareCommunityDetailDTO implements Serializable {
 
     @ApiModelProperty(value = "分享内容的评论信息")
     List<CommentResponse> commentResponses = new ArrayList<>();
-    
+
+    @ApiModelProperty(value = "视频链接地址")
+    private String links;
+
+    @ApiModelProperty(value = "来自哪里")
+    private String origin;
+
+
 }

@@ -37,4 +37,6 @@ public interface TalentPoolApi {
     @PostMapping("/talent/pool/updateStatus")
     void updateStatus(@RequestBody TalentPoolAuditingDTO talentPoolAuditingDTO);
 
+    @GetMapping("/talent/pool/getUnits")
+    List<String> getUnits(@RequestParam("unitName") String unitName);
 }

@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.basis.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -27,6 +28,7 @@ public class BannerDTO implements Serializable {
     @ApiModelProperty(value = "图片链接地址")
     private String links;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty(value = "生效时间")
     private Date effectAt;
 

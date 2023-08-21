@@ -21,7 +21,7 @@ public interface ProvinceCityDistrictApi {
     public List<ProvinceCityDistrictQueryResponse> sonlist(@RequestParam("pid") String pid);
 
     @GetMapping("/address/getProvinceCityDistrictById")
-    public ProvinceCityDistrictVO getProvinceCityDistrictById(@RequestParam("id") Integer id);
+    public ProvinceCityDistrictVO getProvinceCityDistrictById(@RequestParam("id") Long id);
 
     @GetMapping("/address/getProvinceCityDistrictByName")
     public ProvinceCityDistrictVO getProvinceCityDistrictByName(@RequestParam("name") String name);

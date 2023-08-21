@@ -113,4 +113,11 @@ public class HavestController extends BaseController {
     }
 
 
+    @ApiOperation("获取技术所属人")
+    @GetMapping("/havest/getHolders")
+    List<String> getHolders(@RequestParam("holder") String holder){
+        return havestFeignApi.getHolders(holder);
+    }
+
+
 }

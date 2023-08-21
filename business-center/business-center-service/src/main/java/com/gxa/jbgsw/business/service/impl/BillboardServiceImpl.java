@@ -478,5 +478,21 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         return new ArrayList<>();
     }
 
+    @Override
+    public List<BillboardResponse> getBillboardByUnitName(String name) {
+        LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 已审核，待揭榜
+        lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
+                .eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode())
+                .eq(Billboard::getUnitName, name)
+                .orderByDesc(Billboard::getCreateAt);
+        List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
+        if(billboards != null && billboards.size()>0){
+            return mapperFacade.mapAsList(billboards, BillboardResponse.class);
+        }
+
+        return null;
+    }
+
 
 }

@@ -1,13 +1,19 @@
 package com.gxa.jbgsw.admin.controller;
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.admin.feignapi.MessageFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TalentPoolFeignApi;
 import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.client.BillboardTalentRelatedApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.CollaborateStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.*;
@@ -19,6 +25,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,6 +49,8 @@ public class TalentPoolFontController extends BaseController {
     @Resource
     MessageFeignApi messageFeignApi;
     @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+    @Resource
     MapperFacade mapperFacade;
 
     @ApiOperation(value = "批量删除帅才", notes = "批量删除帅才")
@@ -61,15 +70,18 @@ public class TalentPoolFontController extends BaseController {
          * 分配一个账号
          * 先判断手机号是否注册，如果没有注册则注册
          */
-        UserDTO user = userFeignApi.getUserByMobile(talentPoolDTO.getMobie());
-        if(user == null){
-            UserDTO userDTO = mapperFacade.map(talentPoolDTO, UserDTO.class);
-            userDTO.setNick(talentPoolDTO.getName());
-            userDTO.setAvatar(talentPoolDTO.getPhoto());
-            // 设置默认密码: 123456
-            userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+        if(StrUtil.isNotBlank(talentPoolDTO.getMobie())){
+            UserDTO user = userFeignApi.getUserByMobile(talentPoolDTO.getMobie());
+            if(user == null){
+                UserDTO userDTO = mapperFacade.map(talentPoolDTO, UserDTO.class);
+                userDTO.setNick(talentPoolDTO.getName());
+                userDTO.setAvatar(talentPoolDTO.getPhoto());
+                // 设置默认密码: 123456
+                userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+                userDTO.setMobile(talentPoolDTO.getMobie());
 
-            userFeignApi.add(userDTO);
+                userFeignApi.add(userDTO);
+            }
         }
     }
 
@@ -102,14 +114,36 @@ public class TalentPoolFontController extends BaseController {
 
         // 成果推荐: 根据揭榜单位
         List<HarvestBillboardRelatedDTO> billboardRecommends = billboardTalentRelatedApi.getBillboardRecommendByTalentId(id);
+        if(billboardRecommends != null){
+            billboardRecommends.stream().forEach(s->{
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.categories.name(),String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    s.setCategoriesName(dictionaryDTO.getDicValue());
+                }
+            });
+        }
         talentPoolDTO.setBillboardRecommends(billboardRecommends);
 
         // 合作发起
-        List<HavestCollaborateDTO> vals = billboardTalentRelatedApi.getCollaborateByTalentId(id);
-        talentPoolDTO.setCollaborates(vals);
+        List<HavestCollaborateDTO> vals = billboardTalentRelatedApi.getCollaborateByTalentId(id);        talentPoolDTO.setCollaborates(vals);
+        if(CollectionUtils.isNotEmpty(vals)){
+            vals.stream().forEach(s->{
+                s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus()));
+                String[] strs = s.getMode().split(",");
+                StringBuffer sb = new StringBuffer();
+                for(int i=0; i<strs.length; i++){
+                    DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.collaborate_mode.name(), strs[i]);
+                    if(i == strs.length -1){
+                        sb.append(dic.getDicValue());
+                    }else{
+                        sb.append(dic.getDicValue()).append(CharUtil.COMMA);
+                    }
+                }
+                s.setModeName(sb.toString());
+            });
+        }
 
-
-        return null;
+        return talentPoolDTO;
     }
 
     @ApiOperation("帅才审核")
@@ -146,6 +180,11 @@ public class TalentPoolFontController extends BaseController {
 
     }
 
+    @ApiOperation("获取所在单位")
+    @GetMapping("/talent/pool/getUnits")
+    List<String> getUnits(@RequestParam("unitName") String unitName){
+        return talentPoolFeignApi.getUnits(unitName);
+    }
 
     private UserResponse getUser(){
         Long userId = this.getUserId();

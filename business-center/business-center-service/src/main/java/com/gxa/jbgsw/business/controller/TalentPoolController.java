@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.controller;
 
 
 import cn.hutool.core.util.CharUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.client.TalentPoolApi;
@@ -156,6 +157,11 @@ public class TalentPoolController implements TalentPoolApi {
 
             talentPoolService.updateById(talentPool);
         }
+    }
+
+    @Override
+    public List<String> getUnits(String unitName) {
+        return talentPoolService.getUnits(unitName);
     }
 
 }

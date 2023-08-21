@@ -3,7 +3,7 @@
 <mapper namespace="com.gxa.jbgsw.business.mapper.CompanyMapper">
 
  <select id="pageQuery" parameterType="com.gxa.jbgsw.business.protocol.dto.CompanyRequest"
-         resultType="com.gxa.jbgsw.business.protocol.dto.CompanyResponse">
+         resultType="com.gxa.jbgsw.business.entity.Company">
      SELECT
 	  a.id,
       a.logo,
@@ -15,7 +15,9 @@
       a.scope_business AS scopeBusiness,
       a.area_name AS areaName,
       a.province_name AS provinceName,
-      a.city_name AS cityName
+      a.city_name AS cityName,
+      a.remark,
+      a.address
 
     FROM
         t_company AS a
@@ -24,13 +26,13 @@
      <if test="searchFiled != null and searchFiled != '' ">
          AND a.`name` LIKE CONCAT('%',#{searchFiled},'%')
      </if>
-     <if test="tradeType != null ">
+     <if test="tradeType != null and tradeType != '' ">
          AND a.trade_type =  #{tradeType}
      </if>
-     <if test="type != null ">
+     <if test="type != null">
          AND a.type =  #{type}
      </if>
-     <if test="addrId != null and addrId != '' ">
+     <if test="addrId != null ">
          AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
      </if>
      ORDER BY a.create_at DESC

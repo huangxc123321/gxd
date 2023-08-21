@@ -10,6 +10,7 @@ import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.mapper.BillboardTalentRelatedMapper;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
@@ -187,7 +188,7 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
     @Override
     public List<RelateTalentDTO> getRelatedTalentByBillboardId(Long id) {
         List<RelateTalentDTO> relateTalents = billboardTalentRelatedMapper.getRelatedTalentByBillboardId(id);
-        if(CollectionUtils.isEmpty(relateTalents)){
+        if(CollectionUtils.isEmpty(relateTalents) || relateTalents.get(0) == null){
             Billboard billboard = billboardService.getById(id);
             if(billboard != null){
                 String[] keys = billboard.getTechKeys().split(";");
@@ -196,13 +197,26 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                    if(keys2.length > 1){
                        keys = keys2;
                    }
+                   if(keys[0].indexOf("，")>0){
+                       String[] keys3 = billboard.getTechKeys().split("，");
+                       keys = keys3;
+                   }
                 }
 
                 LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
                 lambdaQueryWrapper.like(TalentPool::getQueryKeys, keys[0]);
+                lambdaQueryWrapper.eq(TalentPool::getStatus, AuditingStatusEnum.PASS.getCode());
                 lambdaQueryWrapper.last("LIMIT 1");
 
                 List<TalentPool> talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+                if(talentPools == null || talentPools.size()<1){
+                    LambdaQueryWrapper<TalentPool> lambdaQueryWrapper1 = new LambdaQueryWrapper<>();
+                    lambdaQueryWrapper.eq(TalentPool::getStatus, AuditingStatusEnum.PASS.getCode());
+                    lambdaQueryWrapper1.orderByDesc(TalentPool::getCreateAt);
+                    lambdaQueryWrapper1.last("LIMIT 1");
+                     talentPools = talentPoolMapper.selectList(lambdaQueryWrapper1);
+                }
+
                 if(CollectionUtils.isNotEmpty(talentPools)){
                     List<RelateTalentDTO> list = mapperFacade.mapAsList(talentPools, RelateTalentDTO.class);
 

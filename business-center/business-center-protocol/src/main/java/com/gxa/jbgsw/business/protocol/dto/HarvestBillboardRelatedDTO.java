@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -19,15 +20,20 @@ public class HarvestBillboardRelatedDTO implements Serializable {
     @ApiModelProperty(value = "工信大类：字典中获取, type: categories")
     private Integer categories;
 
+    @ApiModelProperty(value = "工信大类显示名称：字典中获取, type: categories")
+    private String categoriesName;
+
     @ApiModelProperty(value = "技术关键词，用逗号分隔")
     private String techKeys;
 
     @ApiModelProperty(value = "需求详情")
     private String content;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "有效开始时间")
     private Date startAt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "有效结束时间")
     private Date endAt;
 

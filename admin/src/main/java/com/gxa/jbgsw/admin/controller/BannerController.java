@@ -97,7 +97,9 @@ public class BannerController extends BaseController {
     })
     @GetMapping("/banner/getById")
     BannerResponse getById(@RequestParam("id") Long id) throws BizException {
-         return bannerFeignApi.getById(id);
+        BannerResponse bannerResponse = bannerFeignApi.getById(id);
+
+        return bannerResponse;
     }
 
 

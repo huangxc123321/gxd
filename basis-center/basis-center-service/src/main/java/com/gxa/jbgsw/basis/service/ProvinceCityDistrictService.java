@@ -24,7 +24,7 @@ public interface ProvinceCityDistrictService extends IService<ProvinceCityDistri
 
     List<ProvinceCityDistrictQueryResponse> pageSonQuery(String pid);
 
-    ProvinceCityDistrictVO getProvinceCityDistrictById(Integer id);
+    ProvinceCityDistrictVO getProvinceCityDistrictById(Long id);
 
     ProvinceCityDistrictVO getProvinceCityDistrictByName(String name);
 }
