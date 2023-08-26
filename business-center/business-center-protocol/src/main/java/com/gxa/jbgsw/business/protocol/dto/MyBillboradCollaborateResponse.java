@@ -26,6 +26,6 @@ public class MyBillboradCollaborateResponse implements Serializable {
     private String techKeys;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Double sStar;
+    private String star;
 
 }

@@ -56,6 +56,9 @@ public class BillboardResponse implements Serializable {
     @ApiModelProperty(value = "发布时间")
     private Date createAt;
 
+    @ApiModelProperty(value = "发布人")
+    private Long createBy;
+
     @ApiModelProperty(value = "发布人(认证了显示认证信息)")
     private String createByName;
 
@@ -89,5 +92,23 @@ public class BillboardResponse implements Serializable {
     @ApiModelProperty(value = "是否置顶： 0 不置顶 1 置顶")
     private Integer isTop;
 
+    @ApiModelProperty(value = "审核状态： 0 待审核  1 审核通过  2 审核不通过")
+    private Integer auditStatus;
+
+    @ApiModelProperty(value = "审核不通过的原因")
+    private String reason;
+
+    @ApiModelProperty(value = "审核人ID")
+    private Long auditUserId;
+
+    @ApiModelProperty(value = "审核人名称")
+    private String auditUserName;
+
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "审核时间")
+    private Long auditCreateAt;
+
+    @ApiModelProperty(value = "发榜人")
+    private String publishPerson;
 
 }

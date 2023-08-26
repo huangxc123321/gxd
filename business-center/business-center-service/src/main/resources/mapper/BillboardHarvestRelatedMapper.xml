@@ -5,7 +5,7 @@
         SELECT
             a.id,
             c.`name`,
-            c.tech_domain AS techDomain,
+            c.tech_domain AS techKeys,
             c.unit_name AS unitName,
             c.maturity_level AS maturityLevel,
             a.s_star AS sStar,

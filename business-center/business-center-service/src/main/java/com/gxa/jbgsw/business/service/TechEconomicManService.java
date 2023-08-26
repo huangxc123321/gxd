@@ -28,4 +28,6 @@ public interface TechEconomicManService extends IService<TechEconomicMan> {
     List<String> getLabels();
 
     PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(TechEconomicManRequiresRequest request);
+
+    TechEconomicManDTO getTechEconomicManByMobile(String mobile);
 }

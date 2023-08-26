@@ -33,5 +33,7 @@ public interface HarvestService extends IService<Harvest> {
 
     List<HarvestResponse> getHarvestByUnitName(String name);
 
-    List<String> getHolders(String holder);
+    List<String> getContacts(String contacts);
+
+    void saveHarvest(Harvest harvest, List<PatentDTO> patents);
 }

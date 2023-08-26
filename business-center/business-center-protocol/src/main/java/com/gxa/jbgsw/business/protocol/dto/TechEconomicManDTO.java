@@ -23,13 +23,19 @@ public class TechEconomicManDTO implements Serializable {
     private String label;
 
     @ApiModelProperty(value = "等级：0 无， 1 金  2 银  3 铜")
-    private Long level;
+    private Integer level;
+
+    @ApiModelProperty(value = "等级显示名称：0 无， 1 金  2 银  3 铜")
+    private String levelName;
 
     @ApiModelProperty(value = "电话")
     private String mobile;
 
     @ApiModelProperty(value = "经纪人类型：字典中获取, type: broker_type")
     private Integer type;
+
+    @ApiModelProperty(value = "经纪人类型显示名称：字典中获取, type: broker_type")
+    private String typeName;
 
     @ApiModelProperty(value = "邮箱")
     private String email;
@@ -73,8 +79,11 @@ public class TechEconomicManDTO implements Serializable {
     @ApiModelProperty(value = "单位名称")
     private String unitName;
 
-    @ApiModelProperty(value = "或者协议")
+    @ApiModelProperty(value = "协议地址")
     private String agreements;
+
+    @ApiModelProperty(value = "协议显示名称")
+    private String agreementsName;
 
     @ApiModelProperty(value = "需求派单：接单次数,系统向经纪人派单的次数")
     private Integer requires;
@@ -85,6 +94,7 @@ public class TechEconomicManDTO implements Serializable {
     @ApiModelProperty(value = "总促成:是指完成项目的总数量，完成项目以评价完成为准")
     private Integer successTotal;
 
-
+    @ApiModelProperty(value = "分数 ")
+    private BigDecimal score;
 
 }

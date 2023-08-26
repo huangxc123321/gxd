@@ -30,6 +30,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "主键")
     private Long id;
 
+    @ApiModelProperty(value = "成果ID")
+    private Long pid;
+
     @ApiModelProperty(value = "专利号")
     private String no;
 
@@ -38,6 +41,12 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "专利申请时间")
     private Date applyDate;
+
+    @ApiModelProperty(value = "省ID")
+    private Long provinceId;
+
+    @ApiModelProperty(value = "城市ID")
+    private Long cityId;
 
     @ApiModelProperty(value = "专利所属地区")
     private Integer areaId;

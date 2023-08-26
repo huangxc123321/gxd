@@ -21,7 +21,7 @@ public class TalentPoolAuditingDTO implements Serializable {
     @ApiModelProperty(value = "审核人ID", hidden = true)
     private Long auditUserId;
 
-    @ApiModelProperty(value = "审核是否通过原因", hidden = true)
+    @ApiModelProperty(value = "审核人名称", hidden = true)
     private String auditUserName;
 
     @ApiModelProperty(value = "审核时间", hidden = true)

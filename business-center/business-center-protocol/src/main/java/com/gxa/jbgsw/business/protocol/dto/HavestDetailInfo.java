@@ -30,6 +30,9 @@ public class HavestDetailInfo implements Serializable {
     @ApiModelProperty(value = "技术关键词，用逗号分隔")
     private String techKeys;
 
+    @ApiModelProperty(value = "技术关键词，用逗号分隔")
+    private String techDomainName;
+
     @ApiModelProperty(value = "视频地址")
     private String videoUrl;
 

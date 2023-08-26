@@ -72,7 +72,7 @@
                 b.title,
                 b.amount,
                 b.tech_keys AS techKeys,
-                a.s_star AS sStar
+                a.s_star AS star
             FROM
                 t_billboard_talent_related AS a
             LEFT JOIN t_billboard AS b ON a.billboard_id = b.id

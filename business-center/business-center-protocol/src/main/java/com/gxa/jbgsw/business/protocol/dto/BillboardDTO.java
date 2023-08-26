@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -34,9 +35,11 @@ public class BillboardDTO implements Serializable {
     @ApiModelProperty(value = "需求详情")
     private String content;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "有效开始时间")
     private Date startAt;
 
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "有效结束时间")
     private Date endAt;
 
@@ -72,5 +75,10 @@ public class BillboardDTO implements Serializable {
 
     @ApiModelProperty(value = "发布时间", hidden = true)
     private Date createAt;
+
+    @ApiModelProperty(value = "发榜人")
+    private String publishPerson;
+
+
 
 }

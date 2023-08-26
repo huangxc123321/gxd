@@ -64,6 +64,10 @@ public class UserCenterController extends BaseController {
         Integer messages = messageFeignApi.getAllMessages(userId);
         userCenterDTO.setMessages(messages);
 
+        // 是否有未读消息
+        boolean isHaveNoRead = messageFeignApi.getIsHaveNoRead(userId);
+        userCenterDTO.setHaveNoRead(isHaveNoRead);
+
         // 我的积分
         userCenterDTO.setPoints(0);
 

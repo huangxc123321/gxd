@@ -22,45 +22,6 @@ public class CompanyDTO implements Serializable {
     @ApiModelProperty(value = "logo图片")
     private String logo;
 
-    @ApiModelProperty(value = "所属行业：字典中获取")
-    private String tradeType;
-
-    @ApiModelProperty(value = "产品标签")
-    private String productLabel;
-
-    @ApiModelProperty(value = "业及技术标签")
-    private String techLabel;
-
-    @ApiModelProperty(value = "企业统一社会信用代码")
-    private String code;
-
-    @ApiModelProperty(value = "单位负责人")
-    private String director;
-
-    @ApiModelProperty(value = "电话")
-    private String mobile;
-
-    @ApiModelProperty(value = "邮箱")
-    private String email;
-
-    @ApiModelProperty(value = "公司网址")
-    private String url;
-
-    @ApiModelProperty(value = "公司简介")
-    private String remark;
-
-    @ApiModelProperty(value = "公司地址")
-    private String address;
-
-    @ApiModelProperty(value = "状态")
-    private Integer status;
-
-    @ApiModelProperty(value = "企业类型名称：字典中获取")
-    private Integer type;
-
-    @ApiModelProperty(value = "经营范围")
-    private String scopeBusiness;
-
     @ApiModelProperty(value = "省ID")
     private Long provinceId;
 
@@ -78,6 +39,42 @@ public class CompanyDTO implements Serializable {
 
     @ApiModelProperty(value = "地区名称")
     private String areaName;
+
+    @ApiModelProperty(value = "公司地址")
+    private String address;
+
+    @ApiModelProperty(value = "联系人")
+    private String director;
+
+    @ApiModelProperty(value = "联系方式")
+    private String mobile;
+
+    @ApiModelProperty(value = "所属行业：字典中获取")
+    private String tradeType;
+
+    @ApiModelProperty(value = "企业类型：字典中获取")
+    private Integer type;
+
+    @ApiModelProperty(value = "企业统一社会信用代码")
+    private String code;
+
+    @ApiModelProperty(value = "邮箱")
+    private String email;
+
+    @ApiModelProperty(value = "公司网址")
+    private String url;
+
+    @ApiModelProperty(value = "公司简介")
+    private String remark;
+
+    @ApiModelProperty(value = "经营范围")
+    private String scopeBusiness;
+
+    @ApiModelProperty(value = "多个请用分号 ; 隔开")
+    private String productLabel;
+
+    @ApiModelProperty(value = "状态")
+    private Integer status;
 
     @ApiModelProperty(value = "创建时间", hidden = true)
     private Date createAt;

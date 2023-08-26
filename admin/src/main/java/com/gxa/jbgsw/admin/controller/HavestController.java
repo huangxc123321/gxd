@@ -9,6 +9,7 @@ import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollaborateStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -17,6 +18,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -63,7 +65,15 @@ public class HavestController extends BaseController {
     @PostMapping("/havest/pageQuery")
     PageResult<HarvestResponse> pageQuery(@RequestBody HarvestRequest request){
         PageResult<HarvestResponse> pageResult = havestFeignApi.pageQuery(request);
-        log.info("Result：{}", JSONObject.toJSONString(pageResult));
+        List<HarvestResponse> responses = pageResult.getList();
+        if(CollectionUtils.isNotEmpty(responses)){
+            responses.stream().forEach(s->{
+                DictionaryDTO dicMaturityLevel = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(s.getMaturityLevel()));
+                if(dicMaturityLevel != null){
+                    s.setMaturityLevelName(dicMaturityLevel.getDicValue());
+                }
+            });
+        }
 
         return pageResult;
     }
@@ -113,10 +123,10 @@ public class HavestController extends BaseController {
     }
 
 
-    @ApiOperation("获取技术所属人")
-    @GetMapping("/havest/getHolders")
-    List<String> getHolders(@RequestParam("holder") String holder){
-        return havestFeignApi.getHolders(holder);
+    @ApiOperation("获取联系人")
+    @GetMapping("/havest/getContacts")
+    List<String> getContacts(@RequestParam("contacts") String contacts){
+        return havestFeignApi.getContacts(contacts);
     }
 
 

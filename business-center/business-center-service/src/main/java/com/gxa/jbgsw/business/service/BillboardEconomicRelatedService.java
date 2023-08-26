@@ -24,4 +24,6 @@ public interface BillboardEconomicRelatedService extends IService<BillboardEcono
     BillboardEconomicRelated getMyEconomicMan(Long billboardId);
 
     void updateRequireStatus(AppRequiresAccepptDTO requiresAccepptDTO);
+
+    void deleteByEconomicId(List<Long> list);
 }

@@ -92,4 +92,8 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "查询关键字")
     private String queryKeys;
+
+    @ApiModelProperty(value = "联系方式")
+    private String mobile;
+
 }

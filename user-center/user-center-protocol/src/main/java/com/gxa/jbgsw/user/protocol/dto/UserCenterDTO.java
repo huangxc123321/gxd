@@ -36,6 +36,9 @@ public class UserCenterDTO implements Serializable {
     @ApiModelProperty(value = "我的消息数")
     private Integer messages;
 
+    @ApiModelProperty(value = "是否有未读消息： true 有（有未读）， false 没有（全已读）")
+    private boolean isHaveNoRead = false;
+
     @ApiModelProperty(value = "我的积分")
     private Integer points;
 

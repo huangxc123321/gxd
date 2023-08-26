@@ -60,11 +60,20 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
     @Override
     public void add(NewsDTO newsDTO) {
         News news = mapperFacade.map(newsDTO, News.class);
-        news.setCreateAt(new Date());
         String imageUrl = getUrl(newsDTO.getContent());
         if(StrUtil.isNotBlank(imageUrl)){
             news.setPicture(imageUrl);
         }
+
+        // 是否定时发布:  0 不定时  1定时
+        if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
+            news.setFixedAt(newsDTO.getFixedAt());
+        }else{
+            news.setFixedAt(null);
+            // 立即发布
+            news.setPublishAt(new Date());
+        }
+        newsMapper.insert(news);
 
         // 是否定时发布:  0 不定时  1定时
         if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
@@ -73,11 +82,7 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
             // 过期时间
             long timeout = DateUtil.between(new Date(), newsDTO.getFixedAt(), DateUnit.MINUTE);
             stringRedisTemplate.opsForValue().set(key, String.valueOf(news.getId()), timeout, TimeUnit.MINUTES);
-            news.setFixedAt(newsDTO.getFixedAt());
-        }else{
-            news.setFixedAt(null);
         }
-        newsMapper.insert(news);
     }
 
     private String getUrl(String content){
@@ -102,15 +107,38 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
         news.setUpdateAt(new Date());
 
         // newsDTO有null就不需要替换news的字段
-        BeanUtils.copyProperties(newsDTO, news, CopyPropertionIngoreNull.getNullPropertyNames(news));
+        BeanUtils.copyProperties(newsDTO, news);
+        String imageUrl = getUrl(newsDTO.getContent());
+        if(StrUtil.isNotBlank(imageUrl)){
+            news.setPicture(imageUrl);
+        }
+
+        // 是否定时发布:  0 不定时  1定时
+        if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
+            news.setFixedAt(newsDTO.getFixedAt());
+        }else{
+            news.setFixedAt(null);
+            // 立即发布
+            news.setPublishAt(new Date());
+        }
         newsMapper.updateById(news);
+
+        // 是否定时发布:  0 不定时  1定时
+        if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
+            // 写定时任务
+            String key = RedisKeys.NEWS_PUBLIS_TIME + news.getId();
+            // 过期时间
+            long timeout = DateUtil.between(new Date(), newsDTO.getFixedAt(), DateUnit.MINUTE);
+            stringRedisTemplate.opsForValue().set(key, String.valueOf(news.getId()), timeout, TimeUnit.MINUTES);
+        }
     }
 
     @Override
     public void updateStatus(String id, Integer status) {
         LambdaUpdateWrapper<News> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.set(News::getStatus, status)
-                .eq(News::getId, id);
+                .set(News::getPublishAt, new Date())
+                .eq(News::getId, Long.valueOf(id));
         newsMapper.update(null, lambdaUpdateWrapper);
     }
 

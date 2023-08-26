@@ -78,6 +78,7 @@ public class BillboardGainController implements BillboardGainApi {
             billboardGain.setAuditingUserName(billboardGainAuditDTO.getAuditingUserName());
             billboardGain.setAuditingStatus(billboardGainAuditDTO.getAuditingStatus());
             billboardGain.setReason(billboardGainAuditDTO.getReason());
+            billboardGain.setAuditingAt(new Date());
 
             billboardGainService.updateById(billboardGain);
         }

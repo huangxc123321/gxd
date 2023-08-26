@@ -6,6 +6,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
+import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
@@ -29,8 +30,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Api(tags = "榜单管理")
@@ -73,6 +76,30 @@ public class BillboardFontController extends BaseController {
             billboardGainResponses.stream().forEach(s->{
                 s.setAuditingStatusName(AuditingStatusEnum.getNameByIndex(s.getAuditingStatus()));
             });
+            List<Long> ids = new ArrayList<>();
+            List<Long> finalIds = ids;
+            billboardGainResponses.stream().forEach(s->{
+                if(s.getCreateBy() != null){
+                    finalIds.add(s.getCreateBy());
+                }
+            });
+
+            // 去重
+            ids = finalIds.stream().distinct().collect(Collectors.toList());
+            Long[] createByIds = new Long[ids.size()];
+            ids .toArray(createByIds);
+            List<UserResponse> createByResponses = userFeignApi.getUserByIds(createByIds);
+            billboardGainResponses.stream().forEach(s->{
+                if(s.getCreateBy() != null){
+                    UserResponse u = createByResponses.stream()
+                            .filter(user -> s.getCreateBy().equals(user.getId()))
+                            .findAny()
+                            .orElse(null);
+                    if(u != null){
+                        s.setCreateByName(u.getNick());
+                    }
+                }
+            });
         }
         detailInfo.setBillboardGains(billboardGainResponses);
 
@@ -95,7 +122,63 @@ public class BillboardFontController extends BaseController {
     @PostMapping("/billboard/pageQuery")
     PageResult<BillboardResponse> pageQuery(@RequestBody BillboardRequest request){
         PageResult<BillboardResponse> pageResult = billboardFeignApi.pageQuery(request);
-        log.info("Result：{}", JSONObject.toJSONString(pageResult));
+
+        List<BillboardResponse> response = pageResult.getList();
+        List<Long> ids = new ArrayList<>();
+        List<Long> finalIds = ids;
+
+        // 创建者
+        List<Long> idCs = new ArrayList<>();
+        List<Long> finalIdCs = idCs;
+        if(response != null){
+            response.stream().forEach(s->{
+                if(s.getCreateBy() != null){
+                    finalIdCs.add(s.getCreateBy());
+                }
+                if(s.getAuditUserId() != null){
+                    finalIds.add(s.getAuditUserId());
+                }
+            });
+
+            // 去重
+            idCs = finalIdCs.stream().distinct().collect(Collectors.toList());
+            Long[] createByIds = new Long[idCs.size()];
+            idCs .toArray(createByIds);
+            List<UserResponse> createByResponses = userFeignApi.getUserByIds(createByIds);
+            response.forEach(s->{
+                if(s.getCreateBy() != null){
+                    UserResponse u = createByResponses.stream()
+                            .filter(user -> s.getCreateBy().equals(user.getId()))
+                            .findAny()
+                            .orElse(null);
+                    if(u != null){
+                        s.setCreateByName(u.getNick());
+                    }
+                }
+            });
+
+
+            // 去重
+            ids = finalIds.stream().distinct().collect(Collectors.toList());
+            Long[] userIds = new Long[ids.size()];
+            ids.toArray(userIds);
+            if(CollectionUtils.isNotEmpty(ids)){
+                List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
+                if(CollectionUtils.isNotEmpty(userResponses)){
+                    response.forEach(s->{
+                        if(s.getAuditUserId() != null){
+                            UserResponse u = userResponses.stream()
+                                    .filter(user -> s.getAuditUserId().equals(user.getId()))
+                                    .findAny()
+                                    .orElse(null);
+                            if(u != null){
+                                s.setAuditUserName(u.getNick());
+                            }
+                        }
+                    });
+                }
+            }
+        }
 
         return pageResult;
     }
@@ -107,6 +190,9 @@ public class BillboardFontController extends BaseController {
     })
     @GetMapping("/billboard/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
+
+
+
         billboardFeignApi.updateSeqNo(id, seqNo);
     }
 
@@ -165,25 +251,32 @@ public class BillboardFontController extends BaseController {
         billboardDTO.setCreateBy(this.getUserId());
         // 设置默认的待揭榜
         billboardDTO.setStatus(0);
-        if(billboardDTO.getUnitName() == null){
+        if(StrUtil.isBlank(billboardDTO.getUnitName())){
             billboardDTO.setUnitName(this.getUnitName());
         }
 
         // 判断是否政府发布政府榜单
         UserResponse userResponse = getUser();
-/*        // 如果榜单是政府榜单，但用户又不是政府部门，那么抛出异常
-        if(billboardDTO.getType().equals(BillboardTypeEnum.GOV_BILLBOARD.getCode()) && !userResponse.getType().equals(UserTypeEnum.GOV.getCode())){
+        // 如果榜单是政府榜单，但用户又不是政府部门，那么抛出异常
+        if(billboardDTO.getType().equals(BillboardTypeEnum.GOV_BILLBOARD.getCode()) && !userResponse.getUnitNature().equals(UserTypeEnum.GOV.getCode())){
             throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
-        }else if(billboardDTO.getType().equals(BillboardTypeEnum.BUS_BILLBOARD.getCode()) && !userResponse.getType().equals(UserTypeEnum.BUZ.getCode())){
-            throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
-        }*/
+        }else if(billboardDTO.getType().equals(BillboardTypeEnum.BUS_BILLBOARD.getCode())){
+            boolean flag = false;
+            if(userResponse.getUnitNature().equals(UserTypeEnum.BUZ.getCode())
+                    || userResponse.getUnitNature().equals(UserTypeEnum.TEAM.getCode())
+                    || userResponse.getUnitNature().equals(UserTypeEnum.EDU.getCode()) ){
+                flag = true;
+            }
+            if(!flag){
+                throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
+            }
+        }
 
         if(userResponse != null){
             billboardDTO.setUnitName(userResponse.getUnitName());
         }
 
         billboardFeignApi.add(billboardDTO);
-
     }
 
 

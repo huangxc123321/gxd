@@ -58,7 +58,6 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
     public void addEconomicRelated(Long billboardId) {
         Billboard billboard = billboardService.getById(billboardId);
 
-        // 获取一百条
         // TODO: 2023/7/20 0020 还有一些条件，后期加上
         List<TechEconomicMan> economics = techEconomicManService.list();
         if(economics != null && economics.size()>0){
@@ -190,6 +189,14 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                            .set(BillboardEconomicRelated::getRemark, requiresAccepptDTO.getRemark())
                            .eq(BillboardEconomicRelated::getId, requiresAccepptDTO.getId());
         billboardEconomicRelatedMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public void deleteByEconomicId(List<Long> list) {
+        LambdaQueryWrapper<BillboardEconomicRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(BillboardEconomicRelated::getEconomicId, list);
+
+        billboardEconomicRelatedMapper.delete(lambdaQueryWrapper);
     }
 
 

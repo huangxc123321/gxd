@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.website.controller;
 
 import cn.hutool.core.util.StrUtil;
+import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.website.feignapi.LeaveWordsFeignApi;
 import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsDTO;
 import com.gxa.jbgsw.basis.protocol.dto.LeaveWordsRequest;
@@ -35,6 +36,10 @@ public class LeaveWordsController extends BaseController {
             leaveWordsDTO.setCode(code);
         }
         leaveWordsDTO.setCreateAt(new Date());
+
+        if(StrUtil.isBlank(leaveWordsDTO.getContent())){
+            throw new BizException(BusinessErrorCode.LEAVE_WORDS_IS_EXIST);
+        }
 
         leaveWordsFeignApi.add(leaveWordsDTO);
     }

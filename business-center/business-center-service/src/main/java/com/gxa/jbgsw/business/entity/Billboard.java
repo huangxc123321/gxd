@@ -121,4 +121,8 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "审核时间")
     private Long auditCreateAt;
+
+    @ApiModelProperty(value = "发榜人")
+    private String publishPerson;
+
 }

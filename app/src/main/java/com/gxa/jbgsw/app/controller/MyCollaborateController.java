@@ -19,7 +19,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
-import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -181,7 +180,7 @@ public class MyCollaborateController extends BaseController {
     @GetMapping("/collaborate/getMyBillboradCollaborate")
     List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(@RequestParam("talentId") Long talentId) throws BizException {
         List<MyBillboradCollaborateResponse> responses = billboardTalentRelatedFeignApi.getMyBillboradCollaborate(talentId);
-        if(CollectionUtils.isNotEmpty(responses)){
+/*        if(CollectionUtils.isNotEmpty(responses)){
             String techKeys = null;
             for(int i=0; i<responses.size(); i++){
                 StringBuffer sb  = new StringBuffer();
@@ -200,7 +199,7 @@ public class MyCollaborateController extends BaseController {
                 responses.get(i).setTechKeys(sb.toString());
             }
 
-        }
+        }*/
 
         return responses;
     }

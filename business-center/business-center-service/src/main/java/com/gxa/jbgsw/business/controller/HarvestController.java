@@ -12,6 +12,7 @@ import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.HarvestService;
+import com.gxa.jbgsw.business.service.PatentService;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
@@ -42,6 +43,8 @@ public class HarvestController implements HarvestApi {
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
     TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+    @Resource
+    PatentService patentService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -122,7 +125,7 @@ public class HarvestController implements HarvestApi {
             }
         }
         harvest.setQueryKeys(sb.toString());
-        harvestService.save(harvest);
+        harvestService.saveHarvest(harvest, havestDTO.getPatents());
     }
 
     @Override
@@ -171,6 +174,7 @@ public class HarvestController implements HarvestApi {
             }
         }
         havestDetailInfo.setTechKeys(sb.toString().replace("所有分类,", ""));
+        havestDetailInfo.setTechDomainName(sb.toString().replace("所有分类,", ""));
         // 成熟度
         DictionaryDTO dicMaturityLevel = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(harvest.getMaturityLevel()));
         if(dicMaturityLevel != null){
@@ -185,6 +189,10 @@ public class HarvestController implements HarvestApi {
         Harvest harvest = harvestService.getById(id);
         HavestDTO havestDTO = mapperFacade.map(harvest, HavestDTO.class);
 
+        if(harvest.getIsPatent() != null && harvest.getIsPatent().equals(Integer.valueOf(1))){
+            List<PatentDTO> patents = patentService.getPatentByPid(id);
+            havestDTO.setPatents(patents);
+        }
         return havestDTO;
     }
 
@@ -221,8 +229,8 @@ public class HarvestController implements HarvestApi {
     }
 
     @Override
-    public List<String> getHolders(String holder) {
-        return harvestService.getHolders(holder);
+    public List<String> getContacts(String contacts) {
+        return harvestService.getContacts(contacts);
     }
 
 }

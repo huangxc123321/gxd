@@ -30,8 +30,17 @@ public class TalentPoolResponse implements Serializable {
     @ApiModelProperty(value = "职称名称")
     private String professionalName;
 
+    @ApiModelProperty(value = "专业方向")
+    private String techDomain;
+
+    @ApiModelProperty(value = "专业方向显示名称")
+    private String techDomainName;
+
     @ApiModelProperty(value = "学历")
     private String highestEdu;
+
+    @ApiModelProperty(value = "学历显示名称")
+    private String highestEduName;
 
     @ApiModelProperty(value = "所在单位")
     private String unitName;

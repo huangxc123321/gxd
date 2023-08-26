@@ -11,6 +11,7 @@ import com.gxa.jbgsw.business.client.BillboardApi;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
@@ -130,6 +131,7 @@ public class BillboardController implements BillboardApi {
                 // 状态名称
                 s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
             });
+
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());
             pages.setPages(pageResult.getPages());

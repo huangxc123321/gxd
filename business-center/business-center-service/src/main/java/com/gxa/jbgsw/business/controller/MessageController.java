@@ -91,4 +91,9 @@ public class MessageController implements MessageApi {
     public void updateAllReadFlag(Long userId, Integer type) {
         messageService.updateAllReadFlag(userId, type);
     }
+
+    @Override
+    public boolean getIsHaveNoRead(Long userId) {
+        return messageService.getIsHaveNoRead(userId);
+    }
 }

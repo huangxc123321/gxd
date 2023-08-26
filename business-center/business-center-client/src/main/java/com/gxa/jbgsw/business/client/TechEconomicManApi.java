@@ -43,4 +43,7 @@ public interface TechEconomicManApi {
 
     @PostMapping("/tech/broker/queryEconomicManRequires")
     PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(@RequestBody TechEconomicManRequiresRequest request);
+
+    @GetMapping("/tech/broker/getTechEconomicManByMobile")
+    TechEconomicManDTO getTechEconomicManByMobile(@RequestParam(value = "mobile") String mobile);
 }

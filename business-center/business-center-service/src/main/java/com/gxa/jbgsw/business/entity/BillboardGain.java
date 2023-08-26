@@ -65,4 +65,8 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "创建者")
     private Long createBy;
 
+    @ApiModelProperty(value = "审核时间")
+    private Date auditingAt;
+
+
 }

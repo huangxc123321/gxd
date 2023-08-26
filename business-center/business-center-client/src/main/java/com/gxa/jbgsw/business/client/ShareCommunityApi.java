@@ -43,7 +43,7 @@ public interface ShareCommunityApi {
     void addViews(@RequestParam("id") Long id);
 
     @GetMapping("/my/share/community/addlikes")
-    void addlikes(@RequestParam("id") Long id);
+    void addlikes(@RequestParam("id") Long id, @RequestParam("userId") Long userId);
 
     @GetMapping("/my/share/community/addComments")
     void addComments(@RequestParam("id") Long id);
@@ -58,5 +58,5 @@ public interface ShareCommunityApi {
     List<CommunityResponse> getHotShare();
 
     @GetMapping("/my/share/community/cancellikes")
-    void cancellikes(@RequestParam("id") Long id);
+    void cancellikes(@RequestParam("id") Long id, @RequestParam("userId") Long userId);
 }

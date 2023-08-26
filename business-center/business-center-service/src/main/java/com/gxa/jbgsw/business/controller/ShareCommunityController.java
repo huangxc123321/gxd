@@ -124,8 +124,8 @@ public class ShareCommunityController implements ShareCommunityApi {
     }
 
     @Override
-    public void addlikes(Long id) {
-        shareCommunityService.addlikes(id);
+    public void addlikes(Long id, Long userId) {
+        shareCommunityService.addlikes(id, userId);
     }
 
     @Override
@@ -154,8 +154,8 @@ public class ShareCommunityController implements ShareCommunityApi {
     }
 
     @Override
-    public void cancellikes(Long id) {
-        shareCommunityService.cancellikes(id);
+    public void cancellikes(Long id, Long userId) {
+        shareCommunityService.cancellikes(id, userId);
     }
 }
 

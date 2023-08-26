@@ -29,6 +29,7 @@ public class MenuController implements MenuApi {
     @Autowired
     MenuService menuService;
 
+    @Override
     @GetMapping("/menu/getAllMenu")
     @ApiOperation(value = "获取所有资源", notes = "获取所有资源")
     public List<MenuPO> getAllMenu(){

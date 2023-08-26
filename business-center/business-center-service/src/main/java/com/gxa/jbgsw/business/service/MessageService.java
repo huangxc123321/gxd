@@ -30,4 +30,6 @@ public interface MessageService extends IService<Message> {
     AppMessageResponse getMyMessages(AppMessageRequest appMessageRequest);
 
     void updateAllReadFlag(Long userId, Integer type);
+
+    boolean getIsHaveNoRead(Long userId);
 }

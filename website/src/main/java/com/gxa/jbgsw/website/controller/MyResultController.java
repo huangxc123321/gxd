@@ -39,7 +39,6 @@ public class MyResultController extends BaseController {
     @Resource
     CollaborateFeignApi collaborateFeignApi;
 
-
     @ApiOperation("获取我的成果列表")
     @PostMapping("/havest/pageQuery")
     PageResult<HarvestResponse> pageQuery(@RequestBody MyHarvestRequest myHarvestRequest){
@@ -57,7 +56,6 @@ public class MyResultController extends BaseController {
 
         return pageResult;
     }
-
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
     @ApiImplicitParams({

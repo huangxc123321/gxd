@@ -27,4 +27,6 @@ public interface BillboardTalentRelatedService extends IService<BillboardTalentR
     List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(Long talentId);
 
     List<RelateTalentDTO> getRelatedTalentByBillboardId(Long id);
+
+    void deleteByTalentId(List<Long> list);
 }

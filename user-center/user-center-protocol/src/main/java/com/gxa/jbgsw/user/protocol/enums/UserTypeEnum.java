@@ -7,11 +7,12 @@ package com.gxa.jbgsw.user.protocol.enums;
  */
 public enum UserTypeEnum {
 
-    // 用户类型： 0 政府部门 1 企业 2 帅才 3 个人
+    // 用户类型：
     GOV(0, "政府部门"),
     BUZ(1, "企业"),
-    TALENT(2, "帅才"),
-    PERSON(3, "个人"),
+    TEAM(2, "科研机构和团队"),
+    EDU(3, "大学院校"),
+    PERSON(4, "个人"),
     ;
 
     private final Integer code;

@@ -3,11 +3,9 @@ package com.gxa.jbgsw.admin.controller;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
-import com.gxa.jbgsw.admin.feignapi.MessageFeignApi;
-import com.gxa.jbgsw.admin.feignapi.TalentPoolFeignApi;
-import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
+import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.client.BillboardTalentRelatedApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
@@ -20,6 +18,7 @@ import com.gxa.jbgsw.common.utils.*;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -51,6 +50,8 @@ public class TalentPoolFontController extends BaseController {
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+    @Resource
     MapperFacade mapperFacade;
 
     @ApiOperation(value = "批量删除帅才", notes = "批量删除帅才")
@@ -79,6 +80,9 @@ public class TalentPoolFontController extends BaseController {
                 // 设置默认密码: 123456
                 userDTO.setPassword(ConstantsUtils.defalutMd5Password);
                 userDTO.setMobile(talentPoolDTO.getMobie());
+                userDTO.setUnitNature(UserTypeEnum.PERSON.getCode());
+                // 个人类型: 1 经纪人 2 帅才 0 其它
+                userDTO.setType(2);  // 经纪人
 
                 userFeignApi.add(userDTO);
             }
@@ -101,7 +105,43 @@ public class TalentPoolFontController extends BaseController {
     @PostMapping("/talent/pool/pageQuery")
     PageResult<TalentPoolResponse> pageQuery(@RequestBody TalentPoolRequest request){
         PageResult<TalentPoolResponse> pageResult = talentPoolFeignApi.pageQuery(request);
-        log.info("Result：{}", JSONObject.toJSONString(pageResult));
+        List<TalentPoolResponse> responses = pageResult.getList();
+        if(CollectionUtils.isNotEmpty(responses)){
+            responses.stream().forEach(s->{
+                s.setStatusName(AuditingStatusEnum.getNameByIndex(s.getStatus()));
+
+                // 职称
+                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                if(dicProfessional != null){
+                    s.setProfessionalName(dicProfessional.getDicValue());
+                }
+
+                // 学历显示名称
+                DictionaryDTO edu = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.highest_edu.name(),  s.getHighestEdu());
+                if(edu != null){
+                    s.setHighestEduName(edu.getDicValue());
+                }
+
+
+                // 技术领域
+                StringBuffer sb = new StringBuffer();
+                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                if(tfc1 != null){
+                    sb.append(tfc1.getName());
+                    sb.append(CharUtil.COMMA);
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName());
+                        sb.append(CharUtil.COMMA);
+                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                        if(tfc3 != null){
+                            sb.append(tfc3.getName());
+                        }
+                    }
+                }
+                s.setTechDomainName(sb.toString().replace("所有分类", ""));
+            });
+        }
 
         return pageResult;
     }

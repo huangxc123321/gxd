@@ -13,6 +13,8 @@
             a.mobile,
             a.`name`,
             a.remark,
+            a.update_at AS updateAt,
+            a.update_by AS updateBy,
             a.reply
         FROM
             t_leave_words AS a

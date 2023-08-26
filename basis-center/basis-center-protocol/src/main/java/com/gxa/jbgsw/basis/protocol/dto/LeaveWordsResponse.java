@@ -38,5 +38,13 @@ public class LeaveWordsResponse implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "更新时间")
+    private Date updateAt;
 
+    @ApiModelProperty(value = "更新人")
+    private Long updateBy;
+
+    @ApiModelProperty(value = "回复人名称")
+    private String updateByName;
 }

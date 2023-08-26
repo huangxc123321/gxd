@@ -35,4 +35,7 @@ public interface CompanyApi {
 
     @GetMapping("/company/getCompanyById4Pc")
     CompanyPCResponse getCompanyById4Pc(Long id);
+
+    @GetMapping("/company/getCompanyByUnitName")
+    CompanyDTO getCompanyByUnitName(@RequestParam("unitName") String unitName);
 }

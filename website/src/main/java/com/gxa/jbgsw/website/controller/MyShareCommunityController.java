@@ -80,13 +80,23 @@ public class MyShareCommunityController extends BaseController {
     @ApiOperation("点赞")
     @GetMapping("/my/share/community/addlikes")
     void addlikes(@RequestParam("id") Long id) throws BizException {
-        shareCommunityFeignApi.addlikes(id);
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
+        shareCommunityFeignApi.addlikes(id, userId);
     }
 
     @ApiOperation("取消点赞")
     @GetMapping("/my/share/community/cancellikes")
     void cancellikes(@RequestParam("id") Long id) throws BizException {
-        shareCommunityFeignApi.cancellikes(id);
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
+        shareCommunityFeignApi.cancellikes(id, userId);
     }
 
 

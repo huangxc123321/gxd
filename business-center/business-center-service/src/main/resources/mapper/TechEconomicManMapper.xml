@@ -16,6 +16,7 @@
                 a.email,
                 a.unit_name AS unitName,
                 a.agreements,
+                a.agreements_name AS agreementsName,
                 a.create_at AS createAt ,
                 a.requires,
                 a.attentions,

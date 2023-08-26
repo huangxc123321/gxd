@@ -57,6 +57,8 @@ public class BillboardGainDTO implements Serializable {
     @ApiModelProperty(value = "创建者")
     private Long createBy;
 
-
+    @JsonFormat(pattern = "yyyy.MM.dd HH:mm:ss",timezone = "GMT+8")
+    @ApiModelProperty(value = "审核时间")
+    private Date auditingAt;
 
 }

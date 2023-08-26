@@ -33,4 +33,7 @@ public interface MessageApi {
 
     @GetMapping("/message/updateAllReadFlag")
     void updateAllReadFlag(@RequestParam("userId") Long userId, @RequestParam("type") Integer type);
+
+    @GetMapping("/message/getIsHaveNoRead")
+    boolean getIsHaveNoRead(@RequestParam("userId")Long userId);
 }

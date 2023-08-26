@@ -44,6 +44,6 @@ public interface HarvestApi {
     @PostMapping("/harvest/pageMyHarvestQuery")
     PageResult<HarvestResponse> pageMyHarvestQuery(@RequestBody HarvestRequest request);
 
-    @GetMapping("/havest/getHolders")
-    List<String> getHolders(@RequestParam("holder") String holder);
+    @GetMapping("/havest/getContacts")
+    List<String> getContacts(@RequestParam("contacts") String contacts);
 }

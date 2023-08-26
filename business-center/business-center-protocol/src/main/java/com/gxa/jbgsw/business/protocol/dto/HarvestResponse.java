@@ -29,6 +29,9 @@ public class HarvestResponse implements Serializable {
     @ApiModelProperty(value = "成熟度：字典中获取")
     private Integer maturityLevel;
 
+    @ApiModelProperty(value = "成熟度中文显示名称")
+    private String maturityLevelName;
+
     @ApiModelProperty(value = "技术持有人")
     private String holder;
 

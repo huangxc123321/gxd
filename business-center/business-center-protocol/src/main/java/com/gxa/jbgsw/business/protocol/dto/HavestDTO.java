@@ -21,10 +21,16 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "成果名称")
     private String name;
 
-    @ApiModelProperty(value = "行业：字典中获取")
+    @ApiModelProperty(value = "行业领域：字典中获取")
     private String tradeType;
 
-    @ApiModelProperty(value = "技术领域：字典中获取")
+    @ApiModelProperty(value = "技术领域(第一级)：字典中获取")
+    private String techDomain1;
+
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private String techDomain2;
+
+    @ApiModelProperty(value = "技术领域(第三级，也就是最后)：字典中获取")
     private String techDomain;
 
     @ApiModelProperty(value = "成熟度：字典中获取")
@@ -48,11 +54,23 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "技术持有人")
     private String holder;
 
-    @ApiModelProperty(value = "所属单位")
+    @ApiModelProperty(value = "所属机构")
     private String unitName;
 
     @ApiModelProperty(value = "联系人")
     private String contacts;
+
+    @ApiModelProperty(value = "联系方式")
+    private String mobile;
+
+    @ApiModelProperty(value = "创建时间")
+    private Date createAt;
+
+    @ApiModelProperty(value = "创建人")
+    private Long createBy;
+
+    @ApiModelProperty(value = "展示图：从详情中获取第一张图片，记录下来")
+    private String guidePicture;
 
     @ApiModelProperty(value = "技术创新点")
     private String innovationPointUrl;
@@ -69,11 +87,6 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "成果案例")
     private String caseUrl;
 
-    @ApiModelProperty(value = "创建时间")
-    private Date createAt;
-
-    @ApiModelProperty(value = "创建人")
-    private Long createBy;
 
     @ApiModelProperty(value = "是否合作： true：已合作  false: 未合作")
     private boolean isCollaborate = false;

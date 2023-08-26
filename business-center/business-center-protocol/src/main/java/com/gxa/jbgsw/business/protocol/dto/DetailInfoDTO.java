@@ -84,6 +84,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "收藏状态： 0 已收藏  1 未收藏")
     private Integer collectionStatus = 1;
 
+    @ApiModelProperty(value = "发榜人")
+    private String publishPerson;
+
     @ApiModelProperty(value = "揭榜单位详情")
     List<BillboardGainDTO> billboardGains = new ArrayList<>();
 

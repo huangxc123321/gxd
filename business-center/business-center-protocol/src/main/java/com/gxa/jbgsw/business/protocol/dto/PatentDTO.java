@@ -26,6 +26,12 @@ public class PatentDTO implements Serializable {
     @ApiModelProperty(value = "专利申请时间")
     private Date applyDate;
 
+    @ApiModelProperty(value = "省ID")
+    private Long provinceId;
+
+    @ApiModelProperty(value = "城市ID")
+    private Long cityId;
+
     @ApiModelProperty(value = "专利所属地区")
     private Integer areaId;
 
@@ -38,10 +44,10 @@ public class PatentDTO implements Serializable {
     @ApiModelProperty(value = "专利摘要")
     private String summary;
 
-    @ApiModelProperty(value = "创建时间")
+    @ApiModelProperty(value = "创建时间", hidden = true)
     private Date createAt;
 
-    @ApiModelProperty(value = "创建人")
+    @ApiModelProperty(value = "创建人", hidden = true)
     private Long createBy;
 
 }

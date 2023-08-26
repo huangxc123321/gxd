@@ -55,9 +55,9 @@
             a.tech_domain AS techDomain,
             a.status,
             a.audit_reason AS auditReason,
-            a.audit_date AS auditDate,
+            a.audit_date AS authDate,
             a.audit_user_name AS auditUserName,
-            a.create_at createAt,
+            a.create_at AS applyDate,
             (SELECT count(1) FROM t_attention AS b WHERE a.id = b.pid AND b.type = 2  ) AS attentionNum,
             (SELECT count(1) FROM t_my_share AS c WHERE a.id = c.pid AND c.share_type = 4 ) AS shareNum
         FROM

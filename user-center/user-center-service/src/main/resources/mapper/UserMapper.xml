@@ -41,6 +41,12 @@
                  AND a.`use_stauts` = #{useStauts}
              </if>
 
+             <if test="unitNature != null">
+                 AND a.`unit_nature` = #{unitNature}
+             </if>
+
+
+
              ORDER BY a.`create_at` DESC
 
 

@@ -7,6 +7,7 @@ import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.BillboardDTO;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
+import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.app.feignapi.BillboardFeignApi;
@@ -43,7 +44,8 @@ public class BillboardImportController extends BaseController {
 
     @ApiOperation("上传文件")
     @PostMapping(value = "/readExcel",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void fileUpload(@RequestParam("file") MultipartFile file) throws Exception {
+    public ApiResult fileUpload(@RequestParam("file") MultipartFile file) throws Exception {
+        ApiResult apiResult = new ApiResult();
         List<BillboardDTO> batchList = new ArrayList();
         batchList.clear();
 
@@ -107,12 +109,15 @@ public class BillboardImportController extends BaseController {
                         double amount = cell.getNumericCellValue();
                         billboardDTO.setAmount(BigDecimal.valueOf(amount));
                     }
-
-                    billboardDTO.setUnitName(unitName);
-                    billboardDTO.setCreateBy(userId);
-                    billboardDTO.setCreateAt(new Date());
                 }
-                batchList.add(billboardDTO);
+                billboardDTO.setUnitName(unitName);
+                billboardDTO.setCreateBy(userId);
+                billboardDTO.setCreateAt(new Date());
+                if(billboardDTO.getTitle() == null || "".equals(billboardDTO.getTitle().trim())){
+                    log.info("空行抛弃");
+                }else{
+                    batchList.add(billboardDTO);
+                }
             }
 
             // 批量插入
@@ -121,12 +126,16 @@ public class BillboardImportController extends BaseController {
             billboardFeignApi.batchInsert(objects);
         }catch (Exception ex){
             ex.printStackTrace();
+            log.error("导入失败");
+            apiResult.setMessage("导入失败");
+            apiResult.setCode(-1);
         }finally {
             if(inputStream != null){
                 inputStream.close();
             }
         }
 
+        return apiResult;
     }
 
     private void deal(String value, BillboardDTO billboardDTO) {

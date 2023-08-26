@@ -53,19 +53,33 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "密码" , hidden = true)
     private String password;
 
+    @ApiModelProperty(value = "单位性质： 0 政府部门 1 企业 2 科研机构/团队 3大学院校 4 个人")
+    private Integer unitNature;
+
     @ApiModelProperty(value = "单位名称")
     private String unitName;
 
-    @ApiModelProperty(value = "单位性质: 字典中获取， type: unit_nature")
-    private Integer unitNature;
+    @ApiModelProperty(value = "单位LOGO")
+    private String unitLogo;
 
-    @ApiModelProperty(value = "行业: 字典中获取, type: trade_type")
-    private Integer tradeType;
-
-    @ApiModelProperty(value = "职务")
+    @ApiModelProperty(value = "职称")
     private String job;
 
-    @ApiModelProperty(value = "用户类型： 0 政府部门 1 企业 2 帅才 3 个人")
-    private Integer type;
+    @ApiModelProperty(value = "技术领域")
+    private String techDomain;
 
+    @ApiModelProperty(value = "经营范围")
+    private String scopeBusiness;
+
+    @ApiModelProperty(value = "企业类型： 字典中获取， typeCode: enterprise_type")
+    private Integer buzType;
+
+    @ApiModelProperty(value = "行业: 字典中获取")
+    private Integer tradeType;
+
+    @ApiModelProperty(value = "单位简介")
+    private String remark;
+
+    @ApiModelProperty(value = "个人类型: 1 经纪人 2 帅才 0 其它")
+    private Integer type ;
 }

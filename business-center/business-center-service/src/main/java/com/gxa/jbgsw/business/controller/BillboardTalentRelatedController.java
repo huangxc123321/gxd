@@ -69,7 +69,8 @@ public class BillboardTalentRelatedController implements BillboardTalentRelatedA
 
     @Override
     public List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(Long talentId) {
-        return billboardTalentRelatedService.getMyBillboradCollaborate(talentId);
+        List<MyBillboradCollaborateResponse> responses = billboardTalentRelatedService.getMyBillboradCollaborate(talentId);
+        return responses;
     }
 }
 

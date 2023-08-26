@@ -1,15 +1,19 @@
 package com.gxa.jbgsw.user.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.gxa.jbgsw.business.client.CompanyApi;
+import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.client.UserApi;
 import com.gxa.jbgsw.user.entity.User;
+import com.gxa.jbgsw.user.feignapi.CompanyFeignApi;
 import com.gxa.jbgsw.user.protocol.dto.UpdatePasswordDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -32,6 +36,8 @@ import java.util.stream.Collectors;
 public class UserController implements UserApi {
     @Resource
     UserService userService;
+    @Resource
+    CompanyFeignApi companyFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
     @Resource

@@ -27,7 +27,7 @@ public interface ShareCommunityService extends IService<ShareCommunity> {
 
     PageResult<ShareCommunity> getMyShareCommunityPages(MyShareCommunityRequest request);
 
-    void addlikes(Long id);
+    void addlikes(Long id, Long userId);
 
     void addViews(Long id);
 
@@ -39,5 +39,5 @@ public interface ShareCommunityService extends IService<ShareCommunity> {
 
     List<ShareCommunity> getHotShare();
 
-    void cancellikes(Long id);
+    void cancellikes(Long id, Long userId);
 }

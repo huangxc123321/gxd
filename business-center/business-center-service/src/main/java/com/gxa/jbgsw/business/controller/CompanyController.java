@@ -44,19 +44,19 @@ public class CompanyController implements CompanyApi {
     public void add(CompanyDTO companyDTO) {
         Company company = mapperFacade.map(companyDTO, Company.class);
         company.setCreateAt(new Date());
-        if(company.getProvinceId() != null && StrUtil.isNotBlank(company.getProvinceName())){
+        if(company.getProvinceId() != null && StrUtil.isBlank(company.getProvinceName())){
             ProvinceCityDistrictVO p = provinceCityDistrictFeignApi.getProvinceCityDistrictById(company.getProvinceId());
             if(p != null){
                 company.setProvinceName(p.getProvinceName());
             }
         }
-        if(company.getCityId() != null && StrUtil.isNotBlank(company.getCityName())){
+        if(company.getCityId() != null && StrUtil.isBlank(company.getCityName())){
             ProvinceCityDistrictVO c = provinceCityDistrictFeignApi.getProvinceCityDistrictById(company.getCityId());
             if(c != null){
                 company.setCityName(c.getCityName());
             }
         }
-        if(company.getAreaId() != null && StrUtil.isNotBlank(company.getAreaName())){
+        if(company.getAreaId() != null && StrUtil.isBlank(company.getAreaName())){
             ProvinceCityDistrictVO a = provinceCityDistrictFeignApi.getProvinceCityDistrictById(company.getAreaId());
             if(a != null){
                 company.setAreaName(a.getAreaName());
@@ -142,5 +142,10 @@ public class CompanyController implements CompanyApi {
         companyPCResponse.setHarvests(harvests);
 
         return companyPCResponse;
+    }
+
+    @Override
+    public CompanyDTO getCompanyByUnitName(String unitName) {
+        return companyService.getCompanyByName(unitName);
     }
 }

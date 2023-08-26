@@ -10,6 +10,7 @@ import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.exception.BizException;
@@ -44,12 +45,17 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     @Resource
     TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
     @Resource
+    BillboardTalentRelatedService billboardTalentRelatedService;
+    @Resource
     MapperFacade mapperFacade;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
         talentPoolMapper.deleteBatchIds(list);
+
+        // 删除相关连的数据
+        billboardTalentRelatedService.deleteByTalentId(list);
     }
 
     @Override

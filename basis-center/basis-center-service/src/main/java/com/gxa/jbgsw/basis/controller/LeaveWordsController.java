@@ -42,7 +42,9 @@ public class LeaveWordsController implements LeaveWordsApi {
 
     @Override
     public PageResult<LeaveWordsResponse> pageQuery(LeaveWordsRequest request) {
-        return leaveWordsService.pageQuery(request);
+        PageResult<LeaveWordsResponse> pageResult = leaveWordsService.pageQuery(request);
+        
+        return pageResult;
     }
 
     @Override
@@ -62,7 +64,8 @@ public class LeaveWordsController implements LeaveWordsApi {
         LeaveWords leaveWords = leaveWordsService.getById(leaveWordsReplayDTO.getId());
 
         leaveWords.setReply(LeaveWordsReplayEnum.SUCESS.getCode());
-        BeanUtils.copyProperties(leaveWordsReplayDTO, leaveWords, CopyPropertionIngoreNull.getNullPropertyNames(leaveWords));
+        org.springframework.beans.BeanUtils.copyProperties(leaveWordsReplayDTO, leaveWords);
+
         leaveWordsService.saveOrUpdate(leaveWords);
     }
 }

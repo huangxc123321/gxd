@@ -11,6 +11,7 @@ import com.gxa.jbgsw.business.mapper.TechEconomicManMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardEconomicRelatedStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
+import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
@@ -42,6 +43,8 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
     BillboardHarvestRelatedService billboardHarvestRelatedService;
     @Resource
     BillboardTalentRelatedService billboardTalentRelatedService;
+    @Resource
+    BillboardEconomicRelatedService billboardEconomicRelatedService;
 
     @Resource
     MapperFacade mapperFacade;
@@ -50,6 +53,9 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
     public void deleteBatchIds(Long[] ids) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
         techEconomicManMapper.deleteBatchIds(list);
+
+        // 删除 榜单与经纪人的匹配关联表 (根据经纪人ID删除该相关信息)
+        billboardEconomicRelatedService.deleteByEconomicId(list);
     }
 
     @Override
@@ -193,9 +199,22 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         }.build(), new TypeBuilder<PageResult<TechEconomicManRequiresResponse>>() {}.build());
     }
 
+    @Override
+    public TechEconomicManDTO getTechEconomicManByMobile(String mobile) {
+        LambdaQueryWrapper<TechEconomicMan> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(TechEconomicMan::getMobile, mobile);
+        List<TechEconomicMan> techEconomics = techEconomicManMapper.selectList(lambdaQueryWrapper);
+        if(techEconomics != null && techEconomics.size()>0){
+            TechEconomicMan techEconomicMan = techEconomics.get(0);
+
+            return mapperFacade.map(techEconomicMan, TechEconomicManDTO.class);
+        }
+
+        return null;
+    }
+
     private long getOrders(TechEconomicManRequiresRequest request) {
         long num = 0;
-
         num = techEconomicManMapper.getOrders(request);
 
         return num;

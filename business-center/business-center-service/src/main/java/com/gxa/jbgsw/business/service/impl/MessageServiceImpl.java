@@ -214,4 +214,20 @@ public class MessageServiceImpl extends ServiceImpl<MessageMapper, Message> impl
                            .eq(Message::getType, type);
         messageMapper.update(null, lambdaUpdateWrapper);
     }
+
+    @Override
+    public boolean getIsHaveNoRead(Long userId) {
+        QueryWrapper<Message> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                .eq("user_id", userId)
+                .eq("read_flag", 0);
+
+        Integer count = messageMapper.selectCount(queryWrapper);
+
+        if(count == null || count.intValue() ==0){
+            return false;
+        }else {
+            return true;
+        }
+    }
 }

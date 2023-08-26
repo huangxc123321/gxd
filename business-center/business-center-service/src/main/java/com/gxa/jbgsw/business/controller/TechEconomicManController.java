@@ -117,6 +117,11 @@ public class TechEconomicManController implements TechEconomicManApi {
         return techEconomicManService.queryEconomicManRequires(request);
     }
 
+    @Override
+    public TechEconomicManDTO getTechEconomicManByMobile(String mobile) {
+        return techEconomicManService.getTechEconomicManByMobile(mobile);
+    }
+
 
 }
 

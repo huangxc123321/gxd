@@ -40,7 +40,7 @@ private static final long serialVersionUID=1L;
     private String label;
 
     @ApiModelProperty(value = "等级：0 无， 1 金  2 银  3 铜")
-    private Long level;
+    private Integer level;
 
     @ApiModelProperty(value = "电话")
     private String mobile;
@@ -96,8 +96,11 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "单位名称")
     private String unitName;
 
-    @ApiModelProperty(value = "或者协议")
+    @ApiModelProperty(value = "协议地址")
     private String agreements;
+
+    @ApiModelProperty(value = "协议显示名称")
+    private String agreementsName;
 
     @ApiModelProperty(value = "需求派单：接单次数,系统向经纪人派单的次数")
     private Integer requires;

@@ -14,6 +14,7 @@ import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -43,26 +44,28 @@ public class BannerController extends BaseController {
         PageResult<BannerResponse> pageResult = bannerFeignApi.pageQuery(request);
         List<BannerResponse> response = pageResult.getList();
 
-        List<Long> ids = new ArrayList<>();
-        List<Long> finalIds = ids;
-        response.stream().forEach(s->{
-            finalIds.add(s.getCreateBy());
-        });
+        if(response != null){
+            List<Long> ids = new ArrayList<>();
+            List<Long> finalIds = ids;
+            response.stream().forEach(s->{
+                finalIds.add(s.getCreateBy());
+            });
 
-        // 去重
-        ids = finalIds.stream().distinct().collect(Collectors.toList());
-        Long[] userIds = new Long[ids.size()];
-        ids.toArray(userIds);
-        List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
-        response.forEach(s->{
-            UserResponse u = userResponses.stream()
-                    .filter(user -> s.getCreateBy().equals(user.getId()))
-                    .findAny()
-                    .orElse(null);
-            if(u != null){
-                s.setCreateName(u.getNick());
-            }
-        });
+            // 去重
+            ids = finalIds.stream().distinct().collect(Collectors.toList());
+            Long[] userIds = new Long[ids.size()];
+            ids.toArray(userIds);
+            List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
+            response.forEach(s->{
+                UserResponse u = userResponses.stream()
+                        .filter(user -> s.getCreateBy().equals(user.getId()))
+                        .findAny()
+                        .orElse(null);
+                if(u != null){
+                    s.setCreateName(u.getNick());
+                }
+            });
+        }
 
         return pageResult;
     }
@@ -81,6 +84,10 @@ public class BannerController extends BaseController {
     @PostMapping("/banner/add")
     void add(@RequestBody BannerDTO[] bannerDTO) throws BizException {
         Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         if(bannerDTO.length > 0){
             for(int i=0; i<bannerDTO.length; i++){
                 bannerDTO[i].setCreateAt(new Date());

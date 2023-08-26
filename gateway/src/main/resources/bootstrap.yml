@@ -116,23 +116,14 @@ spring:
         file-extension: yml
 
     gateway:
-      globalcors: # 全局的跨域处理
-        add-to-simple-url-handler-mapping: true # 因为ajax发起者会通过options请求来向服务器询问是否允许跨域，所以需要设置为true来解决options请求被拦截问题
-        corsConfigurations:
+      globalcors:
+        cors-configurations:
           '[/**]':
-            allowedOrigins: # 允许哪些网站的跨域请求
-              - "http://localhost:8080"
-              - "http://localhost:8081"
-              - "http://localhost:8082"
-            allowedMethods: # 允许的跨域ajax的请求方式
-              - "GET"
-              - "POST"
-              - "DELETE"
-              - "PUT"
-              - "OPTIONS"
-            allowedHeaders: "*" # 允许在请求中携带的头信息
-            allowCredentials: true # 是否允许携带cookie
-            maxAge: 360000 # 这次跨域检测的有效期，即一定时间内就不需要重复询问是否允许跨域了，直接请求即可。
+            allowedOrigins: "*"
+            allowedHeaders: "*"
+            allowedMethods: "*"
+        default-filters:
+          - DedupeResponseHeader=Vary Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRS
 
 
       httpclient:
@@ -163,8 +154,8 @@ spring:
 
           # 在metadata中设置单个路由超时时间
           metadata:
-            response-timeout: 5000
-            connect-timeout: 5000
+            response-timeout: 9000
+            connect-timeout: 9000
 
 
       feign:

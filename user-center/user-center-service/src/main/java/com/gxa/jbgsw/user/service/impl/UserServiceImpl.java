@@ -5,20 +5,24 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.entity.User;
+import com.gxa.jbgsw.user.feignapi.CompanyFeignApi;
 import com.gxa.jbgsw.user.mapper.UserMapper;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.user.service.UserService;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
@@ -30,6 +34,8 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
     @Resource
     UserMapper userMapper;
+    @Resource
+    CompanyFeignApi companyFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -51,6 +57,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public void deleteBatchIds(Long[] ids) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
         userMapper.deleteBatchIds(list);
@@ -69,11 +76,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public void add(User user) {
         this.save(user);
+
+
+        // 如果是企业类型的还需要生成一个企业数据
+        if(user.getUnitNature().equals(UserTypeEnum.BUZ.getCode())
+                || user.getUnitNature().equals(UserTypeEnum.TEAM.getCode())
+                || user.getUnitNature().equals(UserTypeEnum.EDU.getCode())){
+            CompanyDTO companyDTO = new CompanyDTO();
+            CompanyDTO existsCompany = companyFeignApi.getCompanyByUnitName(user.getUnitName());
+            if(existsCompany == null){
+                companyDTO.setName(user.getUnitName());
+                companyDTO.setLogo(user.getUnitLogo());
+                companyDTO.setProvinceId(user.getProvinceId());
+                companyDTO.setProvinceName(user.getProvinceName());
+                companyDTO.setCityName(user.getCityName());
+                companyDTO.setCityId(user.getCityId());
+                companyDTO.setAreaId(user.getAreaId());
+                companyDTO.setAreaName(user.getAreaName());
+                companyDTO.setTradeType(String.valueOf(user.getTradeType()));
+                companyDTO.setCreateAt(new Date());
+                companyDTO.setCreateBy(user.getCreateBy());
+                companyDTO.setDirector(user.getNick());
+                companyDTO.setRemark(user.getRemark());
+                companyDTO.setStatus(0);
+                companyDTO.setScopeBusiness(user.getScopeBusiness());
+                companyDTO.setMobile(user.getMobile());
+
+                companyFeignApi.add(companyDTO);
+            }
+        }
     }
 
     @Override
+    @Transactional
     public void updateUseStatus(Long id, Integer useStauts) {
         LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.set(User::getUseStauts, useStauts)
@@ -84,6 +122,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
+    @Transactional
     public void updateUserAdmin(UserDTO userDTO) {
         LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         User user = this.getById(userDTO.getId());
@@ -127,7 +166,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUpdateBy(userDTO.getUpdateBy());
         user.setUpdateAt(new Date());
         user.setTradeType(userDTO.getTradeType());
-        user.setType(userDTO.getType());
+        user.setUnitNature(userDTO.getUnitNature());
         user.setJob(userDTO.getJob());
 
         this.updateById(user);
@@ -136,6 +175,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
     @Override
+    @Transactional
     public void updateUser(UserDTO userDTO) {
         LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         User user = this.getById(userDTO.getId());
@@ -192,8 +232,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setUpdateBy(userDTO.getUpdateBy());
         user.setUpdateAt(new Date());
         user.setTradeType(userDTO.getTradeType());
-        user.setType(userDTO.getType());
+        user.setUnitNature(userDTO.getUnitNature());
         user.setJob(userDTO.getJob());
+        user.setBuzType(userDTO.getBuzType());
+        user.setScopeBusiness(userDTO.getScopeBusiness());
+        user.setRemark(userDTO.getRemark());
+        user.setUnitLogo(userDTO.getUnitLogo());
 
         this.updateById(user);
     }
@@ -214,6 +258,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @Transactional
     public void updatePassword(String mobile, String password) {
         LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.set(User::getPassword, password)

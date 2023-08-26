@@ -1,15 +1,21 @@
 package com.gxa.jbgsw.admin.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TechEconomicManAppraiseFeignApi;
 import com.gxa.jbgsw.admin.feignapi.TechEconomicManFeignApi;
 import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.protocol.enums.TechEconomicManLevelEnum;
+import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
+import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -33,6 +39,8 @@ public class TechEconomicManController extends BaseController {
     TechEconomicManAppraiseFeignApi techEconomicManAppraiseFeignApi;
     @Resource
     UserFeignApi userFeignApi;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
     @Resource
     MapperFacade mapperFacade;
 
@@ -70,6 +78,12 @@ public class TechEconomicManController extends BaseController {
         techEconomicManDTO.setCreateBy(this.getUserId());
         techEconomicManDTO.setCreateAt(new Date());
 
+        // 根据手机号码判断是否已经存在该经纪人
+        TechEconomicManDTO existDto = techEconomicManFeignApi.getTechEconomicManByMobile(techEconomicManDTO.getMobile());
+        if(existDto != null){
+            throw new BizException(BusinessErrorCode.MOBILE_IS_EXIST);
+        }
+
         techEconomicManFeignApi.add(techEconomicManDTO);
 
         /**
@@ -83,6 +97,9 @@ public class TechEconomicManController extends BaseController {
             userDTO.setAvatar(techEconomicManDTO.getAvatar());
             // 设置默认密码: 123456
             userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+            userDTO.setUnitNature(UserTypeEnum.PERSON.getCode());
+            // 个人类型: 1 经纪人 2 帅才 0 其它
+            userDTO.setType(1);
 
             userFeignApi.add(userDTO);
         }
@@ -114,6 +131,14 @@ public class TechEconomicManController extends BaseController {
     public TechEconomicManDTO detail(@RequestParam("id")Long id){
         TechEconomicManResponse techEconomicManResponse = techEconomicManFeignApi.getTechEconomicManById(id);
         TechEconomicManDTO techEconomicManDTO = mapperFacade.map(techEconomicManResponse, TechEconomicManDTO.class);
+        techEconomicManDTO.setLevelName(TechEconomicManLevelEnum.getNameByIndex(techEconomicManDTO.getLevel()));
+
+        DictionaryDTO t = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.broker_type.name(), String.valueOf(techEconomicManDTO.getType()));
+        if(t != null){
+            techEconomicManDTO.setTypeName(t.getDicValue());
+        }
+
+
 
         //评价
 

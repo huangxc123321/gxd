@@ -3,27 +3,24 @@ package com.gxa.jbgsw.business.service.impl;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
-import com.gxa.jbgsw.business.entity.Billboard;
-import com.gxa.jbgsw.business.entity.BillboardGain;
-import com.gxa.jbgsw.business.entity.Collection;
-import com.gxa.jbgsw.business.entity.TalentPool;
+import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
-import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
-import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
-import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
-import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.protocol.enums.*;
+import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.business.service.CollectionService;
 import com.gxa.jbgsw.business.service.TalentPoolService;
+import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageRequest;
 import com.gxa.jbgsw.common.utils.PageResult;
@@ -93,12 +90,29 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     public void batchIdsTop(Long[] ids, int isTop) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
 
+        // 先判断已经有几个置顶，最多四个置顶(判断置顶数量)
+        Integer tops = getTopNum();
+        if((tops.intValue() + list.size())>4){
+            throw new BizException(BusinessErrorCode.BILLBOARD_TOP_MAX_ERROR);
+        }
+
         LambdaUpdateWrapper<Billboard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.set(Billboard::getIsTop, isTop)
                 .in(Billboard::getId, list);
 
         billboardMapper.update(null, lambdaUpdateWrapper);
     }
+
+
+    public Integer getTopNum() {
+        QueryWrapper<Billboard> queryWrapper = new QueryWrapper<>();
+        queryWrapper.select("id")
+                .eq("is_top", IsTopEnum.TOP.getCode());
+
+        Integer count = billboardMapper.selectCount(queryWrapper);
+        return count;
+    }
+
 
     @Override
     public PageResult<Billboard> pageQuery(BillboardRequest request) {
@@ -390,9 +404,16 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
                     sb.append(dictionaryDTO.getDicValue());
                 }
                 sb.append(CharUtil.COMMA);
-                sb.append(s.getProvinceName()).append(CharUtil.COMMA)
-                        .append(s.getCityName()).append(CharUtil.COMMA)
-                        .append(s.getAreaName());
+                if(StrUtil.isNotBlank(s.getProvinceName())){
+                    sb.append(s.getProvinceName()).append(CharUtil.COMMA);
+                }
+                if(StrUtil.isNotBlank(s.getCityName())){
+                    sb.append(s.getCityName()).append(CharUtil.COMMA);
+                }
+                if(StrUtil.isNotBlank(s.getAreaName())){
+                    sb.append(s.getAreaName());
+                }
+
                 s.setQueryKeys(sb.toString());
             });
         }

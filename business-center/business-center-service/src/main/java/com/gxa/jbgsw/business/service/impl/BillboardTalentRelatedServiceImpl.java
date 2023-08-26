@@ -182,7 +182,8 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
 
     @Override
     public List<MyBillboradCollaborateResponse> getMyBillboradCollaborate(Long talentId) {
-        return billboardTalentRelatedMapper.getMyBillboradCollaborate(talentId);
+        List<MyBillboradCollaborateResponse> responses =  billboardTalentRelatedMapper.getMyBillboradCollaborate(talentId);
+        return responses;
     }
 
     @Override
@@ -226,6 +227,14 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
         }
 
         return relateTalents;
+    }
+
+    @Override
+    public void deleteByTalentId(List<Long> list) {
+        LambdaQueryWrapper<BillboardTalentRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(BillboardTalentRelated::getTalentId, list);
+
+        billboardTalentRelatedMapper.delete(lambdaQueryWrapper);
     }
 
 

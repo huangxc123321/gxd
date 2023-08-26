@@ -188,6 +188,14 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
         return relateHavests;
     }
 
+    @Override
+    public void deleteByHarvestId(List<Long> list) {
+        LambdaQueryWrapper<BillboardHarvestRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(BillboardHarvestRelated::getHarvestId, list);
+
+        billboardHarvestRelatedMapper.delete(lambdaQueryWrapper);
+    }
+
     public DictionaryDTO getByCache(String typeCode, String code) {
         DictionaryDTO dictionary = new DictionaryDTO();
 

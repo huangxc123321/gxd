@@ -68,7 +68,8 @@ public class UserFontController extends BaseController {
     }
 
 
-    @ApiOperation("新增用户信息")
+    @Deprecated
+    @ApiOperation("新增用户信息(已经弃用)")
     @PostMapping("/user/add")
     void add(@RequestBody UserDTO userDTO) throws BizException {
         boolean isValidate = false;

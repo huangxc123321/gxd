@@ -85,6 +85,9 @@ public class TechEconomicManResponse implements Serializable {
     @ApiModelProperty(value = "或者协议")
     private String agreements;
 
+    @ApiModelProperty(value = "协议显示名称")
+    private String agreementsName;
+
     @ApiModelProperty(value = "需求派单：接单次数,系统向经纪人派单的次数")
     private Integer requires;
 

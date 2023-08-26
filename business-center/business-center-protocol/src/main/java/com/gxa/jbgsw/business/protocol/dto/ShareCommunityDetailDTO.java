@@ -49,5 +49,6 @@ public class ShareCommunityDetailDTO implements Serializable {
     @ApiModelProperty(value = "来自哪里")
     private String origin;
 
-
+    @ApiModelProperty(value = "点赞状态： true 点赞， false 没点赞")
+    private boolean isLikesStatus;
 }

@@ -11,6 +11,7 @@ import com.gxa.jbgsw.business.entity.Collection;
 import com.gxa.jbgsw.business.entity.ShareCommunity;
 import com.gxa.jbgsw.business.mapper.ShareCommunityMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.service.MyLikesService;
 import com.gxa.jbgsw.business.service.ShareCommentService;
 import com.gxa.jbgsw.business.service.ShareCommunityService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,8 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     ShareCommunityMapper shareCommunityMapper;
     @Resource
     ShareCommentService shareCommentService;
+    @Resource
+    MyLikesService myLikesService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -69,6 +73,14 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
         List<CommentResponse> commentResponses =  shareCommentService.getCommentById(id, -1L);
         shareCommunityDTO.setCommentResponses(commentResponses);
 
+        // 点赞状态
+        LikesResponse likesResponse = myLikesService.getByPid(id);
+        if(likesResponse != null){
+            shareCommunityDTO.setLikesStatus(true);
+        }else{
+            shareCommunityDTO.setLikesStatus(false);
+        }
+
         return shareCommunityDTO;
     }
 
@@ -97,12 +109,19 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     }
 
     @Override
-    public void addlikes(Long id) {
+    public void addlikes(Long id, Long userId) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
                            .setSql(" likes = likes + 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
+
+        // 我的点赞
+        LikesDTO likesDTO = new LikesDTO();
+        likesDTO.setCreateAt(new Date());
+        likesDTO.setUserId(userId);
+        likesDTO.setPid(id);
+        myLikesService.add(likesDTO);
     }
 
     @Override
@@ -156,11 +175,15 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     }
 
     @Override
-    public void cancellikes(Long id) {
+    public void cancellikes(Long id, Long userId) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
                 .setSql(" views = views - 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
+
+        // 删除我的点赞
+        Long pid = id;
+        myLikesService.deleteLikes(userId, pid);
     }
 }

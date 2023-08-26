@@ -7,10 +7,14 @@ import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.Harvest;
 import com.gxa.jbgsw.business.entity.News;
+import com.gxa.jbgsw.business.entity.Patent;
 import com.gxa.jbgsw.business.mapper.HarvestMapper;
+import com.gxa.jbgsw.business.mapper.PatentMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gxa.jbgsw.business.service.PatentService;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
@@ -36,6 +40,10 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
     @Resource
     HarvestMapper harvestMapper;
     @Resource
+    PatentService patentService;
+    @Resource
+    BillboardHarvestRelatedService billboardHarvestRelatedService;
+    @Resource
     MapperFacade mapperFacade;
 
     @Override
@@ -52,6 +60,9 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
     public void deleteBatchIds(Long[] ids) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
         harvestMapper.deleteBatchIds(list);
+
+        // 删除成果
+        billboardHarvestRelatedService.deleteByHarvestId(list);
     }
 
     @Override
@@ -130,22 +141,38 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
     }
 
     @Override
-    public List<String> getHolders(String holder) {
+    public List<String> getContacts(String contacts) {
         LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        if(StrUtil.isNotBlank(holder)){
-            lambdaQueryWrapper.like(Harvest::getHolder, holder);
+        if(StrUtil.isNotBlank(contacts)){
+            lambdaQueryWrapper.like(Harvest::getContacts, contacts);
         }
 
         List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
         if(harvests != null && harvests.size() >0){
             List<String> ls = new ArrayList<>();
             harvests.stream().forEach(s->{
-               ls.add(s.getUnitName());
+               ls.add(s.getContacts());
             });
             // 去重返回
             return ls.stream().distinct().collect(Collectors.toList());
         }
 
         return null;
+    }
+
+    @Override
+    public void saveHarvest(Harvest harvest, List<PatentDTO> patents) {
+        harvestMapper.insert(harvest);
+
+        // 是专利: 批量新增专利
+        if(harvest.getIsPatent().equals(Integer.valueOf(1))){
+            if(CollectionUtils.isNotEmpty(patents)){
+                List<Patent> ps = mapperFacade.mapAsList(patents, Patent.class);
+                ps.stream().forEach(s->{
+                    s.setPid(harvest.getId());
+                });
+                patentService.saveBatch(ps);
+            }
+        }
     }
 }

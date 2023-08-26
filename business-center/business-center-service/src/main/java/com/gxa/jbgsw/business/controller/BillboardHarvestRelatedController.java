@@ -1,11 +1,14 @@
 package com.gxa.jbgsw.business.controller;
 
 
+import cn.hutool.core.util.CharUtil;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.client.BillboardHarvestRelatedApi;
 import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
+import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import io.swagger.annotations.Api;
@@ -30,6 +33,8 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
     BillboardHarvestRelatedService billboardHarvestRelatedService;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
     @Resource
     MapperFacade mapperFacade;
 
@@ -67,6 +72,26 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
                         s.setHStart(s.getSStar());
                     }
                 }
+
+
+                // 技术领域
+                StringBuffer sb = new StringBuffer();
+                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechKeys()));
+                if(tfc1 != null){
+                    sb.append(tfc1.getName());
+                    sb.append(CharUtil.COMMA);
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName());
+                        sb.append(CharUtil.COMMA);
+                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                        if(tfc3 != null){
+                            sb.append(tfc3.getName());
+                        }
+                    }
+                }
+                s.setTechKeys(sb.toString().replace("所有分类,", ""));
+                s.setTechKeysName(sb.toString().replace("所有分类,", ""));
             });
         }
         return responses;
