@@ -1,11 +1,10 @@
 package com.gxa.jbgsw.admin.controller;
 
+import cn.hutool.core.util.CharUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.admin.feignapi.BillboardHarvestRelatedFeignApi;
-import com.gxa.jbgsw.admin.feignapi.CollaborateFeignApi;
-import com.gxa.jbgsw.admin.feignapi.DictionaryFeignApi;
-import com.gxa.jbgsw.admin.feignapi.HavestFeignApi;
+import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollaborateStatusEnum;
@@ -39,12 +38,16 @@ public class HavestController extends BaseController {
     BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
     @Resource
     CollaborateFeignApi collaborateFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
 
     @ApiOperation("新增成果信息")
     @PostMapping("/havest/add")
     void add(@RequestBody HavestDTO havestDTO) throws BizException {
         havestDTO.setCreateBy(this.getUserId());
         havestDTO.setCreateAt(new Date());
+        // 现在holder存储所属机构
+        havestDTO.setUnitName(havestDTO.getHolder());
 
         havestFeignApi.add(havestDTO);
     }
@@ -58,6 +61,8 @@ public class HavestController extends BaseController {
     @ApiOperation("修改成果信息")
     @PostMapping("/havest/update")
     void update(@RequestBody HavestDTO havestDTO) throws BizException {
+        // 现在holder存储所属机构
+        havestDTO.setUnitName(havestDTO.getHolder());
         havestFeignApi.update(havestDTO);
     }
 
@@ -91,6 +96,25 @@ public class HavestController extends BaseController {
             havestDTO.setMaturityLevelName(dictionaryDTO.getDicValue());
         }
 
+        // 技术领域
+        StringBuffer sb = new StringBuffer();
+        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(havestDTO.getTechDomain()));
+        if(tfc1 != null){
+            sb.append(tfc1.getName());
+            sb.append(CharUtil.COMMA);
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+            if(tfc2 != null){
+                sb.append(tfc2.getName());
+                sb.append(CharUtil.COMMA);
+                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                if(tfc3 != null){
+                    sb.append(tfc3.getName());
+                }
+            }
+        }
+        havestDTO.setTechDomainName(sb.toString().replace("所有分类,", ""));
+
+
         // 榜单推荐，根据成果ID获取推荐榜单
         List<BillboardHarvestRelatedResponse> relateBillboards = billboardHarvestRelatedFeignApi.getBillboardstByHarvestId(id);
         if(relateBillboards != null){
@@ -105,16 +129,16 @@ public class HavestController extends BaseController {
 
                 String mode = s.getMode();
                 String[] modes = mode.split(",");
-                StringBuffer sb = new StringBuffer();
+                StringBuffer xx = new StringBuffer();
                 for(int i=0; i<modes.length; i++){
                     DictionaryDTO dict = dictionaryFeignApi.getByCache(DictionaryTypeEnum.broker_type.name(), modes[i]);
                     if(dict != null && i != modes.length -1){
-                        sb.append(dict.getDicValue()).append(",");
+                        xx.append(dict.getDicValue()).append(",");
                     }else if(dict != null && i != modes.length -1){
-                        sb.append(dict.getDicValue());
+                        xx.append(dict.getDicValue());
                     }
                 }
-                s.setModeName(sb.toString());
+                s.setModeName(xx.toString());
             });
         }
         havestDTO.setHavestCollaborates(havestCollaborates);
@@ -127,6 +151,13 @@ public class HavestController extends BaseController {
     @GetMapping("/havest/getContacts")
     List<String> getContacts(@RequestParam("contacts") String contacts){
         return havestFeignApi.getContacts(contacts);
+    }
+
+
+    @ApiOperation("获取所属机构")
+    @GetMapping("/havest/getHoloder")
+    List<String> getHoloder(@RequestParam("holder") String holder){
+        return havestFeignApi.getHoloder(holder);
     }
 
 

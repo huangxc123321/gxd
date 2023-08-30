@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -23,6 +24,7 @@ public class PatentDTO implements Serializable {
     @ApiModelProperty(value = "专利名称")
     private String name;
 
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @ApiModelProperty(value = "专利申请时间")
     private Date applyDate;
 
@@ -38,6 +40,7 @@ public class PatentDTO implements Serializable {
     @ApiModelProperty(value = "专利类型: 0 发明专利, 1 实用新型专利, 2 外观设计专利")
     private String type;
 
+    @JsonFormat(pattern = "yyyy-MM-dd",timezone = "GMT+8")
     @ApiModelProperty(value = "专利授权时间")
     private Date authorizeDate;
 

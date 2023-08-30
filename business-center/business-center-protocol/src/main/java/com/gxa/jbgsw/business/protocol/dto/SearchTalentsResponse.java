@@ -35,4 +35,7 @@ public class SearchTalentsResponse implements Serializable {
     @ApiModelProperty(value = "技术领域")
     private String techDomain;
 
+    @ApiModelProperty(value = "技术领域显示名称")
+    private String techDomainName;
+
 }

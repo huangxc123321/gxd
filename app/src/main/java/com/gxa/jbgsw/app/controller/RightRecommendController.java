@@ -1,12 +1,15 @@
 package com.gxa.jbgsw.app.controller;
 
+import cn.hutool.core.util.CharUtil;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.app.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.app.feignapi.IndexFeignApi;
+import com.gxa.jbgsw.app.feignapi.TechnicalFieldClassifyFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
@@ -27,6 +30,8 @@ public class RightRecommendController extends BaseController {
     IndexFeignApi indexFeignApi;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
 
     @Deprecated
     @ApiOperation("根据榜单ID获取相关成果、帅才推荐、榜单推荐信息， （榜单详情页使用）已经弃用")
@@ -82,13 +87,6 @@ public class RightRecommendController extends BaseController {
     }
 
 
-
-
-
-
-
-
-
     @ApiOperation("根据成果ID获取相关成果、帅才推荐、榜单推荐信息， （成果详情页使用）")
     @ApiImplicitParams({
             @ApiImplicitParam(value = "成果ID", name = "id", dataType = "Long", paramType = "query"),
@@ -135,5 +133,70 @@ public class RightRecommendController extends BaseController {
         return relateTalents;
     }
 
+
+
+
+    @ApiOperation("根据公司ID获取相关成果,相关成果显示三条")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "公司ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedHavestByCompanyId")
+    List<RelateHavestDTO> getRelatedHavestByCompanyId(@RequestParam(value = "id") Long id) {
+        List<RelateHavestDTO>  relateHavests = indexFeignApi.getRelatedHavestByCompanyId(id);
+        if(CollectionUtils.isNotEmpty(relateHavests)){
+            relateHavests.stream().forEach(s->{
+                // 技术领域
+                StringBuffer sb = new StringBuffer();
+                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                if(tfc1 != null){
+                    sb.append(tfc1.getName());
+                    sb.append(CharUtil.COMMA);
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName());
+                        sb.append(CharUtil.COMMA);
+                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                        if(tfc3 != null){
+                            sb.append(tfc3.getName());
+                        }
+                    }
+                }
+                s.setTechDomainName(sb.toString().replace("所有分类,", ""));
+            });
+        }
+
+        return relateHavests;
+    }
+
+
+    @ApiOperation("根据公司ID获取相关帅才推荐,相关帅才推荐显示一条")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "公司ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedTalentByCompanyId")
+    List<RelateTalentDTO> getRelatedTalentByCompanyId(@RequestParam(value = "id") Long id) {
+        List<RelateTalentDTO> relateTalents = indexFeignApi.getRelatedTalentByCompanyId(id);
+        if(CollectionUtils.isNotEmpty(relateTalents)){
+            relateTalents.stream().forEach(s->{
+                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                if(dicProfessional != null){
+                    s.setProfessionalName(dicProfessional.getDicValue());
+                }
+            });
+        }
+
+        return relateTalents;
+    }
+
+
+
+    @ApiOperation("根据公司ID获取相关榜单，相关榜单显示5条")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "公司ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedBillboardByCompanyId")
+    List<RelateBillboardDTO> getRelatedBillboardByCompanyId(@RequestParam(value = "id") Long id) {
+        return indexFeignApi.getRelatedBillboardByCompanyId(id);
+    }
 
 }

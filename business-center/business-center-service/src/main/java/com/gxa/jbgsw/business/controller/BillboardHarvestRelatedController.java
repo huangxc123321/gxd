@@ -69,7 +69,7 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
                 if(dictionaryDTO != null){
                     s.setMaturityLevelName(dictionaryDTO.getDicValue());
                     if(s.getHStart() == null){
-                        s.setHStart(s.getSStar());
+                        s.setHStart(s.getStar());
                     }
                 }
 

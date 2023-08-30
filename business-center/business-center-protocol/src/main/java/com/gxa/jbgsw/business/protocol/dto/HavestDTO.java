@@ -33,6 +33,9 @@ public class HavestDTO implements Serializable {
     @ApiModelProperty(value = "技术领域(第三级，也就是最后)：字典中获取")
     private String techDomain;
 
+    @ApiModelProperty(value = "技术领域显示名称")
+    private String techDomainName;
+
     @ApiModelProperty(value = "成熟度：字典中获取")
     private Integer maturityLevel;
 

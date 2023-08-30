@@ -93,13 +93,13 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
     @Override
     public void deleteAttention(Long pid, Long userId, Integer type) {
-        attentionMapper.deleteById(pid);
-/*        LambdaQueryWrapper<Attention> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // attentionMapper.deleteById(pid);
+        LambdaQueryWrapper<Attention> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Attention::getPid, pid)
                           .eq(Attention::getUserId, userId)
                           .eq(Attention::getType, type);
 
-        attentionMapper.delete(lambdaQueryWrapper);*/
+        attentionMapper.delete(lambdaQueryWrapper);
     }
 
     @Override

@@ -49,4 +49,8 @@ public class BillboardRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "审核状态： 0 待审核  1 审核通过  2 审核不通过")
     private Integer auditStatus = 0;
 
+    @ApiModelProperty(value = "上传者ID", hidden = true)
+    private Long createBy;
+
+
 }

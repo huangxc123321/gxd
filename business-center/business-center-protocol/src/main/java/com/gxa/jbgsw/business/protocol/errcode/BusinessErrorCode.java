@@ -16,5 +16,5 @@ public class BusinessErrorCode {
     public static final ResultCode BILLBOARD_TOP_MAX_ERROR = new ResultCode(3004, "最多只能允许4个置顶榜单，请重新选择或者取消之前设置的置顶");
     public static final ResultCode MOBILE_IS_EXIST = new ResultCode(3005, "手机号码已经注册，请换一个手机号经行注册");
     public static final ResultCode LEAVE_WORDS_IS_EXIST = new ResultCode(3006, "留言不能为空");
-
+    public static final ResultCode BUZ_IS_NOT_EXIST = new ResultCode(3007, "企业不存在");
 }

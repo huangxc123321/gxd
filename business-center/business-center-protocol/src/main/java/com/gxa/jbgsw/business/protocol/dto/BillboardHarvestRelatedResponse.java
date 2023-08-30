@@ -10,8 +10,11 @@ import java.util.Date;
 @Data
 public class BillboardHarvestRelatedResponse implements Serializable {
 
-    @ApiModelProperty(value = "榜单成果推荐ID")
+    @ApiModelProperty(value = "成果ID")
     private Long id;
+
+    @ApiModelProperty(value = "榜单成果推荐ID： 推荐的时候使用这个ID")
+    private Long recommendId;
 
     @ApiModelProperty(value = "榜单")
     private String name;
@@ -52,7 +55,7 @@ public class BillboardHarvestRelatedResponse implements Serializable {
     private Date endAt;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Double sStar;
+    private Double star;
 
     @ApiModelProperty(value = "人工手动推荐匹配度")
     private Double hStart;
@@ -67,5 +70,6 @@ public class BillboardHarvestRelatedResponse implements Serializable {
     @ApiModelProperty(value = "备注")
     private String remark;
 
-
+    @ApiModelProperty(value = "是否推荐： 0 不推荐(取消) 1推荐")
+    private Integer status;
 }

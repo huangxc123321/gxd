@@ -31,7 +31,7 @@ import java.io.IOException;
 @Slf4j
 @ResponseBody
 public class ChatGptController extends BaseController {
-    private static final String OPENAI_API_KEY = "";
+    private static final String OPENAI_API_KEY = "noDdgfuEzLWVREkuT3BlbkFJXuJGpUNF5kwZL5G6gvde";
     private static final String openai_api_url = "http";
     private static final String url = "https://api.openai.com/v1/chat";
 
@@ -41,32 +41,39 @@ public class ChatGptController extends BaseController {
         if(StrUtil.isBlank(msg)){
             throw new BizException(UserErrorCode.CHATGPT_MESSAGE_IS_NULL);
         }
-
-        ChatGptDTO chatGptDTO = new ChatGptDTO();
-        chatGptDTO.setPrompt(msg);
-
-        String jsonData = JSONObject.toJSONString(chatGptDTO);
-        ByteArrayEntity data = new ByteArrayEntity(jsonData.getBytes("UTF-8"));
-        // 创建HttpClient和HttpPost对象
-        PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
-        cm.setMaxTotal(100);
-        HttpClient httpClient = new DefaultHttpClient(cm);
-        HttpPost httpPost = new HttpPost(url);
-
-        // 设置请求的头信息
-        httpPost.setHeader("Content-Type", "application/json");
-        httpPost.setHeader("Authorization", "Bearer "+OPENAI_API_KEY);
-        // 设置请求的数据
-        httpPost.setEntity(data);
-        // 发送HTTP请求并获取响应结果
-        HttpResponse httpResponse = httpClient.execute(httpPost);
-        HttpEntity httpEntity = httpResponse.getEntity();
-        String response = EntityUtils.toString(httpEntity, "UTF-8");
-
-        System.out.println("chatGpt 返回： "+response);
-
         ApiResult apiResult = new ApiResult();
-        apiResult.setData(response);
+
+        try{
+            ChatGptDTO chatGptDTO = new ChatGptDTO();
+            chatGptDTO.setPrompt(msg);
+
+            String jsonData = JSONObject.toJSONString(chatGptDTO);
+            ByteArrayEntity data = new ByteArrayEntity(jsonData.getBytes("UTF-8"));
+            // 创建HttpClient和HttpPost对象
+            PoolingClientConnectionManager cm = new PoolingClientConnectionManager();
+            cm.setMaxTotal(100);
+            HttpClient httpClient = new DefaultHttpClient(cm);
+            HttpPost httpPost = new HttpPost(url);
+
+            // 设置请求的头信息
+            httpPost.setHeader("Content-Type", "application/json");
+            httpPost.setHeader("Authorization", "Bearer "+OPENAI_API_KEY);
+            // 设置请求的数据
+            httpPost.setEntity(data);
+            // 发送HTTP请求并获取响应结果
+            HttpResponse httpResponse = httpClient.execute(httpPost);
+            HttpEntity httpEntity = httpResponse.getEntity();
+            String response = EntityUtils.toString(httpEntity, "UTF-8");
+
+            System.out.println("chatGpt 返回： "+response);
+
+
+            apiResult.setData(response);
+
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+
 
         return apiResult;
     }

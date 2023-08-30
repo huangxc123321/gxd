@@ -8,6 +8,8 @@ import com.gxa.jbgsw.business.entity.Company;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.feignapi.ProvinceCityDistrictFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AttentionStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.AttentionTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.CompanyService;
@@ -147,5 +149,34 @@ public class CompanyController implements CompanyApi {
     @Override
     public CompanyDTO getCompanyByUnitName(String unitName) {
         return companyService.getCompanyByName(unitName);
+    }
+
+    @Override
+    public CompanyPCResponse getCompanyByName(String name) {
+        CompanyDTO companyDTO = companyService.getCompanyByName(name);
+        if(companyDTO == null){
+            return null;
+        }
+
+        CompanyPCResponse companyPCResponse = mapperFacade.map(companyDTO, CompanyPCResponse.class);
+
+        DictionaryDTO tradeType = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), companyDTO.getTradeType());
+        if(tradeType != null){
+            companyPCResponse.setTradeTypeName(tradeType.getDicValue());
+        }
+        DictionaryDTO t = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.enterprise_type.name(), String.valueOf(companyPCResponse.getType()));
+        if(t != null){
+            companyPCResponse.setTypeName(t.getDicValue());
+        }
+
+        // 发布榜单
+        List<BillboardResponse> billboards = billboardService.getBillboardByUnitName(companyDTO.getName());
+        companyPCResponse.setBillboards(billboards);
+
+        // 发布成果
+        List<HarvestResponse> harvests = harvestService.getHarvestByUnitName(companyDTO.getName());
+        companyPCResponse.setHarvests(harvests);
+
+        return companyPCResponse;
     }
 }

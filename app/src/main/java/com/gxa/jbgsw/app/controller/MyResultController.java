@@ -88,7 +88,9 @@ public class MyResultController extends BaseController {
         if(relateBillboards != null){
             relateBillboards.stream().forEach(s->{
                 DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeEnum.categories.name(), String.valueOf(s.getCategories()));
-                s.setCategoriesName(dic.getDicValue());
+                if(dic != null){
+                    s.setCategoriesName(dic.getDicValue());
+                }
             });
 
             havestDTO.setBillboardHarvestRecommends(relateBillboards);

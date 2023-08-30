@@ -138,8 +138,6 @@ public class TechEconomicManController extends BaseController {
             techEconomicManDTO.setTypeName(t.getDicValue());
         }
 
-
-
         //评价
 
         // 需求派单: 根据经纪人，找到分配的需求

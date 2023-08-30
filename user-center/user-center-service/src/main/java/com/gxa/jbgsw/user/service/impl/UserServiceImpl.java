@@ -168,6 +168,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setTradeType(userDTO.getTradeType());
         user.setUnitNature(userDTO.getUnitNature());
         user.setJob(userDTO.getJob());
+        user.setUnitName(userDTO.getUnitName());
+        user.setUnitLogo(userDTO.getUnitLogo());
+        user.setRemark(userDTO.getRemark());
+        user.setBuzType(userDTO.getBuzType());
+        user.setScopeBusiness(userDTO.getScopeBusiness());
+
 
         this.updateById(user);
     }

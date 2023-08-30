@@ -17,6 +17,9 @@ public class HarvestBillboardRelatedDTO implements Serializable {
     @ApiModelProperty(value = "榜单标题")
     private String title;
 
+    @ApiModelProperty(value = "榜单类型")
+    private String type;
+
     @ApiModelProperty(value = "工信大类：字典中获取, type: categories")
     private Integer categories;
 
@@ -41,5 +44,5 @@ public class HarvestBillboardRelatedDTO implements Serializable {
     private String unitName;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Double sStar;
+    private Double star;
 }

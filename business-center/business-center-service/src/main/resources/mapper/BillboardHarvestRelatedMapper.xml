@@ -3,15 +3,17 @@
 <mapper namespace="com.gxa.jbgsw.business.mapper.BillboardHarvestRelatedMapper">
    <select id="getHarvestRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardHarvestRelatedResponse">
         SELECT
-            a.id,
+            a.id AS recommendId,
+            c.id,
             c.`name`,
             c.tech_domain AS techKeys,
             c.unit_name AS unitName,
             c.maturity_level AS maturityLevel,
-            a.s_star AS sStar,
+            a.s_star AS star,
             a.h_start AS hStart,
             a.user_name AS userName,
             a.recommend_at AS recommendAt,
+            a.status,
             a.remark
         FROM
              t_billboard_harvest_related AS a
@@ -32,7 +34,7 @@
             b.end_at AS endAt,
             b.categories,
             b.tech_keys techKeys,
-            a.s_star AS sStar,
+            a.s_star AS star,
             b.content
         FROM
              t_billboard_harvest_related AS a
@@ -51,7 +53,7 @@
         b.unit_name AS unitName,
         b.start_at AS startAt,
         b.end_at AS endAt,
-        a.s_star AS sStar,
+        a.s_star AS star,
         b.categories,
         b.tech_keys AS techKeys,
         b.id,
@@ -72,7 +74,7 @@
         b.unit_name AS unitName,
         b.start_at AS startAt,
         b.end_at AS endAt,
-        a.s_star AS sStar,
+        a.s_star AS star,
         b.categories,
         b.tech_keys AS techKeys,
         b.id,

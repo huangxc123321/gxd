@@ -66,4 +66,13 @@ public interface IndexApi {
 
     @GetMapping("/index/getRelatedBillboardByBillboardId")
     List<RelateBillboardDTO> getRelatedBillboardByBillboardId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedHavestByCompanyId")
+    List<RelateHavestDTO> getRelatedHavestByCompanyId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedTalentByCompanyId")
+    List<RelateTalentDTO> getRelatedTalentByCompanyId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedBillboardByCompanyId")
+    List<RelateBillboardDTO> getRelatedBillboardByCompanyId(@RequestParam("id") Long id);
 }

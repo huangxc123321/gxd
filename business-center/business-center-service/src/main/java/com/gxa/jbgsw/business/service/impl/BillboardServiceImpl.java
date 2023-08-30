@@ -15,11 +15,8 @@ import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.*;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
-import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
-import com.gxa.jbgsw.business.service.BillboardService;
+import com.gxa.jbgsw.business.service.*;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.gxa.jbgsw.business.service.CollectionService;
-import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageRequest;
@@ -63,6 +60,8 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     MapperFacade mapperFacade;
     @Resource
     CollectionService collectionService;
+    @Resource
+    CompanyService companyService;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -182,7 +181,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     public void updateMyBillboard(BillboardDTO billboardDTO) {
         Billboard billboard = billboardMapper.selectById(billboardDTO.getId());
         // BillboardDTO有null就不需要替换billboard
-        BeanUtils.copyProperties(billboardDTO, billboard, CopyPropertionIngoreNull.getNullPropertyNames(billboard));
+        BeanUtils.copyProperties(billboardDTO, billboard);
 
         // 组装keys
         StringBuffer sb = new StringBuffer();
@@ -513,6 +512,30 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         }
 
         return null;
+    }
+
+    @Override
+    public List<Billboard> getRelatedBillboardByCompanyId(Long id) {
+        Company company = companyService.getById(id);
+        String tradeType = company.getTradeType();
+        String tradeTypeName = null;
+        if(StrUtil.isNotBlank(tradeType)){
+            DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), tradeType);
+            if(dic != null){
+                tradeTypeName = dic.getDicValue();
+            }
+        }
+
+        LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(StrUtil.isNotBlank(tradeTypeName)){
+            lambdaQueryWrapper.likeLeft(Billboard::getQueryKeys, tradeTypeName);
+        }
+        lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt);
+        lambdaQueryWrapper.last(" LIMIT 5 ");
+
+        List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
+
+        return billboards;
     }
 
 

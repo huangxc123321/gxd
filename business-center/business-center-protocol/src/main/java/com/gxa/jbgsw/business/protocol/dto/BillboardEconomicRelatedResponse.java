@@ -8,8 +8,11 @@ import java.io.Serializable;
 @Data
 public class BillboardEconomicRelatedResponse implements Serializable {
 
-    @ApiModelProperty(value = "榜单经纪人推荐ID")
+    @ApiModelProperty(value = "榜单ID")
     private Long id;
+
+    @ApiModelProperty(value = "榜单经纪人推荐ID： 推荐的时候使用这个ID")
+    private Long recommendId;
 
     @ApiModelProperty(value = "头像")
     private String avatar;
@@ -33,8 +36,10 @@ public class BillboardEconomicRelatedResponse implements Serializable {
     private Integer successTotal;
 
     @ApiModelProperty(value = "系统推荐匹配度(分数)")
-    private Double sStar;
+    private Double star;
 
+    @ApiModelProperty(value = "状态： 0 不推荐  1推荐(派单)  2 接受  3 不接受")
+    private Integer status;
 }
 
 

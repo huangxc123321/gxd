@@ -4,14 +4,16 @@
 
     <select id="getEconomicRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse">
             SELECT
-              a.id,
+              b.id,
+              a.id AS recommendId,
               c.avatar,
               c.`name`,
               c.`level`,
               c.score,
               c.label,
               c.success_total AS successTotal,
-              a.s_star AS sStar
+              a.status,
+              a.s_star AS star
             FROM
                t_billboard_economic_related AS a
                LEFT JOIN t_billboard AS b ON a.billboard_id = b.id

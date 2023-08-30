@@ -4,14 +4,12 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.gxa.jbgsw.business.entity.Billboard;
-import com.gxa.jbgsw.business.entity.Harvest;
-import com.gxa.jbgsw.business.entity.News;
-import com.gxa.jbgsw.business.entity.Patent;
+import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.mapper.HarvestMapper;
 import com.gxa.jbgsw.business.mapper.PatentMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
+import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.business.service.HarvestService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.business.service.PatentService;
@@ -45,6 +43,8 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
     BillboardHarvestRelatedService billboardHarvestRelatedService;
     @Resource
     MapperFacade mapperFacade;
+    @Resource
+    CompanyService companyService;
 
     @Override
     public List<Harvest> getHarvesByHolder(String holder) {
@@ -174,5 +174,43 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
                 patentService.saveBatch(ps);
             }
         }
+    }
+
+    @Override
+    public List<String> getHoloder(String holder) {
+        LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(StrUtil.isNotBlank(holder)){
+            lambdaQueryWrapper.like(Harvest::getHolder, holder);
+        }
+
+        List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
+        if(harvests != null && harvests.size() >0){
+            List<String> ls = new ArrayList<>();
+            harvests.stream().forEach(s->{
+                ls.add(s.getHolder());
+            });
+            // 去重返回
+            return ls.stream().distinct().collect(Collectors.toList());
+        }
+
+        return null;
+    }
+
+    @Override
+    public List<Harvest> getRelatedHavestByCompanyId(Long id) {
+        Company company = companyService.getById(id);
+        if(company == null){
+            return new ArrayList<>();
+        }
+        String tradeType = company.getTradeType();
+
+        LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(StrUtil.isNotBlank(tradeType)){
+            lambdaQueryWrapper.eq(Harvest::getTradeType, tradeType);
+        }
+        lambdaQueryWrapper.orderByDesc(Harvest::getCreateAt);
+        lambdaQueryWrapper.last(" LIMIT 3 ");
+
+        return harvestMapper.selectList(lambdaQueryWrapper);
     }
 }

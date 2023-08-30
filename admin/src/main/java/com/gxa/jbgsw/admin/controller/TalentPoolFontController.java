@@ -165,7 +165,8 @@ public class TalentPoolFontController extends BaseController {
         talentPoolDTO.setBillboardRecommends(billboardRecommends);
 
         // 合作发起
-        List<HavestCollaborateDTO> vals = billboardTalentRelatedApi.getCollaborateByTalentId(id);        talentPoolDTO.setCollaborates(vals);
+        List<HavestCollaborateDTO> vals = billboardTalentRelatedApi.getCollaborateByTalentId(id);
+        talentPoolDTO.setCollaborates(vals);
         if(CollectionUtils.isNotEmpty(vals)){
             vals.stream().forEach(s->{
                 s.setStatusName(CollaborateStatusEnum.getNameByIndex(s.getStatus()));

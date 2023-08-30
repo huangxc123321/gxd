@@ -61,4 +61,6 @@ public interface BillboardService extends IService<Billboard> {
     List<RelateBillboardDTO> getRelatedBillboardByBillboardId(Long id);
 
     List<BillboardResponse> getBillboardByUnitName(String name);
+
+    List<Billboard> getRelatedBillboardByCompanyId(Long id);
 }

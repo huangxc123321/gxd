@@ -46,4 +46,7 @@ public interface HarvestApi {
 
     @GetMapping("/havest/getContacts")
     List<String> getContacts(@RequestParam("contacts") String contacts);
+
+    @GetMapping("/havest/getHoloder")
+    List<String> getHoloder(@RequestParam("holder") String holder);
 }

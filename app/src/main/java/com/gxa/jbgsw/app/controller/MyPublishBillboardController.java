@@ -9,10 +9,12 @@ import com.gxa.jbgsw.business.client.TechEconomicManAppraiseApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.MessageLogInfo;
+import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
@@ -26,8 +28,10 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Api(tags = "用户中心：我的发布榜单")
 @RestController
@@ -52,6 +56,83 @@ public class MyPublishBillboardController extends BaseController {
     BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
     @Resource
     MessageFeignApi messageFeignApi;
+    @Resource
+    UserFeignApi userFeignApi;
+
+
+
+    @ApiOperation("获取上传成功后榜单列表")
+    @PostMapping("/user/center/billboard/pageQuery")
+    PageResult<BillboardResponse> pageQuery(@RequestBody BillboardRequest request){
+        Long createBy = this.getUserId();
+        if(createBy == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        request.setCreateBy(createBy);
+
+        PageResult<BillboardResponse> pageResult = billboardFeignApi.pageQuery(request);
+
+        List<BillboardResponse> response = pageResult.getList();
+        List<Long> ids = new ArrayList<>();
+        List<Long> finalIds = ids;
+
+        // 创建者
+        List<Long> idCs = new ArrayList<>();
+        List<Long> finalIdCs = idCs;
+        if(response != null){
+            response.stream().forEach(s->{
+                if(s.getCreateBy() != null){
+                    finalIdCs.add(s.getCreateBy());
+                }
+                if(s.getAuditUserId() != null){
+                    finalIds.add(s.getAuditUserId());
+                }
+            });
+
+            // 去重
+            idCs = finalIdCs.stream().distinct().collect(Collectors.toList());
+            Long[] createByIds = new Long[idCs.size()];
+            idCs .toArray(createByIds);
+            List<UserResponse> createByResponses = userFeignApi.getUserByIds(createByIds);
+            response.forEach(s->{
+                if(s.getCreateBy() != null){
+                    UserResponse u = createByResponses.stream()
+                            .filter(user -> s.getCreateBy().equals(user.getId()))
+                            .findAny()
+                            .orElse(null);
+                    if(u != null){
+                        s.setCreateByName(u.getNick());
+                    }
+                }
+            });
+
+
+            // 去重
+            ids = finalIds.stream().distinct().collect(Collectors.toList());
+            Long[] userIds = new Long[ids.size()];
+            ids.toArray(userIds);
+            if(CollectionUtils.isNotEmpty(ids)){
+                List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
+                if(CollectionUtils.isNotEmpty(userResponses)){
+                    response.forEach(s->{
+                        if(s.getAuditUserId() != null){
+                            UserResponse u = userResponses.stream()
+                                    .filter(user -> s.getAuditUserId().equals(user.getId()))
+                                    .findAny()
+                                    .orElse(null);
+                            if(u != null){
+                                s.setAuditUserName(u.getNick());
+                            }
+                        }
+                    });
+                }
+            }
+        }
+
+        return pageResult;
+    }
+
+
 
     @ApiOperation("获取我发布的榜单列表")
     @PostMapping("/user/center/queryMyPublish")
@@ -158,6 +239,15 @@ public class MyPublishBillboardController extends BaseController {
 
         // 帅才推荐： 根据技术领域，研究方向确定
         List<BillboardTalentRelatedResponse> talentRecommends = billboardTalentRelatedFeignApi.getTalentRecommend(id);
+        if(CollectionUtils.isNotEmpty(talentRecommends)){
+            talentRecommends.stream().forEach(s->{
+                // 学历显示名称
+                DictionaryDTO edu = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.highest_edu.name(),  s.getHighestEdu());
+                if(edu != null){
+                    s.setHighestEduName(edu.getDicValue());
+                }
+            });
+        }
         detailInfo.setTalentRecommends(talentRecommends);
 
         // 技术经纪人推荐: 根据专业标签来推荐

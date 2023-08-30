@@ -59,7 +59,7 @@
         FROM
             t_news a
         WHERE
-            a.`status` = 0
+            a.`status` = 0 AND a.publish_at is not null
             <if test="type != null ">
                 AND a.news_policy = #{type}
             </if>

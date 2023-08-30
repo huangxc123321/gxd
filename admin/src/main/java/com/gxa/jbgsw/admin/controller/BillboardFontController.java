@@ -7,9 +7,11 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
@@ -61,6 +63,9 @@ public class BillboardFontController extends BaseController {
     UserFeignApi userFeignApi;
     @Resource
     StringRedisTemplate stringRedisTemplate;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
+
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
     @ApiImplicitParams({
@@ -109,6 +114,15 @@ public class BillboardFontController extends BaseController {
 
         // 帅才推荐： 根据技术领域，研究方向确定
         List<BillboardTalentRelatedResponse> talentRecommends = billboardTalentRelatedFeignApi.getTalentRecommend(id);
+        if(CollectionUtils.isNotEmpty(talentRecommends)){
+            talentRecommends.stream().forEach(s->{
+                // 学历显示名称
+                DictionaryDTO edu = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.highest_edu.name(),  s.getHighestEdu());
+                if(edu != null){
+                    s.setHighestEduName(edu.getDicValue());
+                }
+            });
+        }
         detailInfo.setTalentRecommends(talentRecommends);
 
         // 技术经纪人推荐: 根据专业标签来推荐
@@ -190,9 +204,6 @@ public class BillboardFontController extends BaseController {
     })
     @GetMapping("/billboard/updateSeqNo")
     public void updateSeqNo(@RequestParam("id")Long id, @RequestParam("seqNo") Integer seqNo){
-
-
-
         billboardFeignApi.updateSeqNo(id, seqNo);
     }
 
@@ -281,8 +292,8 @@ public class BillboardFontController extends BaseController {
 
 
     @ApiOperation("编辑我发布的榜单信息")
-    @PostMapping("/user/center/updateMyBillboard")
-    void updateMyBillboard(@RequestBody BillboardDTO billboardDTO) throws BizException {
+    @PostMapping("/billboard/update")
+    void update(@RequestBody BillboardDTO billboardDTO) throws BizException {
         Long userId = this.getUserId();
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);

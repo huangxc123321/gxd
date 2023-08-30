@@ -340,5 +340,43 @@ public class IndexController implements IndexApi {
         return billboardService.getRelatedBillboardByBillboardId(id);
     }
 
+    @Override
+    public List<RelateHavestDTO> getRelatedHavestByCompanyId(Long id) {
+        List<Harvest> harvests = harvestService.getRelatedHavestByCompanyId(id);
+
+        List<RelateHavestDTO> relateHavests = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
+        return relateHavests;
+    }
+
+    @Override
+    public List<RelateTalentDTO> getRelatedTalentByCompanyId(Long id) {
+        List<TalentPool> talentPools = talentPoolService.getRelatedTalentByCompanyId(id);
+        if(CollectionUtils.isNotEmpty(talentPools)){
+            List<RelateTalentDTO> relateTalents = mapperFacade.mapAsList(talentPools, RelateTalentDTO.class);
+            relateTalents.stream().forEach(s->{
+                // 职称
+                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                if(dicProfessional != null){
+                    s.setProfessionalName(dicProfessional.getDicValue());
+                }
+            });
+        }
+
+        return new ArrayList<>();
+    }
+
+    @Override
+    public List<RelateBillboardDTO> getRelatedBillboardByCompanyId(Long id) {
+        List<Billboard> billboards = billboardService.getRelatedBillboardByCompanyId(id);
+
+        if(CollectionUtils.isNotEmpty(billboards)){
+            List<RelateBillboardDTO> relateBillboards = mapperFacade.mapAsList(billboards, RelateBillboardDTO.class);
+            return relateBillboards;
+        }
+
+        return  new ArrayList<>();
+
+    }
+
 
 }

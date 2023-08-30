@@ -135,6 +135,10 @@
             AND a.unit_name like CONCAT('%',#{unitName},'%')
         </if>
 
+        <if test="createBy != null ">
+            AND a.create_by = #{createBy}
+        </if>
+
         ORDER BY a.is_top DESC, a.seq_no ASC , a.create_at DESC
         <if test="amountSort != null">
             <choose>

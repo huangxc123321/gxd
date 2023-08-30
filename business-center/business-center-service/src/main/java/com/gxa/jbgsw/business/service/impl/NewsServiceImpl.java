@@ -59,24 +59,39 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
 
     @Override
     public void add(NewsDTO newsDTO) {
+        boolean falg = true;
         News news = mapperFacade.map(newsDTO, News.class);
-        String imageUrl = getUrl(newsDTO.getContent());
+
+       /*
+       String imageUrl = getUrl(newsDTO.getContent());
         if(StrUtil.isNotBlank(imageUrl)){
             news.setPicture(imageUrl);
-        }
+        }*/
 
         // 是否定时发布:  0 不定时  1定时
         if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
-            news.setFixedAt(newsDTO.getFixedAt());
+            // 判断时间是否已经失效，如果失效或者在一分钟内就失效，就当作立即发布
+            int minute = DateUtil.compare(newsDTO.getFixedAt(), new Date());
+            //相差分钟数
+            long m =  DateUtil.between(new Date(),newsDTO.getFixedAt(),DateUnit.MINUTE);
+
+            if(minute >0 && m >1){
+                news.setFixedAt(newsDTO.getFixedAt());
+            }else{
+                // 立即发布
+                news.setPublishAt(new Date());
+                falg = false;
+            }
         }else{
             news.setFixedAt(null);
             // 立即发布
             news.setPublishAt(new Date());
+            falg = false;
         }
         newsMapper.insert(news);
 
         // 是否定时发布:  0 不定时  1定时
-        if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
+        if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed()) && falg){
             // 写定时任务
             String key = RedisKeys.NEWS_PUBLIS_TIME + news.getId();
             // 过期时间
@@ -103,23 +118,36 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
 
     @Override
     public void updateNews(NewsDTO newsDTO) {
+        boolean falg = true;
         News news = newsMapper.selectById(newsDTO.getId());
         news.setUpdateAt(new Date());
 
         // newsDTO有null就不需要替换news的字段
         BeanUtils.copyProperties(newsDTO, news);
-        String imageUrl = getUrl(newsDTO.getContent());
-        if(StrUtil.isNotBlank(imageUrl)){
-            news.setPicture(imageUrl);
-        }
+//        String imageUrl = getUrl(newsDTO.getContent());
+//        if(StrUtil.isNotBlank(imageUrl)){
+//            news.setPicture(imageUrl);
+//        }
 
         // 是否定时发布:  0 不定时  1定时
         if(IsFixedEnum.SIGNED.getCode().equals(newsDTO.getIsFixed())){
-            news.setFixedAt(newsDTO.getFixedAt());
+            // 判断时间是否已经失效，如果失效或者在一分钟内就失效，就当作立即发布
+            int minute = DateUtil.compare(newsDTO.getFixedAt(), new Date());
+            //相差分钟数
+            long m =  DateUtil.between(new Date(),newsDTO.getFixedAt(),DateUnit.MINUTE);
+
+            if(minute >0 && m >1){
+                news.setFixedAt(newsDTO.getFixedAt());
+            }else{
+                // 立即发布
+                news.setPublishAt(new Date());
+                falg = false;
+            }
         }else{
             news.setFixedAt(null);
             // 立即发布
             news.setPublishAt(new Date());
+            falg = false;
         }
         newsMapper.updateById(news);
 

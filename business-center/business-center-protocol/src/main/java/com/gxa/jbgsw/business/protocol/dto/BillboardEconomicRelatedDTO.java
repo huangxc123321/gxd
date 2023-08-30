@@ -19,7 +19,7 @@ public class BillboardEconomicRelatedDTO implements Serializable {
     private Long economicId;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Double sStar;
+    private Double star;
 
     @ApiModelProperty(value = "人工手动推荐匹配度")
     private Double hStart;

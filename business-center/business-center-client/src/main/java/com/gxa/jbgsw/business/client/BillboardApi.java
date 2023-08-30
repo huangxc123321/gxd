@@ -57,4 +57,7 @@ public interface BillboardApi {
 
     @GetMapping("/billboard/getById")
     BillboardDTO getById(@RequestParam("id") Long id);
+
+    @PostMapping(value = "/billboard/insertBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
+    void insertBatchIds(@RequestBody Long[] ids);
 }

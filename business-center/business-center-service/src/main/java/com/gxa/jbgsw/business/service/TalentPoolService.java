@@ -30,4 +30,6 @@ public interface TalentPoolService extends IService<TalentPool> {
     PageResult<TalentPoolResponse> pageQuery(TalentPoolRequest request);
 
     List<String> getUnits(String unitName);
+
+    List<TalentPool> getRelatedTalentByCompanyId(Long id);
 }

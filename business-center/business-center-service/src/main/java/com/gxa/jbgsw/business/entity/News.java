@@ -40,7 +40,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "标题")
     private String title;
 
-    @ApiModelProperty(value = "从内容获取的展示图片")
+    @ApiModelProperty(value = "展示图片")
     private String picture;
 
     @ApiModelProperty(value = "内容")

@@ -45,7 +45,7 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     @Override
     public void updateCompany(CompanyDTO companyDTO) {
         Company company = companyMapper.selectById(companyDTO.getId());
-        BeanUtils.copyProperties(companyDTO, company, CopyPropertionIngoreNull.getNullPropertyNames(company));
+        BeanUtils.copyProperties(companyDTO, company);
 
         companyMapper.updateById(company);
     }

@@ -34,8 +34,11 @@ public interface CompanyApi {
     PageResult<CompanyResponse> pageQuery(@RequestBody CompanyRequest request);
 
     @GetMapping("/company/getCompanyById4Pc")
-    CompanyPCResponse getCompanyById4Pc(Long id);
+    CompanyPCResponse getCompanyById4Pc(@RequestParam("id") Long id);
 
     @GetMapping("/company/getCompanyByUnitName")
     CompanyDTO getCompanyByUnitName(@RequestParam("unitName") String unitName);
+
+    @GetMapping("/company/getCompanyByName")
+    CompanyPCResponse getCompanyByName(@RequestParam("name") String name);
 }

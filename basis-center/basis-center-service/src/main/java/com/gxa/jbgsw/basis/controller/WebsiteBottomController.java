@@ -45,7 +45,7 @@ public class WebsiteBottomController implements WebsiteBottomApi {
         }
 
         // havestDTO有null就不需要替换harvest
-        BeanUtils.copyProperties(websiteBottomDTO, websiteBottom, CopyPropertionIngoreNull.getNullPropertyNames(websiteBottom));
+        BeanUtils.copyProperties(websiteBottomDTO, websiteBottom);
         if(websiteBottomDTO.getFriendlyLinks() != null && websiteBottomDTO.getFriendlyLinks().size()> 0){
             websiteBottom.setLinks(JSONObject.toJSONString(websiteBottomDTO.getFriendlyLinks()));
         }

@@ -90,7 +90,7 @@ public class LastBillboardSetController implements LastBillboardSetApi {
     public DetailInfoDTO detail(Long id) {
         Billboard billboard = billboardService.getById(id);
         DetailInfoDTO detailInfoDTO = new DetailInfoDTO();
-        BeanUtils.copyProperties(billboard,detailInfoDTO,CopyPropertionIngoreNull.getNullPropertyNames(billboard));
+        BeanUtils.copyProperties(billboard,detailInfoDTO);
 
         return detailInfoDTO;
     }

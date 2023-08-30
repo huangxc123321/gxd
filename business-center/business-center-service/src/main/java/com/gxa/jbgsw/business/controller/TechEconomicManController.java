@@ -62,7 +62,7 @@ public class TechEconomicManController implements TechEconomicManApi {
     public void update(TechEconomicManDTO techEconomicManDTO) {
         TechEconomicMan techEconomicMan = techEconomicManService.getById(techEconomicManDTO.getId());
         if(techEconomicMan != null){
-            BeanUtils.copyProperties(techEconomicManDTO, techEconomicMan, CopyPropertionIngoreNull.getNullPropertyNames(techEconomicMan));
+            BeanUtils.copyProperties(techEconomicManDTO, techEconomicMan);
             techEconomicManService.updateById(techEconomicMan);
         }
     }

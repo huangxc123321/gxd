@@ -126,6 +126,10 @@ public class HarvestController implements HarvestApi {
         }
         harvest.setQueryKeys(sb.toString());
         harvestService.saveHarvest(harvest, havestDTO.getPatents());
+
+        // 匹配榜单
+
+
     }
 
     @Override
@@ -138,7 +142,7 @@ public class HarvestController implements HarvestApi {
         Harvest harvest = harvestService.getById(havestDTO.getId());
 
         // havestDTO有null就不需要替换harvest
-        BeanUtils.copyProperties(havestDTO, harvest, CopyPropertionIngoreNull.getNullPropertyNames(harvest));
+        BeanUtils.copyProperties(havestDTO, harvest);
         harvestService.updateById(harvest);
     }
 
@@ -231,6 +235,11 @@ public class HarvestController implements HarvestApi {
     @Override
     public List<String> getContacts(String contacts) {
         return harvestService.getContacts(contacts);
+    }
+
+    @Override
+    public List<String> getHoloder(String holder) {
+        return harvestService.getHoloder(holder);
     }
 
 }

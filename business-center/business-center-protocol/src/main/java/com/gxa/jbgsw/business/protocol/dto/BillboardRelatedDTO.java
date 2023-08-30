@@ -16,7 +16,7 @@ public class BillboardRelatedDTO implements Serializable {
     private Long harvestId;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Integer sStar;
+    private Integer star;
 
     @ApiModelProperty(value = "人工手动推荐匹配度")
     private Integer hStart;

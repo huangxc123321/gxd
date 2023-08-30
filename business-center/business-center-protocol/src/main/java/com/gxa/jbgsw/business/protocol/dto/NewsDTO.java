@@ -25,6 +25,9 @@ public class NewsDTO implements Serializable {
     @ApiModelProperty(value = "标题")
     private String title;
 
+    @ApiModelProperty(value = "展示图片")
+    private String picture;
+
     @ApiModelProperty(value = "内容")
     private String content;
 

@@ -9,6 +9,7 @@ import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.client.BillboardApi;
 import com.gxa.jbgsw.business.entity.Billboard;
+import com.gxa.jbgsw.business.entity.BillboardTemporary;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
@@ -16,6 +17,7 @@ import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
+import com.gxa.jbgsw.business.service.BillboardTemporaryService;
 import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
@@ -54,6 +56,8 @@ public class BillboardController implements BillboardApi {
     MapperFacade mapperFacade;
     @Resource
     StringRedisTemplate stringRedisTemplate;
+    @Resource
+    BillboardTemporaryService billboardTemporaryService;
 
     @Override
     public void add(BillboardDTO billboardDTO) {
@@ -276,6 +280,48 @@ public class BillboardController implements BillboardApi {
         Billboard billboard = billboardService.getById(id);
 
         return mapperFacade.map(billboard, BillboardDTO.class);
+    }
+
+    @Override
+    public void insertBatchIds(Long[] ids) {
+        List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
+        List<BillboardTemporary>  billboardTemporaries = billboardTemporaryService.listByIds(list);
+
+        List<Billboard> billboards = mapperFacade.mapAsList(billboardTemporaries,  Billboard.class);
+        billboards.stream().forEach(s->{
+            // ID 重新置为null
+            s.setId(null);
+
+            // 组装keys
+            StringBuffer sb = new StringBuffer();
+            // 标题
+            sb.append(s.getTitle());
+            sb.append(CharUtil.COMMA);
+            // 技术关键字（直接输入）
+            sb.append(s.getTechKeys());
+            sb.append(CharUtil.COMMA);
+            // 工信大类
+            DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+            if(dictionaryDTO != null){
+                sb.append(dictionaryDTO.getDicValue());
+            }
+            sb.append(CharUtil.COMMA);
+            sb.append(s.getProvinceName()).append(CharUtil.COMMA)
+                    .append(s.getCityName()).append(CharUtil.COMMA)
+                    .append(s.getAreaName());
+            s.setQueryKeys(sb.toString());
+        });
+
+        Integer status = 0;
+        try {
+            billboardService.saveBatch(billboards);
+        }catch (Exception ex){
+            // 导入失败
+            status = 1;
+        }
+
+        Long createBy = billboardTemporaries.get(0).getCreateBy();
+        billboardTemporaryService.updateStatusByCreateBy(createBy, 0);
     }
 }
 

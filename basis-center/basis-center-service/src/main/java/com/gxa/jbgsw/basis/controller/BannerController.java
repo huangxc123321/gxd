@@ -50,7 +50,7 @@ public class BannerController implements BannerApi {
     public void update(BannerDTO bannerDTO) throws BizException {
         Banner banner = bannerService.getById(bannerDTO.getId());
 
-        BeanUtils.copyProperties(bannerDTO, banner, CopyPropertionIngoreNull.getNullPropertyNames(banner));
+        BeanUtils.copyProperties(bannerDTO, banner);
         bannerService.saveOrUpdate(banner);
     }
 

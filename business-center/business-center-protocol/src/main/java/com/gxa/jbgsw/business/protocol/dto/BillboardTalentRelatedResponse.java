@@ -20,6 +20,9 @@ public class BillboardTalentRelatedResponse implements Serializable {
     @ApiModelProperty(value = "学位")
     private String highestEdu;
 
+    @ApiModelProperty(value = "学位显示名称")
+    private String highestEduName;
+
     @ApiModelProperty(value = "专业方向")
     private String researchDirection;
 
@@ -27,6 +30,6 @@ public class BillboardTalentRelatedResponse implements Serializable {
     private String project;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Double sStar;
+    private Double star;
 
 }

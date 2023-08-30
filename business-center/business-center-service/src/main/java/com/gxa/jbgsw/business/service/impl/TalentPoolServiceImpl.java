@@ -4,13 +4,17 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
+import com.gxa.jbgsw.business.entity.Company;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
+import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.exception.BizException;
@@ -47,7 +51,11 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     @Resource
     BillboardTalentRelatedService billboardTalentRelatedService;
     @Resource
+    CompanyService companyService;
+    @Resource
     MapperFacade mapperFacade;
+    @Resource
+    DictionaryFeignApi dictionaryFeignApi;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -96,7 +104,7 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     public void updateTalentPool(TalentPoolDTO talentPoolDTO) throws BizException {
         TalentPool talentPool = talentPoolMapper.selectById(talentPoolDTO.getId());
         // talentPoolDTO有null就不需要替换talentPool
-        BeanUtils.copyProperties(talentPoolDTO, talentPool, CopyPropertionIngoreNull.getNullPropertyNames(talentPool));
+        BeanUtils.copyProperties(talentPoolDTO, talentPool);
 
         talentPoolMapper.updateById(talentPool);
     }
@@ -160,6 +168,40 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         }
 
         return null;
+    }
+
+    @Override
+    public List<TalentPool> getRelatedTalentByCompanyId(Long id) {
+        Company company = companyService.getById(id);
+        if(company == null){
+            return new ArrayList<>();
+        }
+        String tradeType = company.getTradeType();
+        String tradeTypeName = null;
+        if(StrUtil.isNotBlank(tradeType)){
+            DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), tradeType);
+            if(dic != null){
+                tradeTypeName = dic.getDicValue();
+            }
+        }
+
+        LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        if(StrUtil.isNotBlank(tradeTypeName)){
+            lambdaQueryWrapper.likeLeft(TalentPool::getQueryKeys, tradeTypeName);
+        }
+        lambdaQueryWrapper.orderByDesc(TalentPool::getCreateAt);
+        lambdaQueryWrapper.last(" LIMIT 1 ");
+        List<TalentPool> talentPools = talentPoolMapper.selectList(lambdaQueryWrapper);
+
+        // 取最新一条
+        if(talentPools == null || talentPools.size() == 0){
+            LambdaQueryWrapper<TalentPool> wrapper = new LambdaQueryWrapper<>();
+            wrapper.orderByDesc(TalentPool::getCreateAt);
+            wrapper.last(" LIMIT 1 ");
+             talentPools = talentPoolMapper.selectList(wrapper);
+        }
+
+        return talentPools;
     }
 
 }

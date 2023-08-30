@@ -1,16 +1,17 @@
 package com.gxa.jbgsw.business.entity;
 
-import java.math.BigDecimal;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.annotation.IdType;
-import java.util.Date;
 import com.baomidou.mybatisplus.annotation.TableId;
-import java.io.Serializable;
+import com.baomidou.mybatisplus.annotation.TableName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
@@ -23,9 +24,9 @@ import lombok.experimental.Accessors;
 @Data
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
-@TableName("t_billboard")
-@ApiModel(value="Billboard对象", description="榜单信息")
-public class Billboard implements Serializable {
+@TableName("t_billboard_temporary")
+@ApiModel(value="BillboardTemporary对象", description="榜单导入临时表")
+public class BillboardTemporary implements Serializable {
 
 private static final long serialVersionUID=1L;
 
@@ -44,9 +45,6 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "榜单标题")
     private String title;
 
-    @ApiModelProperty(value = "查询关键字： 榜单标题+工信大类+技术关键词")
-    private String queryKeys;
-
     @ApiModelProperty(value = "工信大类：字典中获取")
     private Integer categories;
 
@@ -58,9 +56,6 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "详情")
     private String content;
-
-    @ApiModelProperty(value = "视频URL地址")
-    private String videoUrl;
 
     @ApiModelProperty(value = "有效开始时间")
     private Date startAt;
@@ -86,19 +81,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "地区名称")
     private String areaName;
 
-    @ApiModelProperty(value = "排序")
-    private Integer seqNo;
-
-    @ApiModelProperty(value = "收藏数")
-    private Integer collectNum;
-
-    @ApiModelProperty(value = "分享次数")
-    private Integer shareNum;
-
-    @ApiModelProperty(value = "是否置顶： 0 不置顶 1 置顶")
-    private Integer isTop;
-
-    @ApiModelProperty(value = "发榜状态：0 待揭榜、1 已签约、2 解决中、3 已解决")
+    @ApiModelProperty(value = "状态： 0 导入成功  1 导入失败")
     private Integer status;
 
     @ApiModelProperty(value = "发布时间")
@@ -106,23 +89,5 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "发布人")
     private Long createBy;
-
-    @ApiModelProperty(value = "浏览量")
-    private Integer views;
-
-    @ApiModelProperty(value = "审核状态： 0 待审核  1 审核通过  2 审核不通过")
-    private Integer auditStatus;
-
-    @ApiModelProperty(value = "审核不通过的原因")
-    private String reason;
-
-    @ApiModelProperty(value = "审核人ID")
-    private Long auditUserId;
-
-    @ApiModelProperty(value = "审核时间")
-    private Date auditCreateAt;
-
-    @ApiModelProperty(value = "发榜人")
-    private String publishPerson;
 
 }

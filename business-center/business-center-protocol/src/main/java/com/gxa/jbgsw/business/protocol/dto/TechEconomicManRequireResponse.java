@@ -35,7 +35,7 @@ public class TechEconomicManRequireResponse implements Serializable {
     private Date endAt;
 
     @ApiModelProperty(value = "系统推荐匹配度")
-    private Double sStar;
+    private Double star;
 
     @ApiModelProperty(value = "相关成果")
     private String harvests;

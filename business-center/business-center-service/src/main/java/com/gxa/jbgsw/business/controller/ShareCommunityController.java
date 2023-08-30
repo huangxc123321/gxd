@@ -49,7 +49,7 @@ public class ShareCommunityController implements ShareCommunityApi {
     @Override
     public void update(ShareCommunityDTO shareCommunityDTO) {
         ShareCommunity shareCommunity = shareCommunityService.getById(shareCommunityDTO.getId());
-        BeanUtils.copyProperties(shareCommunityDTO, shareCommunity, CopyPropertionIngoreNull.getNullPropertyNames(shareCommunity));
+        BeanUtils.copyProperties(shareCommunityDTO, shareCommunity);
 
         shareCommunityService.updateById(shareCommunity);
     }

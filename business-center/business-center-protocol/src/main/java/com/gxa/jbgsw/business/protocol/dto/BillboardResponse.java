@@ -44,11 +44,11 @@ public class BillboardResponse implements Serializable {
     @ApiModelProperty(value = "需求详情")
     private String content;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "有效开始时间")
     private Date startAt;
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
     @ApiModelProperty(value = "有效结束时间")
     private Date endAt;
 

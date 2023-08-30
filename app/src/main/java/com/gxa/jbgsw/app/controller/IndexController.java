@@ -1,10 +1,12 @@
 package com.gxa.jbgsw.app.controller;
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.app.feignapi.*;
 import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.protocol.dto.WebsiteBottomDTO;
 import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
@@ -62,6 +64,9 @@ public class IndexController extends BaseController {
     CollaborateFeignApi collaborateFeignApi;
     @Resource
     MessageFeignApi messageFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
 
@@ -107,7 +112,7 @@ public class IndexController extends BaseController {
         return indexFeignApi.queryGovBillborads(searchGovRequest);
     }
 
-    @ApiOperation("获取某个政府榜信息")
+    @ApiOperation("获取某个榜单信息")
     @GetMapping("/index/getGovBillboradById")
     DetailInfoDTO getGovBillboradById(@RequestParam(value = "id") Long id) {
         DetailInfoDTO detailInfoDTO = billboardFeignApi.detail(id);
@@ -194,7 +199,7 @@ public class IndexController extends BaseController {
     PageResult<SearchTalentsResponse> searchTalents(@RequestBody SearchTalentsRequest searchTalentsRequest) {
         PageResult<SearchTalentsResponse> pageResult = indexFeignApi.queryTalents(searchTalentsRequest);
 
-        if(pageResult == null){
+        if(pageResult != null){
             List<SearchTalentsResponse> responses = pageResult.getList();
             if(CollectionUtils.isNotEmpty(responses)){
                 responses.stream().forEach(s->{
@@ -202,6 +207,25 @@ public class IndexController extends BaseController {
                     if(dicProfessional != null){
                         s.setProfessionalName(dicProfessional.getDicValue());
                     }
+
+                    // 技术领域
+                    StringBuffer sb = new StringBuffer();
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc1 != null){
+                        sb.append(tfc1.getName());
+                        sb.append(CharUtil.COMMA);
+                        TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+                        if(tfc2 != null){
+                            sb.append(tfc2.getName());
+                            sb.append(CharUtil.COMMA);
+                            TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
+                            if(tfc3 != null){
+                                sb.append(tfc3.getName());
+                            }
+                        }
+                    }
+                    s.setTechDomainName(sb.toString().replace("所有分类,", ""));
+
                 });
             }
 
@@ -306,7 +330,6 @@ public class IndexController extends BaseController {
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
-        billboardGainAddDTO.setCreateBy(userId);
 
        try{
            billboardGainAddDTO.setApplyAt(new Date());
@@ -314,35 +337,35 @@ public class IndexController extends BaseController {
            if(userResponse != null){
                billboardGainAddDTO.setCreateByName(userResponse.getNick());
                billboardGainAddDTO.setAcceptBillboard(userResponse.getUnitName());
-               billboardGainAddDTO.setCreateBy(userResponse.getCreateBy());
+               billboardGainAddDTO.setCreateBy(userId);
                billboardGainAddDTO.setCreateAt(new Date());
+               billboardGainFeignApi.addBillboardGain(billboardGainAddDTO);
+
+               // 写消息（立即揭榜： （用户名）在XXX时间揭榜了您的XXXX榜单）
+               UserResponse u = this.getUser();
+               BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
+               // 写系统消息
+               MessageDTO messageDTO = new MessageDTO();
+               // 时间
+               messageDTO.setCreateAt(new Date());
+               String time = simpleDateFormat.format(new Date());
+               // 内容
+               String content = String.format(MessageLogInfo.billboard_jb, userResponse.getNick(),
+                       time, billboardDTO.getTitle());
+
+               messageDTO.setContent(content);
+               // 榜单发布人
+               messageDTO.setUserId(billboardDTO.getCreateBy());
+               messageDTO.setTitle(content);
+               // 立即揭榜
+               messageDTO.setType(0);
+               messageDTO.setThirdAvatar(u.getAvatar());
+               messageDTO.setThirdName(u.getNick());
+
+               // 榜单ID
+               messageDTO.setPid(billboardDTO.getId());
+               messageFeignApi.add(messageDTO);
            }
-           billboardGainFeignApi.addBillboardGain(billboardGainAddDTO);
-
-           // 写消息（立即揭榜： （用户名）在XXX时间揭榜了您的XXXX榜单）
-           UserResponse u = this.getUser();
-           BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
-           // 写系统消息
-           MessageDTO messageDTO = new MessageDTO();
-           // 时间
-           messageDTO.setCreateAt(new Date());
-           String time = simpleDateFormat.format(new Date());
-           // 内容
-           String content = String.format(MessageLogInfo.billboard_jb, userResponse.getNick(),
-                   time, billboardDTO.getTitle());
-
-           messageDTO.setContent(content);
-           // 榜单发布人
-           messageDTO.setUserId(billboardDTO.getCreateBy());
-           messageDTO.setTitle(content);
-           // 立即揭榜
-           messageDTO.setType(0);
-           messageDTO.setThirdAvatar(u.getAvatar());
-           messageDTO.setThirdName(u.getNick());
-
-           // 榜单ID
-           messageDTO.setPid(billboardDTO.getId());
-           messageFeignApi.add(messageDTO);
        }catch (Exception ex){
            ex.printStackTrace();
        }
