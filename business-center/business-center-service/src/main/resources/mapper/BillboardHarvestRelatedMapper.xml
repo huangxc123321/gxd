@@ -10,7 +10,7 @@
             c.unit_name AS unitName,
             c.maturity_level AS maturityLevel,
             a.s_star AS star,
-            a.h_start AS hStart,
+            a.h_start AS hstar,
             a.user_name AS userName,
             a.recommend_at AS recommendAt,
             a.status,
@@ -19,7 +19,7 @@
              t_billboard_harvest_related AS a
            LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
            LEFT JOIN t_harvest AS c ON a.harvest_id = c.id
-        WHERE
+        WHERE b.audit_status = 1 AND b.`status` =  0 AND a.s_star > 0 AND
             a.billboard_id = #{billboardId}
             ORDER BY a.create_at DESC
    </select>

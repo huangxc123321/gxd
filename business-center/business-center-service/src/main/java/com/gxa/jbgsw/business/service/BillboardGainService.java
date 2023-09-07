@@ -16,4 +16,6 @@ import java.util.List;
 public interface BillboardGainService extends IService<BillboardGain> {
 
     List<BillboardGain> getBillboardGainByPid(Long id);
+
+    boolean getIsGain(Long pid, Long userId);
 }

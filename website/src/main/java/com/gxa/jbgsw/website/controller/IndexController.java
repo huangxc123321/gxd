@@ -13,6 +13,7 @@ import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.client.CollaborateApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.*;
+import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.*;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
@@ -136,10 +137,16 @@ public class IndexController extends BaseController {
             if(collectionDTO != null){
                 detailInfoDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
             }
+
+            // 是否已揭榜
+            boolean isGain = billboardGainFeignApi.getIsGain(id, userId);
+            detailInfoDTO.setGain(isGain);
         }
 
         detailInfoDTO.setStatusName(BillboardStatusEnum.getNameByIndex(detailInfoDTO.getStatus()));
 
+        // 增加pv
+        billboardFeignApi.addPv(id);
 
         return detailInfoDTO;
     }
@@ -213,22 +220,24 @@ public class IndexController extends BaseController {
                     }
 
                     // 技术领域
-                    StringBuffer sb = new StringBuffer();
-                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
-                    if(tfc1 != null){
-                        sb.append(tfc1.getName());
-                        sb.append(CharUtil.COMMA);
-                        TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-                        if(tfc2 != null){
-                            sb.append(tfc2.getName());
-                            sb.append(CharUtil.COMMA);
-                            TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                            if(tfc3 != null){
-                                sb.append(tfc3.getName());
-                            }
+                    if(s.getTechDomain() != null){
+                        TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
+                        if(tfc != null){
+                            s.setTechDomainName(tfc.getName());
                         }
                     }
-                    s.setTechDomainName(sb.toString().replace("所有分类,", ""));
+                    if(s.getTechDomain1() != null){
+                        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
+                        if(tfc1 != null){
+                            s.setTechDomain1Name(tfc1.getName());
+                        }
+                    }
+                    if(s.getTechDomain2() != null){
+                        TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
+                        if(tfc2 != null){
+                            s.setTechDomain2Name(tfc2.getName());
+                        }
+                    }
 
                 });
             }
@@ -335,6 +344,14 @@ public class IndexController extends BaseController {
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
 
+        BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
+        if(billboardDTO == null){
+            throw new BizException(BusinessErrorCode.BILLBOARD_IS_NOT_EXIST);
+        }
+        if(userId.equals(billboardDTO.getCreateBy())){
+            throw new BizException(BusinessErrorCode.SELF_PUBLISH_SELF_NOT_GAIN);
+        }
+
        try{
            billboardGainAddDTO.setApplyAt(new Date());
            UserResponse userResponse = getUser();
@@ -347,7 +364,7 @@ public class IndexController extends BaseController {
 
                // 写消息（立即揭榜： （用户名）在XXX时间揭榜了您的XXXX榜单）
                UserResponse u = this.getUser();
-               BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
+               // BillboardDTO billboardDTO = billboardFeignApi.getById(billboardGainAddDTO.getPid());
                // 写系统消息
                MessageDTO messageDTO = new MessageDTO();
                // 时间

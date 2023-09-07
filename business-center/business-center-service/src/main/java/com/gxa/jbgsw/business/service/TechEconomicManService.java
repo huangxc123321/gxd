@@ -30,4 +30,6 @@ public interface TechEconomicManService extends IService<TechEconomicMan> {
     PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(TechEconomicManRequiresRequest request);
 
     TechEconomicManDTO getTechEconomicManByMobile(String mobile);
+
+    void deleteAgreements(Long id);
 }

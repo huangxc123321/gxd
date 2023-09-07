@@ -19,6 +19,9 @@ public interface BillboardApi {
     @PostMapping("/billboard/add")
     void add(@RequestBody BillboardDTO billboardDTO);
 
+    @GetMapping("/billboard/addPv")
+    void addPv(@RequestParam("id") Long id);
+
     @PostMapping(value = "/billboard/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     void deleteBatchIds(@RequestBody Long[] ids);
 

@@ -8,7 +8,9 @@ import lombok.ToString;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -86,8 +88,14 @@ public class UserResponse implements Serializable {
     @ApiModelProperty(value = "职称")
     private String job;
 
-    @ApiModelProperty(value = "技术领域")
-    private String techDomain;
+    @ApiModelProperty(value = "技术领域(第一级)")
+    private Long techDomain1;
+
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private Long techDomain2;
+
+    @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
+    private Long techDomain;
 
     @ApiModelProperty(value = "经营范围")
     private String scopeBusiness;
@@ -103,4 +111,8 @@ public class UserResponse implements Serializable {
 
     @ApiModelProperty(value = "个人类型: 1 经纪人 2 帅才 0 其它")
     private Integer type ;
+
+    @ApiModelProperty(value = "用户角色")
+    List<RolePO> roles = new ArrayList<>();
+
 }

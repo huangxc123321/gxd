@@ -3,10 +3,13 @@ package com.gxa.jbgsw.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gxa.jbgsw.user.entity.Role;
 import com.gxa.jbgsw.user.entity.UserRole;
 import com.gxa.jbgsw.user.mapper.UserRoleMapper;
+import com.gxa.jbgsw.user.protocol.dto.RolePO;
 import com.gxa.jbgsw.user.protocol.dto.UserRoleDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRoleResponse;
+import com.gxa.jbgsw.user.service.RoleService;
 import com.gxa.jbgsw.user.service.UserRoleService;
 import ma.glasnost.orika.MapperFacade;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,8 @@ import java.util.stream.Collectors;
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> implements UserRoleService {
     @Resource
     UserRoleMapper userRoleMapper;
+    @Resource
+    RoleService roleService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -56,7 +61,27 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
         return userRoleMapper.getUserRoleByUserIds(list);
     }
 
+    @Override
+    public List<RolePO> getRoleByUserId(Long userId) {
+        LambdaQueryWrapper<UserRole> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(UserRole::getUserId, userId);
 
+        List<UserRole> userRoles = userRoleMapper.selectList(lambdaQueryWrapper);
+
+        List<RolePO> roles = new ArrayList<>();
+        if(userRoles != null && userRoles.size()>0 ){
+            for(int i=0; i<userRoles.size(); i++){
+
+                Role role = roleService.getById(userRoles.get(i).getRoleId());
+
+                RolePO rolePO = mapperFacade.map(role, RolePO.class);
+
+                roles.add(rolePO);
+            }
+        }
+
+        return roles;
+    }
 
 
 }

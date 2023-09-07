@@ -34,6 +34,8 @@
         <result column="audit_user_id" property="auditUserId" jdbcType="BIGINT" />
         <result column="audit_create_at" property="auditCreateAt" jdbcType="TIMESTAMP" />
         <result column="publish_person" property="publishPerson" jdbcType="VARCHAR" />
+
+        <result column="is_create_Video" property="isCreateVideo" jdbcType="INTEGER" />
     </resultMap>
 
 
@@ -228,7 +230,8 @@
             a.unit_name AS unitName,
             a.unit_logo AS unitLogo,
             a.audit_create_at AS auditDate,
-            a.create_at AS createAt
+            a.create_at AS createAt,
+            a.pv
         FROM
             t_billboard a
         WHERE 1 = 1
@@ -266,6 +269,7 @@
                 a.auditing_status AS auditingStatus,
                 a.apply_at applyAt,
                 a.attachment,
+                a.attachment_name AS attachmentName,
                 a.auditing_user_name AS auditingUserName,
                 a.reason,
                 b.type,

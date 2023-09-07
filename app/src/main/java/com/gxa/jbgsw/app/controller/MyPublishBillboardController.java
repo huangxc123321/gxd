@@ -233,7 +233,7 @@ public class MyPublishBillboardController extends BaseController {
         detailInfo.setBillboardGains(billboardGainResponses);
         detailInfo.setStatusName(BillboardStatusEnum.getNameByIndex(detailInfo.getStatus()));
 
-        // 成果推荐: 根据揭榜单位
+        // 成果推荐
         List<BillboardHarvestRelatedResponse> havests = billboardHarvestRelatedFeignApi.getHarvestRecommend(id);
         detailInfo.setHarvestRecommends(havests);
 
@@ -250,9 +250,12 @@ public class MyPublishBillboardController extends BaseController {
         }
         detailInfo.setTalentRecommends(talentRecommends);
 
-        // 技术经纪人推荐: 根据专业标签来推荐
+        // 技术经纪人推荐: 根据专业标签来推荐 (这里是已经派单确认得经纪人)
         List<BillboardEconomicRelatedResponse> techBrokerRecommends = billboardEconomicRelatedFeignApi.getEconomicRecommend(id);
-        detailInfo.setTechBrokerRecommends(techBrokerRecommends);
+        if(CollectionUtils.isNotEmpty(techBrokerRecommends)){
+            BillboardEconomicRelatedResponse relatedResponse = techBrokerRecommends.get(0);
+            detailInfo.setAppTechBrokerRecommends(relatedResponse);
+        }
 
         MyBillboardEconomicManDTO economicMan = billboardEconomicRelatedFeignApi.getMyEconomicMan(id);
         detailInfo.setMyBillboardEconomicMan(economicMan);

@@ -53,7 +53,7 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "密码" , hidden = true)
     private String password;
 
-    @ApiModelProperty(value = "单位性质： 0 政府部门 1 企业 2 科研机构/团队 3大学院校 4 个人")
+    @ApiModelProperty(value = "单位性质： 1 政府部门 2 企业 3 科研机构/团队 4大学院校 5 个人")
     private Integer unitNature;
 
     @ApiModelProperty(value = "单位名称")
@@ -65,8 +65,14 @@ public class UserDTO implements Serializable {
     @ApiModelProperty(value = "职称")
     private String job;
 
-    @ApiModelProperty(value = "技术领域")
-    private String techDomain;
+    @ApiModelProperty(value = "技术领域(第一级)")
+    private Long techDomain1;
+
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private Long techDomain2;
+
+    @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
+    private Long techDomain;
 
     @ApiModelProperty(value = "经营范围")
     private String scopeBusiness;

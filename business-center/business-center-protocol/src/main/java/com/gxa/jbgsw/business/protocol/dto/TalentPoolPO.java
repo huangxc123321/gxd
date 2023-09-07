@@ -10,7 +10,7 @@ import java.util.Date;
 import java.util.List;
 
 @Data
-public class TalentPoolDTO implements Serializable {
+public class TalentPoolPO implements Serializable {
 
     @ApiModelProperty(value = "用户ID: 新增的時候传null, 编辑传用户ID")
     private Long id;
@@ -67,20 +67,11 @@ public class TalentPoolDTO implements Serializable {
     @ApiModelProperty(value = "技术领域(第一级)")
     private Long techDomain1;
 
-    @ApiModelProperty(value = "技术领域显示名称(第一级) ")
-    private String techDomain1Name;
-
     @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
     private Long techDomain2;
 
-    @ApiModelProperty(value = "技术领域显示名称(第二级)")
-    private String techDomain2Name;
-
     @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
     private Long techDomain;
-
-    @ApiModelProperty(value = "技术领域显示名称")
-    private String techDomainName;
 
     @ApiModelProperty(value = "研究方向")
     private String researchDirection;
@@ -120,13 +111,6 @@ public class TalentPoolDTO implements Serializable {
     @ApiModelProperty(value = "更新人", hidden = true)
     private Long updateBy;
 
-    @ApiModelProperty(value = "关注状态： 0 已关注  1 未关注")
-    private Integer attentionStatus = 1;
 
-    @ApiModelProperty(value = "榜单推荐")
-    private List<HarvestBillboardRelatedDTO> billboardRecommends = new ArrayList<>();
-
-    @ApiModelProperty(value = "合作发起")
-    private List<HavestCollaborateDTO> collaborates = new ArrayList<>();
 
 }

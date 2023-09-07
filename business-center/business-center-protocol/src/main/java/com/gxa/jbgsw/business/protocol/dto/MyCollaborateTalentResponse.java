@@ -31,13 +31,12 @@ public class MyCollaborateTalentResponse implements Serializable {
     @ApiModelProperty(value = "详细说明")
     private String detail;
 
-    @ApiModelProperty(value = "状态：0 待沟通  ...")
+    @ApiModelProperty(value = "状态：0 待沟通 1 已同意  2 已拒绝")
     private Integer status;
 
-    @ApiModelProperty(value = "状态显示名称：0 待沟通  ...")
+    @ApiModelProperty(value = "状态显示名称：状态：0 待沟通 1 已同意  2 已拒绝 ")
     private String statusName;
 
-    @JsonFormat(pattern = "yyyy/MM/dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "合作发起时间")
     private String effectAt;
 
@@ -47,4 +46,9 @@ public class MyCollaborateTalentResponse implements Serializable {
     @ApiModelProperty(value = "需求用户logo图片")
     private String logo;
 
+    @ApiModelProperty(value = "合作方的联系电话")
+    private String mobile;
+
+    @ApiModelProperty(value = "合作申请拒绝原因")
+    private String remark;
 }

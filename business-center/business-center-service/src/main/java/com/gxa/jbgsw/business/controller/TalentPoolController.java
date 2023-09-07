@@ -9,14 +9,10 @@ import com.gxa.jbgsw.business.client.TalentPoolApi;
 import com.gxa.jbgsw.business.entity.TalentPool;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
-import com.gxa.jbgsw.business.protocol.dto.TalentPoolAuditingDTO;
-import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
-import com.gxa.jbgsw.business.protocol.dto.TalentPoolRequest;
-import com.gxa.jbgsw.business.protocol.dto.TalentPoolResponse;
+import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.gxa.jbgsw.common.utils.PageResult;
-import com.gxa.jbgsw.business.protocol.dto.TalentPoolDetailInfo;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -56,12 +52,12 @@ public class TalentPoolController implements TalentPoolApi {
     }
 
     @Override
-    public void add(TalentPoolDTO talentPoolDTO) {
-        talentPoolService.add(talentPoolDTO);
+    public void add(TalentPoolPO talentPoolPO) {
+        talentPoolService.add(talentPoolPO);
     }
 
     @Override
-    public void update(TalentPoolDTO talentPoolDTO) {
+    public void update(TalentPoolPO talentPoolDTO) {
         talentPoolService.updateTalentPool(talentPoolDTO);
     }
 
@@ -79,6 +75,9 @@ public class TalentPoolController implements TalentPoolApi {
     @Override
     public TalentPoolDetailInfo getTalentPoolDetailInfo(Long id) {
         TalentPool talentPool = talentPoolService.getById(id);
+        if(talentPool == null){
+            return null;
+        }
 
         TalentPoolDetailInfo talentPoolDetailInfo = mapperFacade.map(talentPool, TalentPoolDetailInfo.class);
         // 职称
@@ -90,22 +89,24 @@ public class TalentPoolController implements TalentPoolApi {
         }
         // 技术领域
         StringBuffer sb = new StringBuffer();
-        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(talentPool.getTechDomain()));
-        if(tfc1 != null){
-            sb.append(tfc1.getName());
-            sb.append(CharUtil.COMMA);
-            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-            if(tfc2 != null){
-                sb.append(tfc2.getName());
-                sb.append(CharUtil.COMMA);
-                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                if(tfc3 != null){
-                    sb.append(tfc3.getName());
-                }
+        if(talentPool.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain());
+            if(tfc != null){
+                talentPoolDetailInfo.setTechDomainName(tfc.getName());
             }
         }
-        talentPoolDetailInfo.setTechDomainName(sb.toString().replace("所有分类", ""));
-
+        if(talentPool.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain1());
+            if(tfc1 != null){
+                talentPoolDetailInfo.setTechDomain1Name(tfc1.getName());
+            }
+        }
+        if(talentPool.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain2());
+            if(tfc2 != null){
+                talentPoolDetailInfo.setTechDomain2Name(tfc2.getName());
+            }
+        }
 
         return talentPoolDetailInfo;
     }
@@ -124,24 +125,24 @@ public class TalentPoolController implements TalentPoolApi {
             }
         }
         // 技术领域
-        StringBuffer sb = new StringBuffer();
-        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(talentPool.getTechDomain()));
-        if(tfc1 != null){
-            sb.append(tfc1.getName());
-            sb.append(CharUtil.COMMA);
-            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-            if(tfc2 != null){
-                sb.append(tfc2.getName());
-                sb.append(CharUtil.COMMA);
-                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                if(tfc3 != null){
-                    sb.append(tfc3.getName());
-                }
+        if(talentPool.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain());
+            if(tfc != null){
+                talentPoolDTO.setTechDomainName(tfc.getName());
             }
         }
-        talentPoolDTO.setTechDomainName(sb.toString().replace("所有分类,", ""));
-
-
+        if(talentPool.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain1());
+            if(tfc1 != null){
+                talentPoolDTO.setTechDomain1Name(tfc1.getName());
+            }
+        }
+        if(talentPool.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain2());
+            if(tfc2 != null){
+                talentPoolDTO.setTechDomain2Name(tfc2.getName());
+            }
+        }
         return talentPoolDTO;
     }
 

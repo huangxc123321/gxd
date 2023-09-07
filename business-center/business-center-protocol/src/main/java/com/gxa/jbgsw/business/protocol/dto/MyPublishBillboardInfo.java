@@ -66,5 +66,6 @@ public class MyPublishBillboardInfo implements Serializable {
     @ApiModelProperty(value = "发榜状态名称：待揭榜、已签约、解决中、已解决")
     private String statusName;
 
-
+    @ApiModelProperty(value = "pv值")
+    private Integer pv;
 }

@@ -18,4 +18,6 @@ import java.util.List;
  */
 public interface BillboardEconomicRelatedMapper extends BaseMapper<BillboardEconomicRelated> {
     List<BillboardEconomicRelatedResponse> getEconomicRecommend(@Param("billboardId") Long billboardId);
+
+    List<BillboardEconomicRelatedResponse> getAdminEconomicRecommend(@Param("billboardId") Long billboardId);
 }

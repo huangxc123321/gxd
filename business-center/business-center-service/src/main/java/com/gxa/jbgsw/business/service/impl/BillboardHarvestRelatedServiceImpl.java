@@ -6,13 +6,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
-import com.gxa.jbgsw.basis.protocol.dto.DictionaryValueQueryRequest;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.gxa.jbgsw.business.entity.Harvest;
-import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
+import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardHarvestRelatedMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -49,6 +51,8 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
     @Resource
     BillboardService billboardService;
     @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+    @Resource
     BillboardHarvestRelatedMapper billboardHarvestRelatedMapper;
     @Resource
     StringRedisTemplate stringRedisTemplate;
@@ -81,10 +85,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                         sorce.set(sorce.get().intValue() + 0);
                     }
                 }
+
                 // 技术关键词
                 String techKeys = billboard.getTechKeys();
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getTechDomain());
-                double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getTechDomain());
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getQueryKeys());
+                double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getQueryKeys());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
@@ -97,6 +102,7 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                         sorce.set(sorce.get().intValue() + 0);
                     }
                 }
+
                 // 行业
                 Integer categories = billboard.getCategories();
                 // 行业名称
@@ -104,7 +110,6 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 if(dictionaryDTO != null){
                    String categoriesName = dictionaryDTO.getDicValue();
                    String tradeType = s.getTradeType();
-
                 }
 
                 // 榜单发布地区
@@ -194,6 +199,111 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
         lambdaQueryWrapper.in(BillboardHarvestRelated::getHarvestId, list);
 
         billboardHarvestRelatedMapper.delete(lambdaQueryWrapper);
+    }
+
+    @Override
+    public void addBillboardRelated(Long harvestId) {
+        Harvest harvest = harvestService.getById(harvestId);
+
+        // 获取一百条
+        LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode())
+                          .eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
+                          .orderByDesc(Billboard::getCreateAt)
+                          .last("LIMIT 100");
+
+        List<Billboard> billboards = billboardService.list(lambdaQueryWrapper);
+        if(billboards != null && billboards.size()>0){
+            // 分数
+            AtomicReference<Integer> sorce = new AtomicReference<>(0);
+            List<BillboardHarvestRelated> relateds = new ArrayList<>();
+            List<BillboardHarvestRelated> finalRelateds = relateds;
+            billboards.stream().forEach(s->{
+                // 成果名称
+                String name = harvest.getName();
+                // 匹配标题
+                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(s.getTitle(), name);
+                if(StrUtil.isNotBlank(sameWords)){
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
+                    if(sameWords.length()>=2 && sameWords.length() <3){
+                        sorce.set(sorce.get().intValue() + 1);
+                    }else if(sameWords.length()>=3){
+                        sorce.set(sorce.get().intValue() + 2);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
+                    }
+                }
+
+                // 成果技术关键词
+                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(harvest.getTechDomain()));
+                String techKeys = tfc1.getName();
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getQueryKeys());
+                double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getQueryKeys());
+                if(StrUtil.isNotBlank(techWords)){
+                    // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
+                    if(sameWords.length()>=3 && num > 0.15){
+                        sorce.set(sorce.get().intValue() + 5);
+                    }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
+                        sorce.set(sorce.get().intValue() + 4);
+                    }else if(sameWords.length()>=2){
+                        sorce.set(sorce.get().intValue() + 2);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
+                    }
+                }
+
+                // 行业
+                Integer categories = s.getCategories();
+                // 行业名称
+                DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
+                if(dictionaryDTO != null){
+                    String categoriesName = dictionaryDTO.getDicValue();
+
+                    String hyNum = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, harvest.getQueryKeys());
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分
+                    if(sameWords.length()>=2){
+                        sorce.set(sorce.get().intValue() + 1);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
+                    }
+                }
+
+                // 榜单发布地区
+                String cityName = s.getCityName();
+                // 匹配地区
+                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(cityName, harvest.getQueryKeys());
+                if(StrUtil.isNotBlank(cityWords)){
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分
+                    if(sameWords.length()>=2){
+                        sorce.set(sorce.get().intValue() + 1);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
+                    }
+                }
+
+                BigDecimal a = new BigDecimal(sorce.get());
+                BigDecimal b = new BigDecimal(2);
+
+                BigDecimal c = a.divide(b, 2, RoundingMode.UP);
+
+                BillboardHarvestRelated related = new BillboardHarvestRelated();
+                related.setBillboardId(s.getId());
+                related.setSStar(c.doubleValue());
+                related.setHarvestId(harvest.getId());
+                related.setCreateAt(new Date());
+
+                finalRelateds.add(related);
+            });
+
+            // 排序，选出分最多的十条
+            relateds.stream().sorted(Comparator.comparing(BillboardHarvestRelated::getSStar).reversed());
+            if(relateds.size()>10){
+                relateds = relateds.subList(0,10);
+            }
+            // 批量保存
+            this.saveBatch(relateds);
+        }
+
     }
 
     public DictionaryDTO getByCache(String typeCode, String code) {

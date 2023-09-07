@@ -40,6 +40,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "发布时间")
     private Date createAt;
 
+    @ApiModelProperty(value = "发布人")
+    private Long createBy;
+
     @ApiModelProperty(value = "工信大类：字典中获取")
     private Integer categories;
 
@@ -87,6 +90,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "发榜人")
     private String publishPerson;
 
+    @ApiModelProperty(value = "是否揭榜： true 已揭榜  false 未揭榜 ")
+    private boolean isGain = false;
+
     @ApiModelProperty(value = "揭榜单位详情")
     List<BillboardGainDTO> billboardGains = new ArrayList<>();
 
@@ -96,8 +102,11 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "帅才推荐")
     List<BillboardTalentRelatedResponse> talentRecommends = new ArrayList<>();
 
-    @ApiModelProperty(value = "技术经纪人推荐")
+    @ApiModelProperty(value = "技术经纪人推荐： admin")
     List<BillboardEconomicRelatedResponse> techBrokerRecommends = new ArrayList<>();
+
+    @ApiModelProperty(value = "技术经纪人推荐: web")
+    BillboardEconomicRelatedResponse appTechBrokerRecommends = null;
 
     @ApiModelProperty(value = "我的技术经纪人")
     MyBillboardEconomicManDTO myBillboardEconomicMan;

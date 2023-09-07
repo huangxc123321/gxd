@@ -1,9 +1,11 @@
 package com.gxa.jbgsw.website.controller;
 
 import com.gxa.jbgsw.business.protocol.dto.TalentPoolDTO;
+import com.gxa.jbgsw.business.protocol.dto.TalentPoolPO;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.TalentPoolFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -23,10 +25,14 @@ public class TalentPoolController extends BaseController {
 
     @ApiOperation("新增帅才信息")
     @PostMapping("/talent/pool/add")
-    void add(@RequestBody TalentPoolDTO talentPoolDTO) throws BizException {
-        talentPoolDTO.setCreateBy(this.getUserId());
+    void add(@RequestBody TalentPoolPO talentPoolPO) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        talentPoolPO.setCreateBy(userId);
 
-        talentPoolFeignApi.add(talentPoolDTO);
+        talentPoolFeignApi.add(talentPoolPO);
     }
 
     @ApiOperation("获取所在单位")

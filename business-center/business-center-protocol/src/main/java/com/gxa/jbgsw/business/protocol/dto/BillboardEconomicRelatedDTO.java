@@ -22,7 +22,7 @@ public class BillboardEconomicRelatedDTO implements Serializable {
     private Double star;
 
     @ApiModelProperty(value = "人工手动推荐匹配度")
-    private Double hStart;
+    private Double hstar;
 
     @ApiModelProperty(value = "记录创建时间")
     private Date createAt;

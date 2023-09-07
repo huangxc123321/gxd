@@ -111,4 +111,9 @@ public class BillboardResponse implements Serializable {
     @ApiModelProperty(value = "发榜人")
     private String publishPerson;
 
+    @ApiModelProperty(value = "是否创建视频： true 创建， false 不创建", hidden = true)
+    private Integer isCreateVideo;
+
+    @ApiModelProperty(value = "是否创建视频： true 创建， false 不创建")
+    private boolean createVideo = false;
 }

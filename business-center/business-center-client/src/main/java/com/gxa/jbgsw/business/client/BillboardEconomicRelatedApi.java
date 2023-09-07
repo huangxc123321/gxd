@@ -22,6 +22,9 @@ public interface BillboardEconomicRelatedApi {
     @GetMapping("/billboard/economic/getEconomicRecommend")
     List<BillboardEconomicRelatedResponse> getEconomicRecommend(@RequestParam("id") Long billboardId);
 
+    @GetMapping("/billboard/economic/getAdminEconomicRecommend")
+    List<BillboardEconomicRelatedResponse> getAdminEconomicRecommend(@RequestParam("id") Long billboardId);
+
     @GetMapping("/billboard/economic/getMyEconomicMan")
     MyBillboardEconomicManDTO getMyEconomicMan(@RequestParam("id") Long billboardId);
 

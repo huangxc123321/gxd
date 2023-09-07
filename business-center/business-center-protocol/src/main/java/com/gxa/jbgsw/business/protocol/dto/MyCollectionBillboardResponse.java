@@ -14,6 +14,9 @@ public class MyCollectionBillboardResponse implements Serializable {
     @ApiModelProperty(value = "收藏ID")
     private Long id;
 
+    @ApiModelProperty(value = "相关收藏ID")
+    private Long pid;
+
     @ApiModelProperty(value = "榜单标题")
     private String title;
 

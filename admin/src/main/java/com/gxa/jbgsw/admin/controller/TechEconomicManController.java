@@ -15,6 +15,7 @@ import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
+import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
@@ -90,7 +91,7 @@ public class TechEconomicManController extends BaseController {
          * 分配一个账号
          * 先判断手机号是否注册，如果没有注册则注册
          */
-        UserDTO user = userFeignApi.getUserByMobile(techEconomicManDTO.getMobile());
+        UserResponse user = userFeignApi.getUserByMobile(techEconomicManDTO.getMobile());
         if(user == null){
             UserDTO userDTO = mapperFacade.map(techEconomicManDTO, UserDTO.class);
             userDTO.setNick(techEconomicManDTO.getName());
@@ -169,6 +170,11 @@ public class TechEconomicManController extends BaseController {
     }
 
 
+    @ApiOperation(value = "删除技术经纪人上传的合作协议", notes = "删除技术经纪人上传的合作协议")
+    @GetMapping("/tech/economic/deleteAgreements")
+    public void deleteAgreements(@RequestParam Long id){
+        techEconomicManFeignApi.deleteAgreements(id);
+    }
 
 
 

@@ -66,5 +66,15 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "平台：0 后台 1 APP")
     private Integer platform;
 
+    @ApiModelProperty(value = "功能类型： 0 按钮 1 菜单")
+    private Integer type;
 
+    @ApiModelProperty(value = "菜单/按钮图形")
+    private String icon;
+
+    @ApiModelProperty(value = "权限标识")
+    private String code;
+
+    @ApiModelProperty(value = "前端组件")
+    private String component;
 }

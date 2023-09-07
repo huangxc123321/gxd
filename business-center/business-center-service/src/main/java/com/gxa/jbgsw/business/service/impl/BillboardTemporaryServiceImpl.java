@@ -73,4 +73,13 @@ public class BillboardTemporaryServiceImpl extends ServiceImpl<BillboardTemporar
 
         billboardTemporaryMapper.update(null, lambdaUpdateWrapper);
     }
+
+    @Override
+    public void deleteByCreateByAndIds(Long createBy, Long[] ids) {
+        LambdaQueryWrapper<BillboardTemporary> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(BillboardTemporary::getCreateBy, createBy)
+                          .in(BillboardTemporary::getId, ids);
+
+        billboardTemporaryMapper.delete(lambdaQueryWrapper);
+    }
 }

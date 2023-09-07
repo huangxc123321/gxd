@@ -19,4 +19,8 @@ public enum DictionaryTypeEnum {
     enterprise_type,
     hot_words,
     collaborate_mode,
+    billboard_templet,
+    billboard_video_url,
+    collaborate_mode_talent,
+    ;
 }

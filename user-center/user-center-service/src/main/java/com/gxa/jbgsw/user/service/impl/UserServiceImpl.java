@@ -173,7 +173,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setRemark(userDTO.getRemark());
         user.setBuzType(userDTO.getBuzType());
         user.setScopeBusiness(userDTO.getScopeBusiness());
-
+        user.setTechDomain(userDTO.getTechDomain());
+        user.setTechDomain1(userDTO.getTechDomain1());
+        user.setTechDomain2(userDTO.getTechDomain2());
 
         this.updateById(user);
     }
@@ -244,6 +246,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setScopeBusiness(userDTO.getScopeBusiness());
         user.setRemark(userDTO.getRemark());
         user.setUnitLogo(userDTO.getUnitLogo());
+        user.setUnitName(userDTO.getUnitName());
+        user.setTechDomain(userDTO.getTechDomain());
+        user.setTechDomain1(userDTO.getTechDomain1());
+        user.setTechDomain2(userDTO.getTechDomain2());
 
         this.updateById(user);
     }

@@ -12,6 +12,9 @@ public class TechEconomicManRequiresRequest extends PageRequest implements Seria
     @ApiModelProperty(value = "经纪人", hidden = true)
     private Long createBy;
 
+    @ApiModelProperty(value = "经纪人id", hidden = true)
+    private Long economicId;
+
     @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜")
     private Integer type;
 }

@@ -18,6 +18,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -71,7 +72,9 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
         ShareCommunity shareCommunity = this.getById(id);
         ShareCommunityDetailDTO shareCommunityDTO = mapperFacade.map(shareCommunity, ShareCommunityDetailDTO.class);
         List<CommentResponse> commentResponses =  shareCommentService.getCommentById(id, -1L);
-        shareCommunityDTO.setCommentResponses(commentResponses);
+        if(CollectionUtils.isNotEmpty(commentResponses)){
+            shareCommunityDTO.setCommentResponses(commentResponses);
+        }
 
         // 点赞状态
         LikesResponse likesResponse = myLikesService.getByPid(id);
@@ -178,7 +181,7 @@ public class ShareCommunityServiceImpl extends ServiceImpl<ShareCommunityMapper,
     public void cancellikes(Long id, Long userId) {
         LambdaUpdateWrapper<ShareCommunity> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
         lambdaUpdateWrapper.eq(ShareCommunity::getId, id)
-                .setSql(" views = views - 1");
+                .setSql(" likes = likes - 1");
 
         shareCommunityMapper.update(null, lambdaUpdateWrapper);
 

@@ -25,4 +25,5 @@ public class UserErrorCode {
     public static final ResultCode QR_CODE_2 = new ResultCode(1015, "二维码已确认");
 
     public static final ResultCode CHATGPT_MESSAGE_IS_NULL = new ResultCode(1016, "消息不能为空");
+    public static final ResultCode USER_IS_NOT_ECONOMICMAN = new ResultCode(1017, "该用户不是经纪人");
 }

@@ -19,9 +19,9 @@ public interface TalentPoolService extends IService<TalentPool> {
 
     void deleteBatchIds(Long[] ids);
 
-    void add(TalentPoolDTO talentPoolDTO);
+    void add(TalentPoolPO talentPoolDTO);
 
-    void updateTalentPool(TalentPoolDTO talentPoolDTO) ;
+    void updateTalentPool(TalentPoolPO talentPoolDTO) ;
 
     List<TalentPool> getTalentPoolByTech(String key);
 

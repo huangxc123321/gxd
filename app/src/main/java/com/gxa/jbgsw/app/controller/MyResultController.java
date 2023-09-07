@@ -3,6 +3,7 @@ package com.gxa.jbgsw.app.controller;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.app.feignapi.*;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.CollaborateStatusEnum;
@@ -38,6 +39,8 @@ public class MyResultController extends BaseController {
     BillboardHarvestRelatedFeignApi billboardHarvestRelatedFeignApi;
     @Resource
     CollaborateFeignApi collaborateFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
 
     @ApiOperation("获取我的成果列表")
     @PostMapping("/havest/pageQuery")
@@ -62,8 +65,8 @@ public class MyResultController extends BaseController {
             @ApiImplicitParam(value = "成果ID", name = "id", dataType = "Long", paramType = "query"),
     })
     @GetMapping("/havest/getHavestById")
-    public HavestDTO getHavestById(@RequestParam("id")Long id){
-        HavestDTO havestDTO = havestFeignApi.getHavestById(id);
+    public HavestPO getHavestById(@RequestParam("id")Long id){
+        HavestPO havestPO = havestFeignApi.getHavestById(id);
         // 判断是否收藏
         Long userId = this.getUserId();
         if(userId != null){
@@ -73,14 +76,14 @@ public class MyResultController extends BaseController {
 
             collectionDTO = collectionFeignApi.getCollection(id, userId, collectionType);
             if(collectionDTO != null){
-                havestDTO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
+                havestPO.setCollectionStatus(CollectionStatusEnum.COLLECTION.getCode());
             }
         }
 
         // maturity_level
-        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(havestDTO.getMaturityLevel()));
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(havestPO.getMaturityLevel()));
         if(dictionaryDTO != null){
-            havestDTO.setMaturityLevelName(dictionaryDTO.getDicValue());
+            havestPO.setMaturityLevelName(dictionaryDTO.getDicValue());
         }
 
         // 榜单推荐，根据成果ID获取推荐榜单
@@ -93,7 +96,7 @@ public class MyResultController extends BaseController {
                 }
             });
 
-            havestDTO.setBillboardHarvestRecommends(relateBillboards);
+            havestPO.setBillboardHarvestRecommends(relateBillboards);
         }
 
         // 合作发起
@@ -116,9 +119,9 @@ public class MyResultController extends BaseController {
                 s.setModeName(sb.toString());
             });
         }
-        havestDTO.setHavestCollaborates(havestCollaborates);
+        havestPO.setHavestCollaborates(havestCollaborates);
 
-        return havestDTO;
+        return havestPO;
     }
 
     @ApiOperation("修改成果信息")
@@ -128,7 +131,7 @@ public class MyResultController extends BaseController {
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
-
+        
         havestFeignApi.update(havestDTO);
     }
 
@@ -157,7 +160,31 @@ public class MyResultController extends BaseController {
     @GetMapping("/havest/getRecommendHavest")
     List<RecommendHavestResponse> getRecommendHavest(){
         // 先时间，阅览数排序， 取3条数据
-        return havestFeignApi.getRecommendHavest();
+        List<RecommendHavestResponse> responses = havestFeignApi.getRecommendHavest();
+        if(responses != null && responses.size() > 0){
+            responses.stream().forEach(s->{
+                if(s.getTechDomain() != null){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
+                    }
+                }
+                if(s.getTechDomain1() != null){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                    }
+                }
+                if(s.getTechDomain2() != null){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                    }
+                }
+            });
+        }
+
+        return responses;
     }
 
 

@@ -40,7 +40,7 @@ public interface UserApi {
     List<UserResponse> getUserByIds(@RequestBody Long[]  ids);
 
     @GetMapping("/user/getUserByMobile")
-    UserDTO getUserByMobile(@RequestParam("mobie")String mobie);
+    UserResponse getUserByMobile(@RequestParam("mobile") String mobile);
 
     @PostMapping("/user/updateUserAdmin")
     void updateUserAdmin(@RequestBody UserDTO userDTO);

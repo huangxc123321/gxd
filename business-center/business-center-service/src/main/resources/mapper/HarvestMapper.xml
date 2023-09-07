@@ -37,6 +37,8 @@
                 a.unit_name AS unitName,
                 a.maturity_level AS maturityLevel,
                 a.tech_domain AS techDomain,
+                a.tech_domain1 AS techDomain1,
+                a.tech_domain2 AS techDomain2,
                 a.holder,
                 a.remark,
                 a.create_at AS createAt,
@@ -54,8 +56,14 @@
                     AND a.trade_type =  #{tradeType}
                 </if>
 
-                <if test="techDomain != null and techDomain != '' ">
-                    AND a.`tech_domain` LIKE CONCAT('%',#{techDomain},'%')
+                <if test="techDomain != null ">
+                    AND a.`tech_domain` = #{techDomain}
+                </if>
+                <if test="techDomain1 != null ">
+                    AND a.`tech_domain1` = #{techDomain1}
+                </if>
+                <if test="techDomain2 != null ">
+                    AND a.`tech_domain2` = #{techDomain2}
                 </if>
 
                 <if test="maturityLevel != null ">
@@ -83,6 +91,8 @@
             a.NAME,
             a.maturity_level AS maturityLevel,
             a.tech_domain AS techDomain,
+            a.tech_domain1 AS techDomain1,
+            a.tech_domain2 AS techDomain2,
             a.holder,
             a.remark,
             a.create_at AS createAt,
@@ -103,7 +113,13 @@
         </if>
 
         <if test="techDomain != null and techDomain != '' ">
-            AND a.`tech_domain` LIKE CONCAT('%',#{techDomain},'%')
+            AND a.`tech_domain` = #{techDomain}
+        </if>
+        <if test="techDomain1 != null and techDomain1 != '' ">
+            AND a.`tech_domain1` = #{techDomain1}
+        </if>
+        <if test="techDomain2 != null and techDomain2 != '' ">
+            AND a.`tech_domain2` = #{techDomain2}
         </if>
 
         <if test="maturityLevel != null ">
@@ -125,6 +141,8 @@
         a.unit_name AS unitName,
         a.maturity_level AS maturityLevel,
         a.tech_domain AS techDomain,
+        a.tech_domain1 AS techDomain1,
+        a.tech_domain2 AS techDomain2,
         a.holder,
         a.remark,
         a.create_at AS createAt
@@ -140,8 +158,14 @@
             AND a.trade_type =  #{tradeType}
         </if>
 
-        <if test="techDomain != null and techDomain != '' ">
-            AND a.`tech_domain` LIKE CONCAT('%',#{techDomain},'%')
+        <if test="techDomain != null ">
+            AND a.`tech_domain` = #{techDomain}
+        </if>
+        <if test="techDomain1 != null ">
+            AND a.`tech_domain1` = #{techDomain1}
+        </if>
+        <if test="techDomain2 != null ">
+            AND a.`tech_domain2` = #{techDomain2}
         </if>
 
         <if test="maturityLevel != null ">

@@ -42,7 +42,7 @@ public class BillboardTalentRelatedController implements BillboardTalentRelatedA
     public void audit(BillboardRelatedAuditDTO billboardRelatedAuditDTO) {
         BillboardTalentRelated billboardTalentRelated = billboardTalentRelatedService.getById(billboardRelatedAuditDTO.getId());
 
-        billboardTalentRelated.setHStart(billboardRelatedAuditDTO.getHStart());
+        billboardTalentRelated.setHStart(billboardRelatedAuditDTO.getHstar());
         billboardTalentRelated.setRecommendAt(new Date());
         billboardTalentRelated.setUserId(billboardRelatedAuditDTO.getUserId());
         billboardTalentRelated.setUserName(billboardRelatedAuditDTO.getUserName());

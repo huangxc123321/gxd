@@ -18,8 +18,14 @@ public class SearchHarvestsRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "行业：字典中获取")
     private String tradeType;
 
-    @ApiModelProperty(value = "技术领域：字典中获取")
-    private String techDomain;
+    @ApiModelProperty(value = "技术领域(第一级)")
+    private Long techDomain1;
+
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private Long techDomain2;
+
+    @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
+    private Long techDomain;
 
     @ApiModelProperty(value = "成熟度：字典中获取")
     private Integer maturityLevel;

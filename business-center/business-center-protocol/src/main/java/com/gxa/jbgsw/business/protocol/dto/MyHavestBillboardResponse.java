@@ -11,6 +11,9 @@ public class MyHavestBillboardResponse implements Serializable {
     @ApiModelProperty(value = "成果ID")
     private Long id;
 
+    @ApiModelProperty(value = "相关收藏ID")
+    private Long pid;
+
     @ApiModelProperty(value = "成果名称")
     private String name;
 

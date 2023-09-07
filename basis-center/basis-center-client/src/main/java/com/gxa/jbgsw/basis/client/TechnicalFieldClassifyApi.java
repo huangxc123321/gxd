@@ -1,7 +1,10 @@
 package com.gxa.jbgsw.basis.client;
 
 import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyPO;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -16,8 +19,14 @@ public interface TechnicalFieldClassifyApi {
     List<TechnicalFieldClassifyDTO> getAll();
 
     @GetMapping("/techical/field/classify/getAllById")
-    List<TechnicalFieldClassifyDTO> getAllById(@RequestParam("pid") Long pid);
+    List<TechnicalFieldClassifyPO> getAllById(@RequestParam("pid") Long pid);
 
     @GetMapping("/techical/field/classify/getById")
     TechnicalFieldClassifyDTO getById(@RequestParam("id") Long id);
+
+    @PostMapping("/techical/field/classify/insert")
+    Long insert(@RequestBody TechnicalFieldClassifyPO po1);
+
+    @GetMapping("/techical/field/classify/getAllByParentId")
+    List<TechnicalFieldClassifyDTO> getAllByParentId(@RequestParam("pid") Long pid);
 }

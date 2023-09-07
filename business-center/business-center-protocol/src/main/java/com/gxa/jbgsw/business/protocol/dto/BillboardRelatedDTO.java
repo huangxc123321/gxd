@@ -19,7 +19,7 @@ public class BillboardRelatedDTO implements Serializable {
     private Integer star;
 
     @ApiModelProperty(value = "人工手动推荐匹配度")
-    private Integer hStart;
+    private Integer hstar;
 
     @ApiModelProperty(value = "记录创建时间", hidden = true)
     private Date createAt;

@@ -119,6 +119,7 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
                     }
                 }
                 s.setModeName(sb.toString());
+
             });
         }
         PageInfo<MyCollaborateHarvestResponse> pageInfo = new PageInfo<>(responses);

@@ -5,7 +5,7 @@
     <select id="getMyCollectionBillboardResponse"
             resultType="com.gxa.jbgsw.business.protocol.dto.MyCollectionBillboardResponse">
         SELECT
-            a.id, b.title, b.content, b.`status`, b.amount, b.unit_logo, b.unit_name, b.create_at
+            a.id, b.title, b.content, b.`status`, b.amount, b.unit_logo, b.unit_name, b.create_at, a.pid
         FROM
             t_collection AS a
         LEFT JOIN t_billboard AS b ON a.pid = b.id
@@ -24,6 +24,7 @@
                 b.`name`,
                 b.remark,
                 b.guide_picture AS guidePicture,
+                a.pid,
                 b.unit_name AS unitName
             FROM
                 t_collection AS a
@@ -39,8 +40,9 @@
 
             SELECT
                 a.id,
-              b.title,
-              b.origin
+                a.pid,
+                b.title,
+                b.origin
             FROM
                 t_collection AS a
             LEFT JOIN t_news AS b ON a.pid = b.id

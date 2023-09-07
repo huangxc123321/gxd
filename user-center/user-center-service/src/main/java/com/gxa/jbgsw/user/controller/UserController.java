@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.user.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.gxa.jbgsw.business.client.CompanyApi;
 import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
@@ -9,12 +10,11 @@ import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.client.UserApi;
 import com.gxa.jbgsw.user.entity.User;
 import com.gxa.jbgsw.user.feignapi.CompanyFeignApi;
-import com.gxa.jbgsw.user.protocol.dto.UpdatePasswordDTO;
-import com.gxa.jbgsw.user.protocol.dto.UserDTO;
-import com.gxa.jbgsw.user.protocol.dto.UserRequest;
-import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.dto.*;
 import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
+import com.gxa.jbgsw.user.service.RoleService;
+import com.gxa.jbgsw.user.service.UserRoleService;
 import com.gxa.jbgsw.user.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +38,9 @@ public class UserController implements UserApi {
     UserService userService;
     @Resource
     CompanyFeignApi companyFeignApi;
+    @Resource
+    UserRoleService userRoleService;
+
     @Resource
     StringRedisTemplate stringRedisTemplate;
     @Resource
@@ -63,7 +66,18 @@ public class UserController implements UserApi {
 
     @Override
     public PageResult<UserResponse> pageQuery(UserRequest request) {
-        return userService.pageQuery(request);
+        PageResult<UserResponse> pageResult = userService.pageQuery(request);
+
+        List<UserResponse> userResponses = pageResult.getList();
+        if(CollectionUtils.isNotEmpty(userResponses)){
+            userResponses.stream().forEach(s->{
+                List<RolePO>  roles = userRoleService.getRoleByUserId(s.getId());
+                s.setRoles(roles);
+            });
+        }
+
+
+        return pageResult;
     }
 
     @Override
@@ -108,14 +122,14 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public UserDTO getUserByMobile(String mobie) {
+    public UserResponse getUserByMobile(String mobile) {
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(User::getMobile, mobie);
+        lambdaQueryWrapper.eq(User::getMobile, mobile);
 
         List<User> users = userService.list(lambdaQueryWrapper);
         if(CollectionUtils.isNotEmpty(users)){
             User user = users.get(0);
-            UserDTO userDTO = mapperFacade.map(user, UserDTO.class);
+            UserResponse userDTO = mapperFacade.map(user, UserResponse.class);
             return userDTO;
         }
         return null;

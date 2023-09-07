@@ -50,7 +50,7 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
     public void audit(BillboardRelatedAuditDTO billboardHarvestAuditDTO) {
         BillboardHarvestRelated billboardHarvestRelated = billboardHarvestRelatedService.getById(billboardHarvestAuditDTO.getId());
 
-        billboardHarvestRelated.setHStart(billboardHarvestAuditDTO.getHStart());
+        billboardHarvestRelated.setHStart(billboardHarvestAuditDTO.getHstar());
         billboardHarvestRelated.setRecommendAt(new Date());
         billboardHarvestRelated.setUserId(billboardHarvestAuditDTO.getUserId());
         billboardHarvestRelated.setUserName(billboardHarvestAuditDTO.getUserName());
@@ -68,8 +68,8 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
                 DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(s.getMaturityLevel()));
                 if(dictionaryDTO != null){
                     s.setMaturityLevelName(dictionaryDTO.getDicValue());
-                    if(s.getHStart() == null){
-                        s.setHStart(s.getStar());
+                    if(s.getHstar() == null){
+                        s.setHstar(s.getStar());
                     }
                 }
 

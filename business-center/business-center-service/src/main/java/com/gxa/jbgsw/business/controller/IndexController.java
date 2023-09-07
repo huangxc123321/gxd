@@ -1,11 +1,16 @@
 package com.gxa.jbgsw.business.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.client.IndexApi;
 import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
+import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
@@ -48,6 +53,8 @@ public class IndexController implements IndexApi {
     BillboardTalentRelatedService billboardTalentRelatedService;
     @Resource
     BillboardHarvestRelatedService billboardHarvestRelatedService;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
     @Resource
     NewsService newsService;
     @Resource
@@ -166,6 +173,13 @@ public class IndexController implements IndexApi {
         if(billboards != null){
             List<RelateBillboardDTO> billboardList = mapperFacade.mapAsList(billboards, RelateBillboardDTO.class);
             relateDTO.setBillboards(billboardList);
+        }else{
+            LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt)
+                    .last("limit 5");
+            billboards = billboardService.list(lambdaQueryWrapper);
+            List<RelateBillboardDTO> blist = mapperFacade.mapAsList(billboards, RelateBillboardDTO.class);
+            relateDTO.setBillboards(blist);
         }
 
        return relateDTO;
@@ -177,24 +191,60 @@ public class IndexController implements IndexApi {
 
         Harvest harvest = harvestService.getById(id);
 
-        // 获取相关成果
-        List<Harvest> harvests = harvestService.getHarvesByTechDomain(harvest.getTechDomain());
-        if(harvests != null){
-            List<RelateHavestDTO> havestList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
-            relateDTO.setHavests(havestList);
+        // 获取相关成果 (三条)
+        String key = "";
+        if(harvest.getTechDomain() != null){
+            Long techDomainId = Long.valueOf(harvest.getTechDomain());
+            TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
+            if(technicalFieldClassifyDTO != null){
+                key = technicalFieldClassifyDTO.getName();
+            }
         }
+        List<Harvest> harvests = harvestService.getHarvesByTechDomainLimit(key, 3);
+        if(harvests == null){
+            LambdaUpdateWrapper<Harvest> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.orderByDesc(Harvest::getCreateAt)
+                               .last(" LIMIT 3 ");
+            harvests = harvestService.list(lambdaUpdateWrapper);
+        }
+        List<RelateHavestDTO> havestList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
+        relateDTO.setHavests(havestList);
 
-        // 相关帅才推荐
+        // 相关帅才推荐（一条）
         List<BillboardTalentRelatedResponse> talents = billboardTalentRelatedService.getTalentRecommend(id);
         if(CollectionUtils.isNotEmpty(talents)){
             List<RelateTalentDTO> talentList = mapperFacade.mapAsList(talents, RelateTalentDTO.class);
+            relateDTO.setTalents(talentList.subList(0,1));
+        }else{
+            LambdaUpdateWrapper<TalentPool> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.orderByDesc(TalentPool::getCreateAt)
+                    .last(" LIMIT 1 ");
+            List<TalentPool> talentPools = talentPoolService.list(lambdaUpdateWrapper);
+            List<RelateTalentDTO> talentList = mapperFacade.mapAsList(talentPools, RelateTalentDTO.class);
+            talentList.stream().forEach(s->{
+                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                if(dicProfessional != null){
+                    s.setProfessionalName(dicProfessional.getDicValue());
+                }
+            });
             relateDTO.setTalents(talentList);
         }
 
-        // 相关榜单推荐
+        // 相关榜单推荐（五条）
         List<BillboardResponse> billboardList = billboardHarvestRelatedService.getHarvestByHarvestId(id);
-        if(billboardList != null){
+        if(CollectionUtils.isNotEmpty(billboardList)){
             List<RelateBillboardDTO> blist = mapperFacade.mapAsList(billboardList, RelateBillboardDTO.class);
+            if(blist.size()>=5){
+                relateDTO.setBillboards(blist.subList(0,5));
+            }else{
+                relateDTO.setBillboards(blist);
+            }
+        }else{
+            LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt)
+                              .last("LIMIT 5");
+            List<Billboard> billboards = billboardService.list(lambdaQueryWrapper);
+            List<RelateBillboardDTO> blist = mapperFacade.mapAsList(billboards, RelateBillboardDTO.class);
             relateDTO.setBillboards(blist);
         }
 
@@ -208,23 +258,74 @@ public class IndexController implements IndexApi {
         TalentPool talentPool = talentPoolService.getById(id);
 
         // 获取相关成果
-        List<Harvest> harvests = harvestService.getHarvesByTechDomain(talentPool.getTechDomain());
-        if(harvests != null){
-            List<RelateHavestDTO> havestList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
-            relateDTO.setHavests(havestList);
+        // 获取相关成果 (三条)
+        String key = "";
+        if(talentPool.getTechDomain() != null){
+            Long techDomainId = Long.valueOf(talentPool.getTechDomain());
+            TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
+            if(technicalFieldClassifyDTO != null){
+                key = technicalFieldClassifyDTO.getName();
+            }
+        }else if(talentPool.getTechDomain2() != null){
+            Long techDomainId = Long.valueOf(talentPool.getTechDomain2());
+            TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
+            if(technicalFieldClassifyDTO != null){
+                key = technicalFieldClassifyDTO.getName();
+            }
+        }else{
+            Long techDomainId = Long.valueOf(talentPool.getTechDomain1());
+            TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
+            if(technicalFieldClassifyDTO != null){
+                key = technicalFieldClassifyDTO.getName();
+            }
         }
 
-        // 相关帅才推荐
+        List<Harvest> harvests = harvestService.getHarvesByTechDomainLimit(key, 3);
+        if(harvests == null){
+            LambdaUpdateWrapper<Harvest> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.orderByDesc(Harvest::getCreateAt)
+                    .last(" LIMIT 3 ");
+            harvests = harvestService.list(lambdaUpdateWrapper);
+        }
+        List<RelateHavestDTO> havestList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
+        relateDTO.setHavests(havestList);
+
+
+        // 相关帅才推荐（一条）
         List<BillboardTalentRelatedResponse> talents = billboardTalentRelatedService.getTalentRecommend(id);
         if(CollectionUtils.isNotEmpty(talents)){
             List<RelateTalentDTO> talentList = mapperFacade.mapAsList(talents, RelateTalentDTO.class);
+            relateDTO.setTalents(talentList.subList(0,1));
+        }else{
+            LambdaUpdateWrapper<TalentPool> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+            lambdaUpdateWrapper.orderByDesc(TalentPool::getCreateAt)
+                    .last(" LIMIT 1 ");
+            List<TalentPool> talentPools = talentPoolService.list(lambdaUpdateWrapper);
+            List<RelateTalentDTO> talentList = mapperFacade.mapAsList(talentPools, RelateTalentDTO.class);
+            talentList.stream().forEach(s->{
+                DictionaryDTO dicProfessional = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(s.getProfessional()));
+                if(dicProfessional != null){
+                    s.setProfessionalName(dicProfessional.getDicValue());
+                }
+            });
             relateDTO.setTalents(talentList);
         }
 
-        // 相关榜单推荐
+        // 相关榜单推荐（五条）
         List<BillboardResponse> billboardList = billboardHarvestRelatedService.getHarvestByHarvestId(id);
-        if(billboardList != null){
+        if(CollectionUtils.isNotEmpty(billboardList)){
             List<RelateBillboardDTO> blist = mapperFacade.mapAsList(billboardList, RelateBillboardDTO.class);
+            if(blist.size()>=5){
+                relateDTO.setBillboards(blist.subList(0,5));
+            }else{
+                relateDTO.setBillboards(blist);
+            }
+        }else{
+            LambdaQueryWrapper<Billboard> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+            lambdaQueryWrapper.orderByDesc(Billboard::getCreateAt)
+                    .last("LIMIT 5");
+            List<Billboard> billboards = billboardService.list(lambdaQueryWrapper);
+            List<RelateBillboardDTO> blist = mapperFacade.mapAsList(billboards, RelateBillboardDTO.class);
             relateDTO.setBillboards(blist);
         }
 

@@ -62,6 +62,9 @@ public class BillboardController implements BillboardApi {
     @Override
     public void add(BillboardDTO billboardDTO) {
         Billboard billboard = mapperFacade.map(billboardDTO, Billboard.class);
+        if(billboardDTO.isCreateVideo()){
+            billboard.setIsCreateVideo(1);
+        }
         billboard.setCreateAt(new Date());
 
         // 组装keys
@@ -102,6 +105,11 @@ public class BillboardController implements BillboardApi {
     }
 
     @Override
+    public void addPv(Long id) {
+        billboardService.add(id);
+    }
+
+    @Override
     public void deleteBatchIds(Long[] ids) {
         billboardService.deleteBatchIds(ids);
     }
@@ -134,6 +142,9 @@ public class BillboardController implements BillboardApi {
                 }
                 // 状态名称
                 s.setStatusName(BillboardStatusEnum.getNameByIndex(s.getStatus()));
+                if(Integer.valueOf(1).equals(s.getIsCreateVideo())){
+                    s.setCreateVideo(true);
+                }
             });
 
             pages.setList(responses);
@@ -322,6 +333,10 @@ public class BillboardController implements BillboardApi {
 
         Long createBy = billboardTemporaries.get(0).getCreateBy();
         billboardTemporaryService.updateStatusByCreateBy(createBy, 0);
+
+        // 删除临时数据
+        billboardTemporaryService.deleteByCreateByAndIds(createBy, ids);
+
     }
 }
 

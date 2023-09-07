@@ -31,6 +31,11 @@ public class BaseController {
         return ((ServletRequestAttributes)RequestContextHolder.currentRequestAttributes()).getRequest();
     }
 
+    protected String getToken() {
+        return this.getRequest().getHeader("token");
+    }
+
+
     protected Long getUserId() {
         Long userId = null;
 
@@ -90,6 +95,18 @@ public class BaseController {
             JSONObject jsonObject = JSONObject.parseObject(userInfo);
             if(jsonObject != null){
                 return  jsonObject.getString("unitName");
+            }
+        }
+        return "";
+    }
+
+    protected String getMobile(){
+        Long userId = this.getUserId();
+        String userInfo = stringRedisTemplate.opsForValue().get(RedisKeys.USER_INFO+userId);
+        if(StrUtil.isNotBlank(userInfo)){
+            JSONObject jsonObject = JSONObject.parseObject(userInfo);
+            if(jsonObject != null){
+                return  jsonObject.getString("mobile");
             }
         }
         return "";

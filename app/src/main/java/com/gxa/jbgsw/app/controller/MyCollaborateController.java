@@ -12,7 +12,6 @@ import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.MessageLogInfo;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
-import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
@@ -23,6 +22,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -108,6 +108,8 @@ public class MyCollaborateController extends BaseController {
     @ApiOperation("发起合作")
     @PostMapping("/collaborate/add")
     void add(@RequestBody CollaborateDTO collaborateDTO) throws BizException {
+        List<CollaborateDTO> collaborates = new ArrayList<>();
+
         Long userId = this.getUserId();
         if(userId == null){
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
@@ -120,20 +122,29 @@ public class MyCollaborateController extends BaseController {
         collaborateDTO.setLaunchUserName(this.getUserNick());
         // 合作类型：0 成果合作  1 需求合作（跟帅才合作）
         if(CollaborateTypeEnum.GAIN.getCode().equals(collaborateDTO.getType())){
-            HavestDTO havest = havestFeignApi.getHavestById(collaborateDTO.getPid());
+            HavestPO havest = havestFeignApi.getHavestById(collaborateDTO.getPid());
             collaborateDTO.setHarvestUserId(havest.getCreateBy());
 
             harvestUserId = havest.getCreateBy();
+
+            collaborates.add(collaborateDTO);
         }
 
-        if(CollaborateTypeEnum.REQUIREMENT.getCode().equals(collaborateDTO.getType())){
+        else if(CollaborateTypeEnum.REQUIREMENT.getCode().equals(collaborateDTO.getType())){
             Long[] ids = collaborateDTO.getBillboardIds();
-            for(int i=0; i<ids.length; i++){
-                collaborateDTO.setBillboardId(ids[i]);
-                collaborateFeignApi.add(collaborateDTO);
+            if(ids != null && ids.length>0){
+                for(int i=0; i<ids.length; i++){
+                    collaborateDTO.setBillboardId(ids[i]);
+                    collaborates.add(collaborateDTO);
+                }
+            }else{
+                collaborates.add(collaborateDTO);
             }
-        }else {
-            collaborateFeignApi.add(collaborateDTO);
+        }
+
+        // 插入(基本上是一条，所以不搞批量插入了)
+        for(int i=0; i<collaborates.size(); i++){
+            collaborateFeignApi.add(collaborates.get(i));
         }
 
         // 写消息（发起合作：（用户名）向您发起XXX（合作方式）的合作。）
@@ -158,9 +169,9 @@ public class MyCollaborateController extends BaseController {
             Long talentId = collaborateDTO.getPid();
             TalentPoolDTO talentPool = talentPoolFeignApi.getTalentPoolById(talentId);
             if(talentPool != null){
-                UserDTO userDTO = userFeignApi.getUserByMobile(talentPool.getMobie());
-                if(userDTO != null){
-                    messageDTO.setUserId(userDTO.getId());
+                UserResponse userResponse = userFeignApi.getUserByMobile(talentPool.getMobie());
+                if(userResponse != null){
+                    messageDTO.setUserId(userResponse.getId());
                 }
             }
         }

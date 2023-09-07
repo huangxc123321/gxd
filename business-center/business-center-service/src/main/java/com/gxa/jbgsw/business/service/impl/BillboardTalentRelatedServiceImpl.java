@@ -72,7 +72,7 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 String title = billboard.getTitle();
 
                 // 榜单名称 ===== 研究方向
-                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getResearchDirection());
+                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getQueryKeys());
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=2 && sameWords.length() <3){
@@ -87,8 +87,8 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
 
                 // 技术关键词 === 研究成果
                 String techKeys = billboard.getTechKeys();
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getProject());
-                double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getTechDomain());
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getQueryKeys());
+                double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getQueryKeys());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
@@ -108,7 +108,7 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
                 if(dictionaryDTO != null){
                     String categoriesName = dictionaryDTO.getDicValue();
-                    String techDomain =  s.getTechDomain();
+                    String techDomain =  s.getQueryKeys();
                     String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, techDomain);
                     if(StrUtil.isNotBlank(techSameWorkds)){
                         // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分

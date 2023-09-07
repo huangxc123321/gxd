@@ -2,4 +2,21 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.gxa.jbgsw.user.mapper.MenuMapper">
 
+
+    <resultMap id="menuDTOMap" type="com.gxa.jbgsw.user.protocol.dto.MenuPO">
+        <association property="sonMenus"
+                     select="com.gxa.jbgsw.user.mapper.MenuMapper.getMenuById" column="{parentId=id}"
+                     fetchType="lazy">
+        </association>
+    </resultMap>
+
+
+    <select id="getMenuById" resultMap="menuDTOMap">
+      select a.id, a.name, a.pid, a.url, a.show_inx AS showInx , a.type, a.icon FROM t_menu AS a
+      WHERE  a.pid = #{parentId}
+      order by a.pid desc
+    </select>
+
+
+
 </mapper>

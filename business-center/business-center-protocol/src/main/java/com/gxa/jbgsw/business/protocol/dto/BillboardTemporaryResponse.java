@@ -68,6 +68,9 @@ public class BillboardTemporaryResponse implements Serializable {
     @ApiModelProperty(value = "状态： 0 导入成功  1 导入失败")
     private Integer status;
 
+    @ApiModelProperty(value = "状态显示名称")
+    private String statusName;
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "发布时间")
     private Date createAt;

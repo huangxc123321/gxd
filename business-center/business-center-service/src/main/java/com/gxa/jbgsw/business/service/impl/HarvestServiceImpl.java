@@ -213,4 +213,30 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
 
         return harvestMapper.selectList(lambdaQueryWrapper);
     }
+
+    @Override
+    public List<Harvest> getHarvesByTechDomainLimit(String techDomain, int num) {
+        LambdaQueryWrapper<Harvest> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.like(Harvest::getQueryKeys, techDomain)
+                .orderByDesc(Harvest::getCreateAt)
+                .last(" LIMIT "+ num);
+        List<Harvest> harvests = harvestMapper.selectList(lambdaQueryWrapper);
+
+        return harvests;
+    }
+
+    @Override
+    public void updateHarvest(Harvest harvest, List<PatentDTO> patents) {
+        harvestMapper.updateById(harvest);
+        // 是专利
+        if(harvest.getIsPatent().equals(Integer.valueOf(1))){
+            if(CollectionUtils.isNotEmpty(patents)){
+                List<Patent> ps = mapperFacade.mapAsList(patents, Patent.class);
+                ps.stream().forEach(s->{
+                    s.setPid(harvest.getId());
+                });
+                patentService.updateBatchById(ps);
+            }
+        }
+    }
 }

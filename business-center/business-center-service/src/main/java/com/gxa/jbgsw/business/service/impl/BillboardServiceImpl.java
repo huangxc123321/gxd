@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
@@ -536,6 +537,15 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);
 
         return billboards;
+    }
+
+    @Override
+    public void add(Long id) {
+        UpdateWrapper<Billboard> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setSql("pv = pv +" + 1)
+                .eq("id", id);
+
+        billboardMapper.update(null, updateWrapper);
     }
 
 

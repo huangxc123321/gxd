@@ -35,4 +35,7 @@ public interface BillboardGainApi {
 
     @PostMapping(value = "/billboard/gain/add")
     void addBillboardGain(@RequestBody BillboardGainAddDTO billboardGainAddDTO);
+
+    @GetMapping("/billboard/gain/getIsGain")
+    boolean getIsGain(@RequestParam("pid") Long pid, @RequestParam("userId") Long userId);
 }

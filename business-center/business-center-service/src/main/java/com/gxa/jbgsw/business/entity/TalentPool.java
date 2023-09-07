@@ -92,9 +92,6 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "职称")
     private Long professional;
 
-    @ApiModelProperty(value = "技术领域：字典")
-    private String techDomain;
-
     @ApiModelProperty(value = "研究方向")
     private String researchDirection;
 
@@ -130,5 +127,14 @@ private static final long serialVersionUID=1L;
 
     @ApiModelProperty(value = "查询关键字： 职称+工信大类+技术关键词")
     private String queryKeys;
+
+    @ApiModelProperty(value = "技术领域(第一级)")
+    private Long techDomain1;
+
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private Long techDomain2;
+
+    @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
+    private Long techDomain;
 
 }

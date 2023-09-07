@@ -22,6 +22,7 @@ import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.beans.BeanUtils;
 
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
@@ -47,7 +48,8 @@ public class HarvestController implements HarvestApi {
     PatentService patentService;
     @Resource
     MapperFacade mapperFacade;
-
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public PageResult<HarvestResponse> pageQuery(HarvestRequest request) {
@@ -58,23 +60,24 @@ public class HarvestController implements HarvestApi {
         if(CollectionUtils.isNotEmpty(harvests)){
             harvests.forEach(s->{
                 // 技术领域
-                StringBuffer sb = new StringBuffer();
-                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
-                if(tfc1 != null){
-                    sb.append(tfc1.getName());
-                    sb.append(CharUtil.COMMA);
-                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-                    if(tfc2 != null){
-                        sb.append(tfc2.getName());
-                        sb.append(CharUtil.COMMA);
-                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                        if(tfc3 != null){
-                            sb.append(tfc3.getName());
-                        }
+                if(s.getTechDomain() != null){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
                     }
                 }
-                s.setTechDomainName(sb.toString().replace("所有分类,", ""));
-
+                if(s.getTechDomain1() != null){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                    }
+                }
+                if(s.getTechDomain2() != null){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                    }
+                }
             });
             pages.setList(harvests);
             pages.setPageNum(pageResult.getPageNum());
@@ -92,7 +95,7 @@ public class HarvestController implements HarvestApi {
         Harvest harvest = mapperFacade.map(havestDTO, Harvest.class);
         harvest.setCreateAt(new Date());
 
-        // trade_type + tech_domain + maturity_level + name
+        // name + maturity_level + tech_domain
         // 组装keys
         StringBuffer sb = new StringBuffer();
         // 标题
@@ -104,32 +107,36 @@ public class HarvestController implements HarvestApi {
             sb.append(dic.getDicValue());
         }
         sb.append(CharUtil.COMMA);
-        // 行业类型
-        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.trade_type.name(), String.valueOf(havestDTO.getTradeType()));
-        if(dictionaryDTO != null){
-            sb.append(dictionaryDTO.getDicValue());
-        }
         // 技术领域
-        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(havestDTO.getTechDomain()));
-        if(tfc1 != null){
-            sb.append(tfc1.getName());
-            sb.append(CharUtil.COMMA);
-            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+        if(havestDTO.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(havestDTO.getTechDomain());
+            if(tfc != null){
+                sb.append(tfc.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        if(havestDTO.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(havestDTO.getTechDomain1());
+            if(tfc1 != null){
+                sb.append(tfc1.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        if(havestDTO.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(havestDTO.getTechDomain2());
             if(tfc2 != null){
                 sb.append(tfc2.getName());
                 sb.append(CharUtil.COMMA);
-                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                if(tfc3 != null){
-                    sb.append(tfc3.getName());
-                }
             }
         }
+
         harvest.setQueryKeys(sb.toString());
         harvestService.saveHarvest(harvest, havestDTO.getPatents());
 
-        // 匹配榜单
-
-
+        // 发布成果： 匹配榜单
+        String key = RedisKeys.HARVEST_RELATED_RECOMMEND_TASK + harvest.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(harvest.getId()), 1, TimeUnit.MINUTES);
     }
 
     @Override
@@ -141,9 +148,46 @@ public class HarvestController implements HarvestApi {
     public void update(HavestDTO havestDTO) {
         Harvest harvest = harvestService.getById(havestDTO.getId());
 
-        // havestDTO有null就不需要替换harvest
         BeanUtils.copyProperties(havestDTO, harvest);
-        harvestService.updateById(harvest);
+
+        // name + maturity_level + tech_domain
+        // 组装keys
+        StringBuffer sb = new StringBuffer();
+        // 标题
+        sb.append(harvest.getName());
+        sb.append(CharUtil.COMMA);
+        // 成熟度
+        DictionaryDTO dic = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(harvest.getMaturityLevel()));
+        if(dic != null){
+            sb.append(dic.getDicValue());
+        }
+        sb.append(CharUtil.COMMA);
+        // 技术领域
+        if(harvest.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(harvest.getTechDomain());
+            if(tfc != null){
+                sb.append(tfc.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        if(harvest.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(harvest.getTechDomain1());
+            if(tfc1 != null){
+                sb.append(tfc1.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        if(havestDTO.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(havestDTO.getTechDomain2());
+            if(tfc2 != null){
+                sb.append(tfc2.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        harvest.setQueryKeys(sb.toString());
+
+        harvestService.updateHarvest(harvest, havestDTO.getPatents());
+
     }
 
     @Override
@@ -163,22 +207,30 @@ public class HarvestController implements HarvestApi {
         HavestDetailInfo havestDetailInfo = mapperFacade.map(harvest, HavestDetailInfo.class);
         // 技术领域
         StringBuffer sb = new StringBuffer();
-        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(harvest.getTechDomain()));
-        if(tfc1 != null){
-            sb.append(tfc1.getName());
-            sb.append(CharUtil.COMMA);
-            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
+        // 技术领域
+        if(harvest.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(harvest.getTechDomain());
+            if(tfc != null){
+                sb.append(tfc.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        if(harvest.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(harvest.getTechDomain1());
+            if(tfc1 != null){
+                sb.append(tfc1.getName());
+                sb.append(CharUtil.COMMA);
+            }
+        }
+        if(harvest.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(harvest.getTechDomain2());
             if(tfc2 != null){
                 sb.append(tfc2.getName());
-                sb.append(CharUtil.COMMA);
-                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                if(tfc3 != null){
-                    sb.append(tfc3.getName());
-                }
             }
         }
         havestDetailInfo.setTechKeys(sb.toString().replace("所有分类,", ""));
         havestDetailInfo.setTechDomainName(sb.toString().replace("所有分类,", ""));
+
         // 成熟度
         DictionaryDTO dicMaturityLevel = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.maturity_level.name(), String.valueOf(harvest.getMaturityLevel()));
         if(dicMaturityLevel != null){
@@ -189,15 +241,35 @@ public class HarvestController implements HarvestApi {
     }
 
     @Override
-    public HavestDTO getHavestById(Long id) {
+    public HavestPO getHavestById(Long id) {
         Harvest harvest = harvestService.getById(id);
-        HavestDTO havestDTO = mapperFacade.map(harvest, HavestDTO.class);
+        HavestPO havestPO = mapperFacade.map(harvest, HavestPO.class);
+
+        // 技术领域
+        if(havestPO.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain());
+            if(tfc != null){
+                havestPO.setTechDomainName(tfc.getName());
+            }
+        }
+        if(havestPO.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain1());
+            if(tfc1 != null){
+                havestPO.setTechDomain1Name(tfc1.getName());
+            }
+        }
+        if(havestPO.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain2());
+            if(tfc2 != null){
+                havestPO.setTechDomain2Name(tfc2.getName());
+            }
+        }
 
         if(harvest.getIsPatent() != null && harvest.getIsPatent().equals(Integer.valueOf(1))){
             List<PatentDTO> patents = patentService.getPatentByPid(id);
-            havestDTO.setPatents(patents);
+            havestPO.setPatents(patents);
         }
-        return havestDTO;
+        return havestPO;
     }
 
     @Override
@@ -215,11 +287,6 @@ public class HarvestController implements HarvestApi {
             List<HarvestResponse> responses = mapperFacade.mapAsList(harvests, HarvestResponse.class);
             responses.forEach(s->{
 
-                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(""));
-                if(dictionaryDTO != null){
-
-
-                }
             });
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());

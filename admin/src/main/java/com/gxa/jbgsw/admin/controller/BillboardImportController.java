@@ -100,6 +100,8 @@ public class BillboardImportController extends BaseController {
                         // 工信大类名称
                         s.setCategoriesName(dictionaryDTO.getDicValue());
                     }
+                    // 状态： 0 导入成功  1 导入失败
+                    s.setStatusName(s.getStatus().equals(Integer.valueOf(0)) ? "导入成功" : "导入失败");
                 });
             }
         }
@@ -119,15 +121,15 @@ public class BillboardImportController extends BaseController {
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
 
-        // 先删除之前的数据
-        billboardTemporaryFeignApi.deleteByCreateBy(userId);
-
         ApiResult apiResult = new ApiResult();
         List<BillboardTemporaryDTO> batchList = new ArrayList();
         batchList.clear();
 
         String unitName = userResponse.getUnitName();
         String unitLogo = userResponse.getUnitLogo();
+
+        int total = 0;
+        int failures = 0;
 
         try{
             // 获得文件流
@@ -140,6 +142,7 @@ public class BillboardImportController extends BaseController {
             int firstRowNum = 0;
             // 一直读到最后一行
             int lasrRowNum = sheet.getLastRowNum();
+
             for (int i = 1; i <= lasrRowNum; i++) {
                 BillboardTemporaryDTO billboardDTO = new BillboardTemporaryDTO();
                 Integer status = 0;
@@ -207,7 +210,7 @@ public class BillboardImportController extends BaseController {
                 }
                 billboardDTO.setUnitName(unitName);
                 billboardDTO.setUnitLogo(unitLogo);
-                billboardDTO.setCreateBy(userResponse.getCreateBy());
+                billboardDTO.setCreateBy(userResponse.getId());
                 billboardDTO.setCreateAt(new Date());
                 billboardDTO.setProvinceId(userResponse.getProvinceId());
                 billboardDTO.setProvinceName(userResponse.getProvinceName());
@@ -221,11 +224,18 @@ public class BillboardImportController extends BaseController {
                 }else{
                     batchList.add(billboardDTO);
                 }
+
+                if(status == 1){
+                    ++failures;
+                }
             }
 
             // 批量插入
             BillboardTemporaryDTO[]  objects = new BillboardTemporaryDTO[batchList.size()];
             batchList.toArray(objects);
+
+            total = objects.length;
+            System.out.println("total: "+total);
             billboardTemporaryFeignApi.batchInsert(objects);
         }catch (Exception ex){
             ex.printStackTrace();
@@ -236,6 +246,8 @@ public class BillboardImportController extends BaseController {
             }
         }
 
+        int success = total - failures;
+        apiResult.setMessage("成功上传"+success+"条数据，失败"+failures+"条。您可以在列表编辑或删除");
         return  apiResult;
     }
 

@@ -20,4 +20,6 @@ public interface BillboardTemporaryService  extends IService<BillboardTemporary>
     void deleteByCreateBy(Long userId);
 
     void updateStatusByCreateBy(Long createBy, Integer status);
+
+    void deleteByCreateByAndIds(Long createBy, Long[] ids);
 }

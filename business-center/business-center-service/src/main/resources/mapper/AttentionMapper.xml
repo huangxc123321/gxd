@@ -8,7 +8,9 @@
          SELECT
             a.id,
             b.`name`,
-            b.logo
+            b.logo,
+            a.type,
+            a.pid
         FROM
             t_attention AS a
         LEFT JOIN t_company AS b ON a.pid = b.id
@@ -45,6 +47,8 @@
             b.professional,
             b.job,
             b.photo,
+            a.type,
+            a.pid,
             b.research_direction AS harvest,
             b.tech_domain AS techDomain
         FROM
@@ -61,6 +65,8 @@
          SELECT
             a.id,
             b.`name`,
+            a.type,
+            a.pid,
             b.logo
         FROM
             t_attention AS a

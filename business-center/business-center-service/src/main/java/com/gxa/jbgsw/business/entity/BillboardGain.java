@@ -41,6 +41,9 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "揭榜方案：附件")
     private String attachment;
 
+    @ApiModelProperty(value = "揭榜方案附件名称")
+    private String attachmentName;
+
     @ApiModelProperty(value = "揭榜单位")
     private String acceptBillboard;
 

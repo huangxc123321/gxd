@@ -63,4 +63,6 @@ public interface BillboardService extends IService<Billboard> {
     List<BillboardResponse> getBillboardByUnitName(String name);
 
     List<Billboard> getRelatedBillboardByCompanyId(Long id);
+
+    void add(Long id);
 }

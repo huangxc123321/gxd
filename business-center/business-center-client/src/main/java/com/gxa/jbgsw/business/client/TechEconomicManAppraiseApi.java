@@ -24,4 +24,5 @@ public interface TechEconomicManAppraiseApi {
 
     @GetMapping("/tech/economic/appraise/delete")
     void delete(@RequestParam("id") Long id);
+
 }

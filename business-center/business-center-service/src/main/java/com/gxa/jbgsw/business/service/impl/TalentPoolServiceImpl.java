@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.github.pagehelper.PageHelper;
@@ -67,44 +68,56 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     }
 
     @Override
-    public void add(TalentPoolDTO talentPoolDTO) {
-        TalentPool talentPool = mapperFacade.map(talentPoolDTO, TalentPool.class);
+    public void add(TalentPoolPO talentPoolPO) {
+        TalentPool talentPool = mapperFacade.map(talentPoolPO, TalentPool.class);
         talentPool.setId(null);
         talentPool.setCreateAt(new Date());
 
         StringBuffer sb = new StringBuffer();
         StringBuffer ts = new StringBuffer();
-        TechnicalFieldClassifyDTO t = technicalFieldClassifyFeignApi.getById(talentPoolDTO.getTechDomain());
-        ts.append(t.getName());
-        if(t != null && !t.getPid().equals(-1)){
-            TechnicalFieldClassifyDTO t1 = technicalFieldClassifyFeignApi.getById(t.getPid());
-            ts.append(",").append(t1.getName());
-            if(t1 != null && !t1.getPid().equals(-1)){
-                TechnicalFieldClassifyDTO t2 = technicalFieldClassifyFeignApi.getById(t1.getPid());
-                ts.append(",").append(t2.getName());
-
-                if(t2!=null && !t2.getPid().equals(-1)){
-                    TechnicalFieldClassifyDTO t3 = technicalFieldClassifyFeignApi.getById(t2.getPid());
-                    ts.append(",").append(t3.getName());
-                }
+        // 技术领域
+        if(talentPool.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain());
+            if(tfc != null){
+                ts.append(tfc.getName());
+                ts.append(CharUtil.COMMA);
+            }
+        }
+        if(talentPool.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain1());
+            if(tfc1 != null){
+                ts.append(tfc1.getName());
+                ts.append(CharUtil.COMMA);
+            }
+        }
+        if(talentPool.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain2());
+            if(tfc2 != null){
+                ts.append(tfc2.getName());
+                ts.append(CharUtil.COMMA);
             }
         }
         // 技术领域
         sb.append(ts.toString());
 
-        sb.append(talentPoolDTO.getName()).append(",").append(talentPoolDTO.getHighestEdu()).append(",")
-                .append(talentPoolDTO.getJob()).append(",").append(talentPoolDTO.getProfessionalName())
-                .append(",").append(talentPoolDTO.getResearchDirection());
+        if(talentPool.getProfessional() != null){
+            DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.professional.name(), String.valueOf(talentPool.getProfessional()));
+            if(dictionaryDTO != null){
+                sb.append(",").append(dictionaryDTO.getDicValue());
+            }
+        }
+        sb.append(talentPool.getName()).append(",").append(talentPool.getHighestEdu()).append(",")
+                .append(talentPool.getJob()).append(",").append(talentPool.getResearchDirection());
         talentPool.setQueryKeys(sb.toString());
 
         this.save(talentPool);
     }
 
     @Override
-    public void updateTalentPool(TalentPoolDTO talentPoolDTO) throws BizException {
-        TalentPool talentPool = talentPoolMapper.selectById(talentPoolDTO.getId());
+    public void updateTalentPool(TalentPoolPO talentPoolPO) throws BizException {
+        TalentPool talentPool = talentPoolMapper.selectById(talentPoolPO.getId());
         // talentPoolDTO有null就不需要替换talentPool
-        BeanUtils.copyProperties(talentPoolDTO, talentPool);
+        BeanUtils.copyProperties(talentPoolPO, talentPool);
 
         talentPoolMapper.updateById(talentPool);
     }

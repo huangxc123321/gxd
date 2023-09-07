@@ -8,7 +8,12 @@
             a.id,
             a.`name`,
             a.url,
-            a.pid
+            a.pid,
+            a.`code`,
+            a.component,
+            a.icon,
+            a.show_inx AS showInx,
+            a.type
         FROM
             t_menu AS a
         LEFT JOIN t_role_menu AS b ON a.id = b.menu_id

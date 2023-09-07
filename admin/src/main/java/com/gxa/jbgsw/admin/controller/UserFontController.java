@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.admin.controller;
 
+import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.common.exception.BizException;
@@ -11,16 +12,19 @@ import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 @Api(tags = "用户管理")
 @RestController
 @Slf4j
 @ResponseBody
 public class UserFontController extends BaseController {
+    private int expireTime = 2592000;
     @Resource
     UserFeignApi userFeignApi;
     @Resource
@@ -108,6 +112,16 @@ public class UserFontController extends BaseController {
         }
         userDTO.setUpdateBy(this.getUserId());
         userFeignApi.updateUserAdmin(userDTO);
+
+        String token = this.getToken();
+        if(StrUtil.isNotBlank(token)){
+            UserResponse userResponse = userFeignApi.getUserById(userDTO.getId());
+
+            // token放到redis中
+            stringRedisTemplate.opsForValue().set(RedisKeys.USER_TOKEN+token, String.valueOf(userResponse.getId()), expireTime, TimeUnit.SECONDS);
+            // 存储用户信息
+            stringRedisTemplate.opsForValue().set(RedisKeys.USER_INFO+userResponse.getId(), JSONObject.toJSONString(userResponse), expireTime, TimeUnit.SECONDS);
+        }
     }
 
     @ApiOperation("修改用户使用状态: 使用状态： 0 已使用  1 停用")

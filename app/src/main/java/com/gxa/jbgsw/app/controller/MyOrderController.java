@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.app.controller;
 
 import com.gxa.jbgsw.business.protocol.dto.MyOrderResponse;
+import com.gxa.jbgsw.business.protocol.dto.TechEconomicManDTO;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequiresRequest;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
@@ -33,6 +34,14 @@ public class MyOrderController extends BaseController {
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
         request.setCreateBy(userId);
+
+        TechEconomicManDTO techEconomicMan = techEconomicManFeignApi.getTechEconomicManByMobile(this.getMobile());
+        if(techEconomicMan != null){
+            request.setEconomicId(techEconomicMan.getId());
+        }else{
+            throw new BizException(UserErrorCode.USER_IS_NOT_ECONOMICMAN);
+        }
+
         MyOrderResponse  myOrderResponse = techEconomicManFeignApi.getEconomicManRequires(request);
 
         return myOrderResponse;

@@ -71,28 +71,27 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
 
     @Override
     public List<MenuPO> getUserMenus(Long userId, Integer platform) {
-        List<MenuPO> result = new ArrayList<>();
-
         if(platform == null){
             platform = 0;
         }
 
         List<Menu> menus = roleMenuMapper.getUserMenus(userId, platform);
-        Map<Long, Long> map = new HashMap<>();
-        menus.stream().forEach(s->{
-            if(!map.containsKey(s.getPid())){
-                // 没有包含
-                Menu menu = menuMapper.selectById(s.getPid());
-                map.put(menu.getId(), menu.getId());
+        List<MenuPO> result =mapperFacade.mapAsList(menus, MenuPO.class);
 
-                MenuPO po = new MenuPO();
-                po.setId(menu.getId());
-                po.setName(menu.getName());
 
-                result.add(po);
-            }
-        });
+//        Map<Long, Long> map = new HashMap<>();
+//        menus.stream().forEach(s->{
+//            if(!map.containsKey(s.getPid())){
+//                // 没有包含
+//                Menu menu = menuMapper.selectById(s.getPid());
+//                if(menu != null){
+//                    MenuPO po = mapperFacade.map(menu, MenuPO.class);
+//                    result.add(po);
+//                }
+//            }
+//        });
 
+/*
         menus.stream().forEach(x->{
             Long id = x.getId();
             Long pid = x.getPid();
@@ -113,6 +112,7 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
                 menuPO.setSonMenus(list);
             }
         });
+*/
 
         return result;
     }

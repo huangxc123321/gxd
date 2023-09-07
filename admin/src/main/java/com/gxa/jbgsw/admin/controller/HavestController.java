@@ -88,37 +88,38 @@ public class HavestController extends BaseController {
             @ApiImplicitParam(value = "成果ID", name = "id", dataType = "Long", paramType = "query"),
     })
     @GetMapping("/havest/getHavestById")
-    public HavestDTO getHavestById(@RequestParam("id")Long id){
-        HavestDTO havestDTO = havestFeignApi.getHavestById(id);
+    public HavestPO getHavestById(@RequestParam("id")Long id){
+        HavestPO havestPO = havestFeignApi.getHavestById(id);
         // maturity_level
-        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(havestDTO.getMaturityLevel()));
+        DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeEnum.maturity_level.name(), String.valueOf(havestPO.getMaturityLevel()));
         if(dictionaryDTO != null){
-            havestDTO.setMaturityLevelName(dictionaryDTO.getDicValue());
+            havestPO.setMaturityLevelName(dictionaryDTO.getDicValue());
         }
 
         // 技术领域
-        StringBuffer sb = new StringBuffer();
-        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(havestDTO.getTechDomain()));
-        if(tfc1 != null){
-            sb.append(tfc1.getName());
-            sb.append(CharUtil.COMMA);
-            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-            if(tfc2 != null){
-                sb.append(tfc2.getName());
-                sb.append(CharUtil.COMMA);
-                TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                if(tfc3 != null){
-                    sb.append(tfc3.getName());
-                }
+        if(havestPO.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain());
+            if(tfc != null){
+                havestPO.setTechDomainName(tfc.getName());
             }
         }
-        havestDTO.setTechDomainName(sb.toString().replace("所有分类,", ""));
-
+        if(havestPO.getTechDomain1() != null){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain1());
+            if(tfc1 != null){
+                havestPO.setTechDomain1Name(tfc1.getName());
+            }
+        }
+        if(havestPO.getTechDomain2() != null){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain2());
+            if(tfc2 != null){
+                havestPO.setTechDomain2Name(tfc2.getName());
+            }
+        }
 
         // 榜单推荐，根据成果ID获取推荐榜单
         List<BillboardHarvestRelatedResponse> relateBillboards = billboardHarvestRelatedFeignApi.getBillboardstByHarvestId(id);
         if(relateBillboards != null){
-            havestDTO.setBillboardHarvestRecommends(relateBillboards);
+            havestPO.setBillboardHarvestRecommends(relateBillboards);
         }
 
         // 合作发起
@@ -131,19 +132,19 @@ public class HavestController extends BaseController {
                 String[] modes = mode.split(",");
                 StringBuffer xx = new StringBuffer();
                 for(int i=0; i<modes.length; i++){
-                    DictionaryDTO dict = dictionaryFeignApi.getByCache(DictionaryTypeEnum.broker_type.name(), modes[i]);
+                    DictionaryDTO dict = dictionaryFeignApi.getByCache(DictionaryTypeEnum.collaborate_mode.name(), modes[i]);
                     if(dict != null && i != modes.length -1){
                         xx.append(dict.getDicValue()).append(",");
-                    }else if(dict != null && i != modes.length -1){
+                    }else{
                         xx.append(dict.getDicValue());
                     }
                 }
                 s.setModeName(xx.toString());
             });
         }
-        havestDTO.setHavestCollaborates(havestCollaborates);
+        havestPO.setHavestCollaborates(havestCollaborates);
 
-        return havestDTO;
+        return havestPO;
     }
 
 

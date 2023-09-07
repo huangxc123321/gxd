@@ -45,7 +45,7 @@ public class TechEconomicManRequiresResponse  implements Serializable {
     private Date endAt;
 
     @ApiModelProperty(value = "人工手动推荐匹配度")
-    private Double hStart;
+    private Double hstar;
 
     @ApiModelProperty(value = "不推荐理由")
     private String remark;

@@ -62,24 +62,29 @@ public class TalentPoolFontController extends BaseController {
 
     @ApiOperation("新增帅才信息")
     @PostMapping("/talent/pool/add")
-    void add(@RequestBody TalentPoolDTO talentPoolDTO) throws BizException {
-        talentPoolDTO.setCreateBy(this.getUserId());
+    void add(@RequestBody TalentPoolPO talentPoolPO) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
 
-        talentPoolFeignApi.add(talentPoolDTO);
+        talentPoolPO.setCreateBy(userId);
+
+        talentPoolFeignApi.add(talentPoolPO);
 
         /**
          * 分配一个账号
          * 先判断手机号是否注册，如果没有注册则注册
          */
-        if(StrUtil.isNotBlank(talentPoolDTO.getMobie())){
-            UserDTO user = userFeignApi.getUserByMobile(talentPoolDTO.getMobie());
+        if(StrUtil.isNotBlank(talentPoolPO.getMobie())){
+            UserResponse user = userFeignApi.getUserByMobile(talentPoolPO.getMobie());
             if(user == null){
-                UserDTO userDTO = mapperFacade.map(talentPoolDTO, UserDTO.class);
-                userDTO.setNick(talentPoolDTO.getName());
-                userDTO.setAvatar(talentPoolDTO.getPhoto());
+                UserDTO userDTO = mapperFacade.map(talentPoolPO, UserDTO.class);
+                userDTO.setNick(talentPoolPO.getName());
+                userDTO.setAvatar(talentPoolPO.getPhoto());
                 // 设置默认密码: 123456
                 userDTO.setPassword(ConstantsUtils.defalutMd5Password);
-                userDTO.setMobile(talentPoolDTO.getMobie());
+                userDTO.setMobile(talentPoolPO.getMobie());
                 userDTO.setUnitNature(UserTypeEnum.PERSON.getCode());
                 // 个人类型: 1 经纪人 2 帅才 0 其它
                 userDTO.setType(2);  // 经纪人
@@ -91,13 +96,13 @@ public class TalentPoolFontController extends BaseController {
 
     @ApiOperation("编辑帅才信息")
     @PostMapping("/talent/pool/update")
-    void update(@RequestBody TalentPoolDTO talentPoolDTO) throws BizException {
-        if(talentPoolDTO == null || talentPoolDTO.getId() == null){
+    void update(@RequestBody TalentPoolPO talentPoolPO) throws BizException {
+        if(talentPoolPO == null || talentPoolPO.getId() == null){
             throw new BizException(BusinessErrorCode.BUSINESS_PARAMS_ERROR);
         }
-        talentPoolDTO.setUpdateBy(this.getUserId());
+        talentPoolPO.setUpdateBy(this.getUserId());
 
-        talentPoolFeignApi.update(talentPoolDTO);
+        talentPoolFeignApi.update(talentPoolPO);
     }
 
 
@@ -122,24 +127,25 @@ public class TalentPoolFontController extends BaseController {
                     s.setHighestEduName(edu.getDicValue());
                 }
 
-
                 // 技术领域
-                StringBuffer sb = new StringBuffer();
-                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
-                if(tfc1 != null){
-                    sb.append(tfc1.getName());
-                    sb.append(CharUtil.COMMA);
-                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-                    if(tfc2 != null){
-                        sb.append(tfc2.getName());
-                        sb.append(CharUtil.COMMA);
-                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                        if(tfc3 != null){
-                            sb.append(tfc3.getName());
-                        }
+                if(s.getTechDomain() != null){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
+                    if(tfc != null){
+                      s.setTechDomainName(tfc.getName());
                     }
                 }
-                s.setTechDomainName(sb.toString().replace("所有分类", ""));
+                if(s.getTechDomain1() != null){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                    }
+                }
+                if(s.getTechDomain2() != null){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                    }
+                }
             });
         }
 
@@ -209,7 +215,7 @@ public class TalentPoolFontController extends BaseController {
         // 帅才ID-->user_id
         TalentPoolDTO talentPool = talentPoolFeignApi.getTalentPoolById(talentPoolAuditingDTO.getId());
         if(talentPool != null){
-            UserDTO userDTO =  userFeignApi.getUserByMobile(talentPool.getMobie());
+            UserResponse userDTO =  userFeignApi.getUserByMobile(talentPool.getMobie());
             if(userDTO != null){
                 messageDTO.setUserId(userDTO.getId());
             }

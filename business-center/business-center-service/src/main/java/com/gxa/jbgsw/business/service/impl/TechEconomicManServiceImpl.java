@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.service.impl;
 
 import cn.hutool.core.util.CharUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
@@ -211,6 +212,16 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         }
 
         return null;
+    }
+
+    @Override
+    public void deleteAgreements(Long id) {
+        LambdaUpdateWrapper<TechEconomicMan> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(TechEconomicMan::getAgreements, null)
+                .set(TechEconomicMan::getAgreementsName, null)
+                .eq(TechEconomicMan::getId, id);
+
+        techEconomicManMapper.update(null, lambdaUpdateWrapper);
     }
 
     private long getOrders(TechEconomicManRequiresRequest request) {

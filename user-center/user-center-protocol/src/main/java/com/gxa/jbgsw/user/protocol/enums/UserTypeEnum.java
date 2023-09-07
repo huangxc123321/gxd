@@ -8,11 +8,11 @@ package com.gxa.jbgsw.user.protocol.enums;
 public enum UserTypeEnum {
 
     // 用户类型：
-    GOV(0, "政府部门"),
-    BUZ(1, "企业"),
-    TEAM(2, "科研机构和团队"),
-    EDU(3, "大学院校"),
-    PERSON(4, "个人"),
+    GOV(1, "政府部门"),
+    BUZ(2, "企业"),
+    TEAM(3, "科研机构和团队"),
+    EDU(4, "大学院校"),
+    PERSON(5, "个人"),
     ;
 
     private final Integer code;

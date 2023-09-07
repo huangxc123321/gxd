@@ -111,5 +111,10 @@ public class BillboardGainController implements BillboardGainApi {
         messageService.save(message);
     }
 
+    @Override
+    public boolean getIsGain(Long pid, Long userId) {
+        return billboardGainService.getIsGain(pid, userId);
+    }
+
 }
 

@@ -40,4 +40,8 @@ public interface HarvestService extends IService<Harvest> {
     List<String> getHoloder(String holder);
 
     List<Harvest> getRelatedHavestByCompanyId(Long id);
+
+    List<Harvest> getHarvesByTechDomainLimit(String techDomain, int i);
+
+    void updateHarvest(Harvest harvest, List<PatentDTO> patents);
 }

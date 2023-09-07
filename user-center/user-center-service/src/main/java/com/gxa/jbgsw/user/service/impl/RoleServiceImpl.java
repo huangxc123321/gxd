@@ -8,6 +8,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.user.entity.Role;
+import com.gxa.jbgsw.user.entity.UserRole;
 import com.gxa.jbgsw.user.mapper.RoleMapper;
 import com.gxa.jbgsw.user.protocol.dto.RoleDTO;
 import com.gxa.jbgsw.user.protocol.dto.RolePO;

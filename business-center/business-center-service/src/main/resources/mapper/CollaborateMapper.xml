@@ -13,7 +13,7 @@
         FROM
             t_collaborate a
         WHERE
-            a.harvest_user_id = #{havestId}
+            a.pid = #{havestId}
     </select>
 
     <select id="getCollaborateHarvest" parameterType="com.gxa.jbgsw.business.protocol.dto.MyCollaborateRequest"
@@ -24,7 +24,9 @@
                 a.detail,
                 a.`mode`,
                 a.launch_user_name AS launchUserName,
-                a.effect_at AS effectAt,
+                DATE_FORMAT(a.effect_at,'%Y/%m/%d %H:%m') AS effectAt,
+                b.mobile,
+                a.remark,
                 b.`name`
             FROM
                 t_collaborate AS a
@@ -54,6 +56,8 @@
                 c.title,
                 a.tech_keys AS techDomainName,
                 a.detail,
+                b.mobie AS mobile,
+                a.remark,
                 a.effect_at AS effectAt
             FROM
                 t_collaborate AS a

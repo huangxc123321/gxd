@@ -20,4 +20,10 @@ public class RedisKeys {
 
     /** 属性类型信息 **/
     public static final String DICTIONARY_TYPE_VALUE = BASE_RSS + "dictionary:type:";
+
+    /** 任务推荐任务 **/
+    public static final String HARVEST_RELATED_RECOMMEND_TASK = BASE_RSS + "harvest:related:recommend:";
+
+    /** 新闻发布时间 **/
+    public static final String TECH_DOMAIN_VALUE = BASE_RSS + "tech:domain:value:";
 }

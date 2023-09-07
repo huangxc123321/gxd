@@ -54,8 +54,6 @@ public class BillboardFontController extends BaseController {
     @Resource
     BillboardEconomicRelatedFeignApi billboardEconomicRelatedFeignApi;
     @Resource
-    CompanyFeignApi companyFeignApi;
-    @Resource
     MessageFeignApi messageFeignApi;
     @Resource
     TechEconomicManFeignApi techEconomicManFeignApi;
@@ -125,7 +123,7 @@ public class BillboardFontController extends BaseController {
         }
         detailInfo.setTalentRecommends(talentRecommends);
 
-        // 技术经纪人推荐: 根据专业标签来推荐
+        // 技术经纪人推荐: 根据专业标签来推荐（admin）
         List<BillboardEconomicRelatedResponse> techBrokerRecommends = billboardEconomicRelatedFeignApi.getEconomicRecommend(id);
         detailInfo.setTechBrokerRecommends(techBrokerRecommends);
 
@@ -214,8 +212,13 @@ public class BillboardFontController extends BaseController {
     })
     @PostMapping("/billboard/audit")
     public void audit(@ RequestBody BillboardAuditDTO billboardAuditDTO){
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+
         billboardAuditDTO.setAuditCreateAt(new Date());
-        billboardAuditDTO.setAuditUserId(this.getUserId());
+        billboardAuditDTO.setAuditUserId(userId);
 
         billboardFeignApi.audit(billboardAuditDTO);
 
@@ -321,7 +324,7 @@ public class BillboardFontController extends BaseController {
         billboardTalentRelatedFeignApi.audit(billboardHarvestAuditDTO);
     }
 
-    @ApiOperation("手工派单")
+    @ApiOperation("经纪人手工派单")
     @PostMapping("/billboard/economic/related/auditEconomic")
     void auditEconomic(@RequestBody BillboardRelatedAuditDTO billboardHarvestAuditDTO){
         billboardHarvestAuditDTO.setUserId(this.getUserId());
@@ -342,8 +345,11 @@ public class BillboardFontController extends BaseController {
             // 派单接收人
             TechEconomicManResponse t = techEconomicManFeignApi.getTechEconomicManById(billboardEconomicRelatedDTO.getEconomicId());
             if(t != null){
-                UserDTO userDTO = userFeignApi.getUserByMobile(t.getMobile());
-                messageDTO.setUserId(userDTO.getId());
+                UserResponse userDTO = userFeignApi.getUserByCode(t.getMobile());
+                if(userDTO != null){
+                    messageDTO.setUserId(userDTO.getId());
+                }
+
             }
             messageDTO.setTitle(content);
             // 派单： 类型为： 需求单

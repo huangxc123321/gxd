@@ -18,6 +18,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -32,11 +33,13 @@ import java.io.IOException;
 public class ChatGptController extends BaseController {
     private static final String OPENAI_API_KEY = "noDdgfuEzLWVREkuT3BlbkFJXuJGpUNF5kwZL5G6gvde";
     private static final String openai_api_url = "http";
-    private static final String url = "https://api.openai.com/v1/chat";
+    // private static final String url = "https://api.openai.com/v1/chat";
+    private static final String url = "https://api.openai-proxy.com/v1/chat/completions";
 
-    @ApiOperation("发送消息")
+
+    @ApiOperation(value = "发送聊天",produces = MediaType.APPLICATION_OCTET_STREAM_VALUE)
     @GetMapping("/chat/ai/send")
-    ApiResult getCommentById(@RequestParam("msg") String msg) throws BizException, IOException {
+    ApiResult send(@RequestParam("msg") String msg) throws BizException, IOException {
         if(StrUtil.isBlank(msg)){
             throw new BizException(UserErrorCode.CHATGPT_MESSAGE_IS_NULL);
         }

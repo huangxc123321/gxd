@@ -7,6 +7,8 @@ import com.gxa.jbgsw.user.protocol.dto.RoleDTO;
 import com.gxa.jbgsw.user.protocol.dto.RolePO;
 import com.gxa.jbgsw.user.protocol.dto.RoleRequest;
 
+import java.util.List;
+
 
 public interface RoleService extends IService<Role> {
 
@@ -19,4 +21,5 @@ public interface RoleService extends IService<Role> {
     void deleteBatchIds(Long[] ids);
 
     void updateRole(RoleDTO roleDTO);
+
 }

@@ -11,8 +11,8 @@ public enum BillboardEconomicRelatedStatusEnum {
     // 状态： 0 不推荐 1推荐(派单)  2 接受  3 不接受
     NOT_RECOMMEND(0, "不推荐"),
     RECOMMEND(1, "推荐"),
-    ACCEPT(2, "接受"),
-    NOT_ACCEPT(3, "不接受"),
+    ACCEPT(2, "已接受"),
+    NOT_ACCEPT(3, "已拒绝"),
     ;
 
     private final Integer code;

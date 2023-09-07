@@ -1,19 +1,14 @@
 package com.gxa.jbgsw.user.protocol.dto;
 
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
-import lombok.ToString;
 
-import java.io.Serializable;
-import java.util.List;
+import java.util.Date;
 
 @Data
-@ApiModel
-@ToString
-public class MenuPO implements Serializable {
+public class MenuDTO {
 
-    @ApiModelProperty(value = "主键， 新增传 null")
+    @ApiModelProperty(value = "id , 新增的时候传 null" )
     private Long id;
 
     @ApiModelProperty(value = "pid， 最顶级为0")
@@ -34,13 +29,15 @@ public class MenuPO implements Serializable {
     @ApiModelProperty(value = "菜单/按钮图形")
     private String icon;
 
+    @ApiModelProperty(value = "创建者", hidden = true)
+    private Long createBy;
+
+    @ApiModelProperty(value = "更新人")
+    private Long updateBy;
+
     @ApiModelProperty(value = "权限标识")
     private String code;
 
     @ApiModelProperty(value = "前端组件")
     private String component;
-
-    @ApiModelProperty(value = "子菜单")
-    private List<MenuPO> sonMenus;
-
 }

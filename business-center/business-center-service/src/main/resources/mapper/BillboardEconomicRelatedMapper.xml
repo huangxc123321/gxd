@@ -4,7 +4,30 @@
 
     <select id="getEconomicRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse">
             SELECT
-              b.id,
+              c.id,
+              a.id AS recommendId,
+              c.avatar,
+              c.`name`,
+              c.`level`,
+              c.score,
+              c.label,
+              c.success_total AS successTotal,
+              a.status,
+              a.s_star AS star
+            FROM
+               t_billboard_economic_related AS a
+               LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
+               LEFT JOIN t_tech_economic_man AS c ON a.economic_id = c.id
+            WHERE
+                a.billboard_id = #{billboardId}
+                AND a.status = 2
+                ORDER BY a.create_at DESC
+
+    </select>
+
+    <select id="getAdminEconomicRecommend" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse">
+        SELECT
+              c.id,
               a.id AS recommendId,
               c.avatar,
               c.`name`,

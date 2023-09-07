@@ -1,8 +1,11 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.gxa.jbgsw.business.entity.TechEconomicManAppraise;
 import com.gxa.jbgsw.business.mapper.TechEconomicManAppraiseMapper;
 import com.gxa.jbgsw.business.protocol.dto.TechEconomicManAppraiseRequest;
@@ -35,4 +38,6 @@ public class TechEconomicManAppraiseServiceImpl extends ServiceImpl<TechEconomic
         }.build(), new TypeBuilder<PageResult<TechEconomicManAppraiseResponse>>() {}.build());
 
     }
+
+
 }

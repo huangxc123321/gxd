@@ -4,10 +4,10 @@ package com.gxa.jbgsw.business.protocol.enums;
  * Created by mac on 2023/7/24.
  */
 public enum CollaborateStatusEnum {
-    // 合作状态： 0 待沟通 1 合作申请同意  2 合作申请拒绝
+    // 状态：0 待沟通 1 已同意  2 已拒绝
     WAIT(0, "待沟通"),
-    SUCCESS(1, "合作申请同意"),
-    JJ(2,"合作申请拒绝"),
+    SUCCESS(1, "已同意"),
+    JJ(2,"已拒绝"),
 
     ;
 

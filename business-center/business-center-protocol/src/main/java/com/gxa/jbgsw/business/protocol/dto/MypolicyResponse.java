@@ -8,8 +8,11 @@ import java.io.Serializable;
 @Data
 public class MypolicyResponse implements Serializable {
 
-    @ApiModelProperty(value = "新闻ID")
+    @ApiModelProperty(value = "收藏ID")
     private Long id;
+
+    @ApiModelProperty(value = "相关收藏ID")
+    private Long pid;
 
     @ApiModelProperty(value = "标题")
     private String title;

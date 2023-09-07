@@ -41,4 +41,5 @@ public class TechEconomicManAppraiseController implements TechEconomicManApprais
     public void delete(Long id) {
         techEconomicManAppraiseService.removeById(id);
     }
+
 }

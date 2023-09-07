@@ -20,6 +20,9 @@ public class BillboardGainAddDTO implements Serializable {
     @ApiModelProperty(value = "揭榜方案：附件")
     private String attachment;
 
+    @ApiModelProperty(value = "揭榜方案附件名称")
+    private String attachmentName;
+
     @ApiModelProperty(value = "揭榜人", hidden = true)
     private String createByName;
 

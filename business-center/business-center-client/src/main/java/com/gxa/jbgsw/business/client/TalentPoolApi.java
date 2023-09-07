@@ -20,10 +20,10 @@ public interface TalentPoolApi {
     PageResult<TalentPoolResponse> pageQuery(@RequestBody TalentPoolRequest request);
 
     @PostMapping("/talent/pool/add")
-    void add(@RequestBody TalentPoolDTO talentPoolDTO);
+    void add(@RequestBody TalentPoolPO talentPoolPO);
 
     @PostMapping("/talent/pool/update")
-    void update(@RequestBody TalentPoolDTO talentPoolDTO);
+    void update(@RequestBody TalentPoolPO talentPoolPO);
 
     @PostMapping("/talent/pool/getTalentPoolByTech")
     List<TalentPoolDTO> getTalentPoolByTech(@RequestParam("key") String key);

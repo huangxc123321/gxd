@@ -105,14 +105,14 @@
               b.unit_logo AS unitLogo,
               b.start_at AS startAt,
               b.end_at AS endAt,
-              a.h_start AS hStart,
+              a.h_start AS hstar,
               a.remark
             FROM
                 t_billboard_economic_related AS a
             LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
             WHERE 1 = 1
-             <if test="createBy != null">
-                 AND a.economic_user_id = #{createBy}
+             <if test="economicId != null">
+                 AND a.economic_id = #{economicId}
              </if>
             <if test="type != null">
                 AND b.type = #{type}
@@ -130,7 +130,7 @@
         LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
         WHERE 1 = 1
         <if test="createBy != null">
-            AND a.economic_user_id = #{createBy}
+            AND a.economic_id = #{economicId}
         </if>
         <if test="type != null">
             AND b.type = #{type}

@@ -1,5 +1,7 @@
 package com.gxa.jbgsw.app.controller;
 
+import cn.hutool.core.util.StrUtil;
+import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.ConstantsUtils;
@@ -16,12 +18,14 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import java.util.concurrent.TimeUnit;
 
 @Api(tags = "用户管理")
 @RestController
 @Slf4j
 @ResponseBody
 public class UserController extends BaseController {
+    private int expireTime = 2592000;
     @Resource
     UserFeignApi userFeignApi;
     @Resource
@@ -49,7 +53,7 @@ public class UserController extends BaseController {
         }
 
         // 判断手机号码是否注册
-        UserDTO existUserDTO = userFeignApi.getUserByMobile(userDTO.getMobile());
+        UserResponse existUserDTO = userFeignApi.getUserByMobile(userDTO.getMobile());
         if(existUserDTO != null){
             throw new BizException(UserErrorCode.USER_PHONE_IS_EXISTS);
         }
@@ -68,6 +72,15 @@ public class UserController extends BaseController {
         }
         userDTO.setUpdateBy(this.getUserId());
         userFeignApi.update(userDTO);
+        String  token = this.getToken();
+        if(StrUtil.isNotBlank(token)){
+            UserResponse userResponse = userFeignApi.getUserById(userDTO.getId());
+
+            // token放到redis中
+            stringRedisTemplate.opsForValue().set(RedisKeys.USER_TOKEN+token, String.valueOf(userResponse.getId()), expireTime, TimeUnit.SECONDS);
+            // 存储用户信息
+            stringRedisTemplate.opsForValue().set(RedisKeys.USER_INFO+userResponse.getId(), JSONObject.toJSONString(userResponse), expireTime, TimeUnit.SECONDS);
+        }
     }
 
     @ApiOperation("修改用户密码")

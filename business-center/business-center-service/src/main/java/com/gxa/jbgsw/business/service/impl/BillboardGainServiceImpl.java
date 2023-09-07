@@ -32,4 +32,17 @@ public class BillboardGainServiceImpl extends ServiceImpl<BillboardGainMapper, B
 
         return billboardGainMapper.selectList(lambdaQueryWrapper);
     }
+
+    @Override
+    public boolean getIsGain(Long pid, Long userId) {
+        LambdaQueryWrapper<BillboardGain> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(BillboardGain::getPid, pid);
+        lambdaQueryWrapper.eq(BillboardGain::getCreateBy, userId);
+        List<BillboardGain> billboardGains = billboardGainMapper.selectList(lambdaQueryWrapper);
+
+        if(billboardGains != null && billboardGains.size()>0){
+            return true;
+        }
+        return false;
+    }
 }

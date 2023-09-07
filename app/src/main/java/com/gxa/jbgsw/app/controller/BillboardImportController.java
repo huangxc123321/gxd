@@ -102,6 +102,8 @@ public class BillboardImportController extends BaseController {
                         // 工信大类名称
                         s.setCategoriesName(dictionaryDTO.getDicValue());
                     }
+                    // 状态： 0 导入成功  1 导入失败
+                    s.setStatusName(s.getStatus().equals(Integer.valueOf(0)) ? "导入成功" : "导入失败");
                 });
             }
         }
@@ -121,15 +123,15 @@ public class BillboardImportController extends BaseController {
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
 
-        // 先删除之前的数据
-        billboardTemporaryFeignApi.deleteByCreateBy(userId);
-
         ApiResult apiResult = new ApiResult();
         List<BillboardTemporaryDTO> batchList = new ArrayList();
         batchList.clear();
 
         String unitName = userResponse.getUnitName();
         String unitLogo = userResponse.getUnitLogo();
+
+        int total = 0;
+        int failures = 0;
 
         try{
             // 获得文件流
@@ -142,8 +144,10 @@ public class BillboardImportController extends BaseController {
             int firstRowNum = 0;
             // 一直读到最后一行
             int lasrRowNum = sheet.getLastRowNum();
+
             for (int i = 1; i <= lasrRowNum; i++) {
                 BillboardTemporaryDTO billboardDTO = new BillboardTemporaryDTO();
+                Integer status = 0;
 
                 Row row =  sheet.getRow(i);
                 // 获取当前最后单元格列号
@@ -151,26 +155,46 @@ public class BillboardImportController extends BaseController {
                 for (int j = 0; j < lastCellNum; j++) {
                     Cell cell = row.getCell(j);
 
+
                     CellType cellType = cell.getCellType();
                     if(CellType.STRING.compareTo(cellType) == 0){
                         String value = cell.getStringCellValue();
                         switch (j) {
                             case 0:
-                                billboardDTO.setType(value.contains("政") == true ? 0 : 1);
+                                if(value.contains("政") || value.contains("企")){
+                                    billboardDTO.setType(value.contains("政") == true ? 0 : 1);
+                                }else{
+                                    billboardDTO.setType(1);
+                                    status = 1;
+                                }
                                 break;
                             case 1:
-                                billboardDTO.setTitle(value);
+                                if(StrUtil.isBlank(value)){
+                                    status = 1;
+                                }else{
+                                    billboardDTO.setTitle(value);
+                                }
+
                                 break;
                             case 2:
                                 billboardDTO.setCategories(getDicCode(value));
+                                if(billboardDTO.getCategories() == null){
+                                    status = 1;
+                                }
                                 break;
                             case 3:
                                 billboardDTO.setTechKeys(value);
+                                if(StrUtil.isBlank(billboardDTO.getTechKeys())){
+                                    status = 1;
+                                }
                                 break;
                             case 4:
                                 break;
                             case 5:
                                 billboardDTO.setContent(value);
+                                if(StrUtil.isBlank(billboardDTO.getContent())){
+                                    status = 1;
+                                }
                                 break;
                             case 6:
                                 deal(value, billboardDTO);
@@ -181,11 +205,14 @@ public class BillboardImportController extends BaseController {
                     }else if(CellType.NUMERIC.compareTo(cellType) == 0){
                         double amount = cell.getNumericCellValue();
                         billboardDTO.setAmount(BigDecimal.valueOf(amount));
+                        if(billboardDTO.getAmount() == null){
+                            status = 1;
+                        }
                     }
                 }
                 billboardDTO.setUnitName(unitName);
                 billboardDTO.setUnitLogo(unitLogo);
-                billboardDTO.setCreateBy(userResponse.getCreateBy());
+                billboardDTO.setCreateBy(userResponse.getId());
                 billboardDTO.setCreateAt(new Date());
                 billboardDTO.setProvinceId(userResponse.getProvinceId());
                 billboardDTO.setProvinceName(userResponse.getProvinceName());
@@ -193,27 +220,36 @@ public class BillboardImportController extends BaseController {
                 billboardDTO.setCityName(userResponse.getCityName());
                 billboardDTO.setAreaId(userResponse.getAreaId());
                 billboardDTO.setAreaName(userResponse.getAreaName());
+                billboardDTO.setStatus(status);
                 if(billboardDTO.getTitle() == null || "".equals(billboardDTO.getTitle().trim())){
                     log.info("空行抛弃");
                 }else{
                     batchList.add(billboardDTO);
+                }
+
+                if(status == 1){
+                    ++failures;
                 }
             }
 
             // 批量插入
             BillboardTemporaryDTO[]  objects = new BillboardTemporaryDTO[batchList.size()];
             batchList.toArray(objects);
+
+            total = objects.length;
+            System.out.println("total: "+total);
             billboardTemporaryFeignApi.batchInsert(objects);
         }catch (Exception ex){
             ex.printStackTrace();
-            log.error("导入失败");
-            apiResult.setMessage("导入失败");
-            apiResult.setCode(-1);
+            log.error("导入有些错误");
         }finally {
             if(inputStream != null){
                 inputStream.close();
             }
         }
+
+        int success = total - failures;
+        apiResult.setMessage("成功上传"+success+"条数据，失败"+failures+"条。您可以在列表编辑或删除");
         return  apiResult;
     }
 

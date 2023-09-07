@@ -122,6 +122,11 @@ public class TechEconomicManController implements TechEconomicManApi {
         return techEconomicManService.getTechEconomicManByMobile(mobile);
     }
 
+    @Override
+    public void deleteAgreements(Long id) {
+        techEconomicManService.deleteAgreements(id);
+    }
+
 
 }
 

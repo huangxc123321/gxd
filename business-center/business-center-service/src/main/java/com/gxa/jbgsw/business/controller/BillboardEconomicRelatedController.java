@@ -44,7 +44,7 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     public void audit(BillboardRelatedAuditDTO billboardRelatedAuditDTO) {
         BillboardEconomicRelated billboardEconomicRelated = billboardEconomicRelatedService.getById(billboardRelatedAuditDTO.getId());
 
-        billboardEconomicRelated.setHStart(billboardRelatedAuditDTO.getHStart());
+        billboardEconomicRelated.setHStart(billboardRelatedAuditDTO.getHstar());
         billboardEconomicRelated.setRecommendAt(new Date());
         billboardEconomicRelated.setUserName(billboardRelatedAuditDTO.getUserName());
         billboardEconomicRelated.setRemark(billboardRelatedAuditDTO.getRemark());
@@ -56,6 +56,11 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     @Override
     public List<BillboardEconomicRelatedResponse> getEconomicRecommend(Long billboardId) {
         return billboardEconomicRelatedService.getEconomicRecommend(billboardId);
+    }
+
+    @Override
+    public List<BillboardEconomicRelatedResponse> getAdminEconomicRecommend(Long billboardId) {
+        return billboardEconomicRelatedService.getAdminEconomicRecommend(billboardId);
     }
 
     @Override

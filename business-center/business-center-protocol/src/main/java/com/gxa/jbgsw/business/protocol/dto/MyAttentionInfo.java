@@ -32,6 +32,10 @@ public class MyAttentionInfo implements Serializable {
     @ApiModelProperty(value = "研究成果")
     private String harvest;
 
+    @ApiModelProperty(value = "关注类型： 0 政府 1 企业 2 帅才")
+    private Integer type;
 
+    @ApiModelProperty(value = "关注第三方ID， 用作后面得查询")
+    private Long pid;
 
 }

@@ -7,12 +7,11 @@ import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.common.utils.RedisUtils;
 import com.gxa.jbgsw.user.client.LoginApi;
 import com.gxa.jbgsw.user.protocol.dto.LoginRequest;
+import com.gxa.jbgsw.user.protocol.dto.RolePO;
 import com.gxa.jbgsw.user.protocol.dto.SmsMessageDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
-import com.gxa.jbgsw.user.service.LoginService;
-import com.gxa.jbgsw.user.service.SmsService;
-import com.gxa.jbgsw.user.service.UserService;
+import com.gxa.jbgsw.user.service.*;
 
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +23,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -32,8 +32,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @Slf4j
 public class LoginController implements LoginApi {
-    @Value("${expire.time}")
-    private String expireTime="43200*2*30";  // 默认30天
+    private int expireTime = 2592000;
 
     @Resource
     LoginService loginService;
@@ -41,6 +40,8 @@ public class LoginController implements LoginApi {
     UserService userService;
     @Resource
     SmsService smsService;
+    @Resource
+    UserRoleService userRoleService;
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
@@ -85,6 +86,10 @@ public class LoginController implements LoginApi {
         if(userResponse == null){
             throw new BizException(UserErrorCode.LOGIN_CODE_ERROR);
         }
+
+        // 查看用户角色
+        List<RolePO> roles = userRoleService.getRoleByUserId(userResponse.getId());
+        userResponse.setRoles(roles);
 
         String token = null;
         if(StrUtil.isNotBlank(userResponse.getToken())){

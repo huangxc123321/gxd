@@ -13,7 +13,7 @@ public class BillboardRelatedAuditDTO implements Serializable {
     private Long id;
 
     @ApiModelProperty(value = "人工手动推荐匹配度， 如果这个有分了，就说明已经派单给这个技术经纪人了")
-    private Double hStart;
+    private Double hstar;
 
     @ApiModelProperty(value = "手工推荐人ID(user_id)", hidden = true)
     private Long userId;

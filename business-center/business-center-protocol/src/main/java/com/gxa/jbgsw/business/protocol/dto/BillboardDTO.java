@@ -79,6 +79,7 @@ public class BillboardDTO implements Serializable {
     @ApiModelProperty(value = "发榜人")
     private String publishPerson;
 
-
+    @ApiModelProperty(value = "是否创建视频： true 创建  false不创建")
+    private boolean isCreateVideo;
 
 }

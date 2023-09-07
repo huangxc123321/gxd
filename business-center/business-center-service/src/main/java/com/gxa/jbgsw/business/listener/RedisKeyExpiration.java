@@ -57,6 +57,9 @@ public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
         String newsPublishTimePrefixKey = RedisKeys.NEWS_PUBLIS_TIME;
         // 榜单成果、帅才、经纪人匹配推荐处理
         String billboardRelatedRecommendPrefixKey = RedisKeys.BILLBOARD_RELATED_RECOMMEND_TASK;
+        // 成果匹配榜单
+        String havestRelatedRecommendPrefixKey = RedisKeys.HARVEST_RELATED_RECOMMEND_TASK;
+
 
         if(expiredKey != null && StrUtil.startWithIgnoreCase(expiredKey, newsPublishTimePrefixKey)){
             // 新闻定时发布
@@ -64,7 +67,19 @@ public class RedisKeyExpiration extends KeyExpirationEventMessageListener {
             String id = strs[strs.length-1];
             // 状态：0 发布， 1 待发布
             newsService.updateStatus(id, NewsStatusEnum.PUBLISHED.getCode());
-        }else if(expiredKey != null && StrUtil.startWithIgnoreCase(expiredKey, billboardRelatedRecommendPrefixKey)){
+        }
+        else if(expiredKey != null && StrUtil.startWithIgnoreCase(expiredKey, havestRelatedRecommendPrefixKey)){
+            // 成果匹配榜单
+            String[] strs = StrUtil.splitToArray(expiredKey, StrUtil.C_COLON);
+            // 榜单ID
+            String id = strs[strs.length-1];
+            System.out.println("开始定时任务");
+
+            // 匹配榜单
+            billboardHarvestRelatedService.addBillboardRelated(Long.valueOf(id));
+        }
+
+        else if(expiredKey != null && StrUtil.startWithIgnoreCase(expiredKey, billboardRelatedRecommendPrefixKey)){
             // 榜单成果、帅才、经纪人匹配推荐处理
             String[] strs = StrUtil.splitToArray(expiredKey, StrUtil.C_COLON);
             // 榜单ID

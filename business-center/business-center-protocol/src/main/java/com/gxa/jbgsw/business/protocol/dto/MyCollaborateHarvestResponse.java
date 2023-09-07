@@ -34,8 +34,12 @@ public class MyCollaborateHarvestResponse implements Serializable {
     @ApiModelProperty(value = "状态显示名称：0 待沟通  ...")
     private String statusName;
 
-    @JsonFormat(pattern = "yyyy/MM/dd HH:mm",timezone = "GMT+8")
     @ApiModelProperty(value = "合作发起时间")
-    private Date effectAt;
+    private String effectAt;
 
+    @ApiModelProperty(value = "合作方的联系电话")
+    private String mobile;
+
+    @ApiModelProperty(value = "合作申请拒绝原因")
+    private String remark;
 }

@@ -46,4 +46,7 @@ public interface TechEconomicManApi {
 
     @GetMapping("/tech/broker/getTechEconomicManByMobile")
     TechEconomicManDTO getTechEconomicManByMobile(@RequestParam(value = "mobile") String mobile);
+
+    @GetMapping("/tech/economic/deleteAgreements")
+    void deleteAgreements(@RequestParam("id") Long id);
 }
