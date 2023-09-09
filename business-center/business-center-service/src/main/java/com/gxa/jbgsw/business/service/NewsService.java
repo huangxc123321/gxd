@@ -35,4 +35,8 @@ public interface NewsService extends IService<News> {
     NewsRelatedDTO getLastRelated(Integer type, Date date);
 
     NewsRelatedDTO getNextRelated(Integer type, Date date);
+
+    void addPv(Long id);
+
+    void addShares(Long id);
 }

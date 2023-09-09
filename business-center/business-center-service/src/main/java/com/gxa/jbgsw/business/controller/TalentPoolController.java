@@ -57,7 +57,7 @@ public class TalentPoolController implements TalentPoolApi {
     }
 
     @Override
-    public void update(TalentPoolPO talentPoolDTO) {
+    public void update(TalentPoolUpdateDTO talentPoolDTO) {
         talentPoolService.updateTalentPool(talentPoolDTO);
     }
 

@@ -100,5 +100,12 @@ public class TechEconomicManResponse implements Serializable {
     @ApiModelProperty(value = "关注状态： 0 已关注  1 未关注, 返回经纪人对象的时候使用")
     private Integer attentionStatus = 1;
 
+    @ApiModelProperty(value = "技术领域(第一级)")
+    private Long techDomain1;
 
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private Long techDomain2;
+
+    @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
+    private Long techDomain;
 }

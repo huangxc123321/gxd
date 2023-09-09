@@ -169,6 +169,31 @@ public class IndexController extends BaseController {
                 if(dicMaturityLevel != null){
                     s.setMaturityLevelName(dicMaturityLevel.getDicValue());
                 }
+
+                StringBuffer sb = new StringBuffer();
+
+                if(s.getTechDomain1() != null && !"".equals(s.getTechDomain1())){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                        sb.append(tfc1.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain2() != null  && !"".equals(s.getTechDomain2())){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                        sb.append(tfc2.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain() != null  && !"".equals(s.getTechDomain())){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
+                        sb.append(tfc.getName());
+                    }
+                }
+                s.setTechDomainName(sb.toString());
             });
         }
 

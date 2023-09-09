@@ -34,4 +34,7 @@ public interface NewsApi {
 
     @GetMapping("/news/getHotNews")
     List<NewsResponse> getHotNews();
+
+    @GetMapping("/news/addShares")
+    void addShares(@RequestParam("id") Long id);
 }

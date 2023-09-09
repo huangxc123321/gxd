@@ -85,12 +85,20 @@ public class NewsController implements NewsApi {
         NewsRelatedDTO nextNews = newsService.getNextRelated(news.getNewsPolicy(), news.getCreateAt());
         newsDTO.setNext(nextNews);
 
+        // 增加一个pv
+        newsService.addPv(id);
+
         return newsDTO;
     }
 
     @Override
     public List<NewsResponse> getHotNews() {
         return newsService.getHotNews();
+    }
+
+    @Override
+    public void addShares(Long id) {
+        newsService.addShares(id);
     }
 }
 

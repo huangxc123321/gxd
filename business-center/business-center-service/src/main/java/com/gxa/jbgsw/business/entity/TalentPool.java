@@ -1,10 +1,8 @@
 package com.gxa.jbgsw.business.entity;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.*;
+
 import java.util.Date;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import java.io.Serializable;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -128,12 +126,15 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "查询关键字： 职称+工信大类+技术关键词")
     private String queryKeys;
 
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     @ApiModelProperty(value = "技术领域(第一级)")
     private Long techDomain1;
 
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
     private Long techDomain2;
 
+    @TableField(updateStrategy = FieldStrategy.IGNORED)
     @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
     private Long techDomain;
 

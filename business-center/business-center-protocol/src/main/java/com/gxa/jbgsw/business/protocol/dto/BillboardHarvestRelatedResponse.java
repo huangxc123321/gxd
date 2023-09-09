@@ -29,10 +29,22 @@ public class BillboardHarvestRelatedResponse implements Serializable {
     private String categoriesName;
 
     @ApiModelProperty(value = "技术领域：字典中获取")
-    private String techKeys;
+    private String techDomain;
 
     @ApiModelProperty(value = "技术领域前端显示名称")
-    private String techKeysName;
+    private String techDomainName;
+
+    @ApiModelProperty(value = "技术领域：字典中获取")
+    private String techDomain1;
+
+    @ApiModelProperty(value = "技术领域前端显示名称")
+    private String techDomain1Name;
+
+    @ApiModelProperty(value = "技术领域：字典中获取")
+    private String techDomain2;
+
+    @ApiModelProperty(value = "技术领域前端显示名称")
+    private String techDomain2Name;
 
     @ApiModelProperty(value = "所属单位")
     private String unitName;

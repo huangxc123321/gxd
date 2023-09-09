@@ -109,15 +109,25 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
                 if(dictionaryDTO != null){
                    String categoriesName = dictionaryDTO.getDicValue();
-                   String tradeType = s.getTradeType();
+                    String categoriesWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, s.getQueryKeys());
+                    if(StrUtil.isNotBlank(categoriesWords)){
+                        // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
+                        if(sameWords.length()>=2 && sameWords.length() <3){
+                            sorce.set(sorce.get().intValue() + 1);
+                        }else if(sameWords.length()>=3){
+                            sorce.set(sorce.get().intValue() + 2);
+                        }else{
+                            sorce.set(sorce.get().intValue() + 0);
+                        }
+                    }
                 }
 
                 // 榜单发布地区
-                String cityName = billboard.getCityName();
+                String address = billboard.getProvinceName()+billboard.getCityName()+billboard.getAreaName();
                 // 成果的单位
                 String unitName = s.getUnitName();
                 // 匹配地区
-                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(cityName, unitName);
+                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(address, unitName);
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){
@@ -235,10 +245,9 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 }
 
                 // 成果技术关键词
-                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(harvest.getTechDomain()));
-                String techKeys = tfc1.getName();
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getQueryKeys());
-                double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getQueryKeys());
+                String techKeys = s.getTechKeys();
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,harvest.getQueryKeys());
+                double num = ComputeSimilarityRatio.SimilarDegree(techKeys,harvest.getQueryKeys());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
@@ -269,9 +278,10 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 }
 
                 // 榜单发布地区
-                String cityName = s.getCityName();
+                String billboardAddress = s.getProvinceName()+s.getCityName()+s.getAreaName();
+                String address = harvest.getUnitName();
                 // 匹配地区
-                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(cityName, harvest.getQueryKeys());
+                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboardAddress,address);
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){

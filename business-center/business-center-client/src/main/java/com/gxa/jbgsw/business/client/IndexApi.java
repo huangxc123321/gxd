@@ -75,4 +75,7 @@ public interface IndexApi {
 
     @GetMapping("/index/getRelatedBillboardByCompanyId")
     List<RelateBillboardDTO> getRelatedBillboardByCompanyId(@RequestParam("id") Long id);
+
+    @GetMapping("/index/getRelatedByEconomicId")
+    RelateEconomicDTO getRelatedByEconomicId(@RequestParam("id") Long id);
 }

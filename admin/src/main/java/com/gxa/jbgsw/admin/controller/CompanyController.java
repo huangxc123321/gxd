@@ -22,7 +22,7 @@ import java.util.Date;
 @RestController
 @Slf4j
 @ResponseBody
-public class CompanyController extends BaseController {
+public class   CompanyController extends BaseController {
     @Resource
     CompanyFeignApi companyFeignApi;
 

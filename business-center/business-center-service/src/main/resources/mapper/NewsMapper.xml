@@ -22,6 +22,7 @@
         <result column="update_at" property="updateAt" jdbcType="TIMESTAMP" />
         <result column="update_by" property="updateBy" jdbcType="INTEGER" />
         <result column="create_name" property="createName" jdbcType="VARCHAR" />
+        <result column="pv" property="pv" jdbcType="INTEGER" />
     </resultMap
     >
 
@@ -55,6 +56,8 @@
             a.publish_at AS publishAt,
             a.picture,
             a.type,
+            a.pv,
+            a.shares,
             a.title
         FROM
             t_news a

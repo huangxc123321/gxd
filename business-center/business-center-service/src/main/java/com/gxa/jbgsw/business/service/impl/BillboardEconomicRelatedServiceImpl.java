@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -7,7 +8,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryResponse;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.entity.*;
+import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardEconomicRelatedMapper;
 import com.gxa.jbgsw.business.protocol.dto.AppRequiresAccepptDTO;
@@ -54,6 +57,8 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
     @Resource
     UserFeignApi userFeignApi;
     @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -70,85 +75,97 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
             economics.stream().forEach(s->{
                 String title = billboard.getTitle();
 
-                // 榜单名称 === 项目经历
+                // 榜单名称 === 专业标签
                 String sameWords = "";
-                String[] label = s.getLabel().replace("；", ";").split(";");
-                if(label.length > 0){
-                    for(int i=0; i<label.length; i++){
-                        sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, label[i]);
-                        if(StrUtil.isNotBlank(sameWords)){
-                            // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                            if(sameWords.length()>=2 && sameWords.length() <3){
-                                sorce.set(sorce.get().intValue() + 1);
-                            }else if(sameWords.length()>=3){
-                                sorce.set(sorce.get().intValue() + 2);
-                            }else{
-                                sorce.set(sorce.get().intValue() + 0);
-                            }
-                        }
+                sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getLabel());
+                if(StrUtil.isNotBlank(sameWords)){
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
+                    if(sameWords.length()>=2 && sameWords.length() <3){
+                        sorce.set(sorce.get().intValue() + 1);
+                    }else if(sameWords.length()>=3){
+                        sorce.set(sorce.get().intValue() + 2);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
                     }
                 }
 
 
-                if(label.length > 0){
-                    for(int i=0; i<label.length; i++){
-                        // 技术关键词 === 专业标签
-                        String techKeys = billboard.getTechKeys();
-                        String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getLabel());
-                        double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getLabel());
-                        if(StrUtil.isNotBlank(techWords)){
-                            // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                            if(sameWords.length()>=3 && num > 0.15){
-                                sorce.set(sorce.get().intValue() + 5);
-                            }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
-                                sorce.set(sorce.get().intValue() + 4);
-                            }else if(sameWords.length()>=2){
-                                sorce.set(sorce.get().intValue() + 2);
-                            }else{
-                                sorce.set(sorce.get().intValue() + 0);
-                            }
-                        }
+                // 技术关键词 === 技术领域
+                String techKeys = billboard.getTechKeys();
+                StringBuffer sb = new StringBuffer();
+                // 技术领域
+                if(s.getTechDomain() != null){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
+                    if(tfc != null){
+                        sb.append(tfc.getName());
+                        sb.append(CharUtil.COMMA);
+                    }
+                }
+                if(s.getTechDomain1() != null){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
+                    if(tfc1 != null){
+                        sb.append(tfc1.getName());
+                        sb.append(CharUtil.COMMA);
+                    }
+                }
+                if(s.getTechDomain2() != null){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName());
+                        sb.append(CharUtil.COMMA);
                     }
                 }
 
-                if(label.length > 0){
-                    for(int i=0; i<label.length; i++){
-                        // 行业 === 技术领域
-                        Integer categories = billboard.getCategories();
-                        // 行业名称
-                        DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
-                        String mwords = "";
-                        if(dictionaryDTO != null){
-                            String categoriesName = dictionaryDTO.getDicValue();
-                            mwords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, s.getLabel());
-                            // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                            if(mwords.length()>=2 && mwords.length() <3){
-                                sorce.set(sorce.get().intValue() + 1);
-                            }else if(mwords.length()>=3){
-                                sorce.set(sorce.get().intValue() + 2);
-                            }else{
-                                sorce.set(sorce.get().intValue() + 0);
-                            }
-                        }
+                // 加上标签
+                sb.append(s.getLabel());
+
+             String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sb.toString());
+                double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getLabel());
+                if(StrUtil.isNotBlank(techWords)){
+                    // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
+                    if(sameWords.length()>=3 && num > 0.15){
+                        sorce.set(sorce.get().intValue() + 5);
+                    }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
+                        sorce.set(sorce.get().intValue() + 4);
+                    }else if(sameWords.length()>=2){
+                        sorce.set(sorce.get().intValue() + 2);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
                     }
                 }
 
-                if(label.length > 0){
-                    for(int i=0; i<label.length; i++){
-                        // 榜单发布地区 === 经纪人地区
-                        String cityName = billboard.getCityName();
-                        // 经纪人地区
-                        String unitName = s.getCityName();
-                        // 匹配地区
-                        String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(cityName, unitName);
-                        if(StrUtil.isNotBlank(cityWords)){
-                            // 如果匹配2个字以下 0 分，匹配2个字给1分
-                            if(sameWords.length()>=2){
-                                sorce.set(sorce.get().intValue() + 1);
-                            }else{
-                                sorce.set(sorce.get().intValue() + 0);
-                            }
-                        }
+
+                // 行业 === 技术领域
+                Integer categories = billboard.getCategories();
+                // 行业名称
+                DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
+                String mwords = "";
+                if(dictionaryDTO != null){
+                    String categoriesName = dictionaryDTO.getDicValue();
+                    mwords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, sb.toString());
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
+                    if(mwords.length()>=2 && mwords.length() <3){
+                        sorce.set(sorce.get().intValue() + 1);
+                    }else if(mwords.length()>=3){
+                        sorce.set(sorce.get().intValue() + 2);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
+                    }
+                }
+
+
+                // 榜单发布地区
+                String billboradAddress = billboard.getProvinceName()+billboard.getCityName()+billboard.getAreaName();
+                // 帅才地区
+                String address = s.getProvinceName()+s.getCityName()+s.getAreaName();
+                // 匹配地区
+                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                if(StrUtil.isNotBlank(cityWords)){
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分
+                    if(sameWords.length()>=2){
+                        sorce.set(sorce.get().intValue() + 1);
+                    }else{
+                        sorce.set(sorce.get().intValue() + 0);
                     }
                 }
 
@@ -173,7 +190,7 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 finalRelateds.add(related);
             });
 
-            if(relateds == null || relateds.size()<1){
+/*            if(relateds == null || relateds.size()<1){
                 TechEconomicManRequest request = new TechEconomicManRequest();
                 PageResult<TechEconomicMan> pageResult = techEconomicManService.pageQuery(request);
                 List<TechEconomicMan> techEconomics = pageResult.getList();
@@ -185,14 +202,10 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                         related.setEconomicId(s.getId());
                         related.setCreateAt(new Date());
 
-/*                        UserResponse userResponse = userFeignApi.getUserByCode(s.getMobile());
-                        if(userResponse != null){
-                            related.setEconomicUserId(userResponse.getId());
-                        }*/
                         finalRelateds.add(related);
                     });
                 }
-            }
+            }*/
 
 
             // 排序，选出分最多的十条

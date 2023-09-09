@@ -32,4 +32,9 @@ public class SearchNewsResponse implements Serializable {
     @ApiModelProperty(value = "展示图片")
     private String picture;
 
+    @ApiModelProperty(value = "pv")
+    private Integer pv;
+
+    @ApiModelProperty(value = "分享数")
+    private Integer shares;
 }

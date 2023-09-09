@@ -294,7 +294,7 @@
             a.amount,
             a.content,
             a.create_at AS createAt,
-            b.logo AS unitLogo,
+            a.unit_logo AS unitLogo,
             a.unit_name AS unitName,
             b.star,
             a.categories

@@ -540,7 +540,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     }
 
     @Override
-    public void add(Long id) {
+    public void addPv(Long id) {
         UpdateWrapper<Billboard> updateWrapper = new UpdateWrapper<>();
         updateWrapper.setSql("pv = pv +" + 1)
                 .eq("id", id);

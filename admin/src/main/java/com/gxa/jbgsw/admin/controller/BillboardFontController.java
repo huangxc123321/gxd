@@ -289,7 +289,12 @@ public class BillboardFontController extends BaseController {
         if(userResponse != null){
             billboardDTO.setUnitName(userResponse.getUnitName());
         }
-
+        // 如果是企业榜，还要有logo
+        if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(billboardDTO.getType())){
+            if(userResponse != null){
+                billboardDTO.setUnitLogo(userResponse.getUnitLogo());
+            }
+        }
         billboardFeignApi.add(billboardDTO);
     }
 

@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.business.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -19,16 +20,13 @@ import com.gxa.jbgsw.business.service.CompanyService;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.exception.BizException;
-import com.gxa.jbgsw.common.utils.CopyPropertionIngoreNull;
 import com.gxa.jbgsw.common.utils.PageResult;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.net.BindException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -114,10 +112,10 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     }
 
     @Override
-    public void updateTalentPool(TalentPoolPO talentPoolPO) throws BizException {
+    public void updateTalentPool(TalentPoolUpdateDTO talentPoolPO) throws BizException {
         TalentPool talentPool = talentPoolMapper.selectById(talentPoolPO.getId());
-        // talentPoolDTO有null就不需要替换talentPool
-        BeanUtils.copyProperties(talentPoolPO, talentPool);
+        // talentPoolDTO 包含null全部拷贝
+        BeanUtil.copyProperties(talentPoolPO, talentPool);
 
         talentPoolMapper.updateById(talentPool);
     }

@@ -128,4 +128,7 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "是否创建视频： 1 创建  0不创建")
     private Integer isCreateVideo;
 
+    @ApiModelProperty(value = "pv")
+    private Integer pv;
+
 }

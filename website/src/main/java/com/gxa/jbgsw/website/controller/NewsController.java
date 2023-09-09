@@ -6,10 +6,7 @@ import com.gxa.jbgsw.website.feignapi.NewsFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -27,6 +24,12 @@ public class NewsController extends BaseController {
     List<NewsResponse> getHotNews(){
         // 先时间，阅览数排序， 取五条数据
         return newsFeignApi.getHotNews();
+    }
+
+    @ApiOperation("增加分享")
+    @GetMapping("/news/addShares")
+    void addShares(@RequestParam("id") Long id){
+        newsFeignApi.addShares(id);
     }
 
 

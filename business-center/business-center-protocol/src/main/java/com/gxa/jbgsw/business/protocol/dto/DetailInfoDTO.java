@@ -27,6 +27,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "发榜单位")
     private String unitName;
 
+    @ApiModelProperty(value = "榜单发布单位图标")
+    private String unitLogo;
+
     @ApiModelProperty(value = "发榜状态：0 待揭榜、1 已签约、2 解决中、3 已解决")
     private Integer status;
 
@@ -92,6 +95,9 @@ public class DetailInfoDTO implements Serializable {
 
     @ApiModelProperty(value = "是否揭榜： true 已揭榜  false 未揭榜 ")
     private boolean isGain = false;
+
+    @ApiModelProperty(value = "pv")
+    private Integer pv = 0;
 
     @ApiModelProperty(value = "揭榜单位详情")
     List<BillboardGainDTO> billboardGains = new ArrayList<>();

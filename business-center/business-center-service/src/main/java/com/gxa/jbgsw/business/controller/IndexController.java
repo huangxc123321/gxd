@@ -15,6 +15,7 @@ import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
+import com.gxa.jbgsw.business.protocol.enums.LevelEnum;
 import com.gxa.jbgsw.business.service.*;
 import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.PageRequest;
@@ -477,6 +478,108 @@ public class IndexController implements IndexApi {
 
         return  new ArrayList<>();
 
+    }
+
+    @Override
+    public RelateEconomicDTO getRelatedByEconomicId(Long id) {
+        RelateEconomicDTO relateDTO = new RelateEconomicDTO();
+        TechEconomicMan techEconomicMan = techEconomicManService.getById(id);
+        if(techEconomicMan != null){
+            // 三个成果推荐
+            SearchHarvestsRequest request = new SearchHarvestsRequest();
+            request.setPageNum(1);
+            request.setPageSize(3);
+/*            String[] labels = techEconomicMan.getLabel().split("；");
+            if(labels.length == 1){
+                labels = techEconomicMan.getLabel().split(";");
+            }
+            String label = labels[0];
+            request.setSearchFiled(label);*/
+
+            List<SearchHavestResponse> totalSearchHavestResponse = new ArrayList<>();
+            PageResult<SearchHavestResponse> pageResult = harvestService.queryHarvests(request);
+/*            if(pageResult.getTotal() <3){
+                if(pageResult.getList() != null && pageResult.getList().size() >0){
+                    pageResult.getList().stream().forEach(s->{
+                        totalSearchHavestResponse.add(s);
+                    });
+                }
+
+               if(labels.length>=2 && totalSearchHavestResponse.size()<3){
+                   label = labels[1];
+                   request.setSearchFiled(label);
+                   PageResult<SearchHavestResponse> pageResult1 = harvestService.queryHarvests(request);
+                   if(pageResult1.getList() != null && pageResult1.getList().size() >0){
+                       pageResult1.getList().stream().forEach(s->{
+                           totalSearchHavestResponse.add(s);
+                       });
+                   }
+               }
+
+                if(labels.length>=3 && totalSearchHavestResponse.size()<3){
+                    label = labels[2];
+                    request.setSearchFiled(label);
+                    PageResult<SearchHavestResponse> pageResult2 = harvestService.queryHarvests(request);
+                    if(pageResult2.getList() != null && pageResult2.getList().size() >0){
+                        pageResult2.getList().stream().forEach(s->{
+                            totalSearchHavestResponse.add(s);
+                        });
+                    }
+                }
+            }*/
+
+
+            if(pageResult.getList() != null && pageResult.getList().size() >0){
+                List<RelateHavestDTO> relateHavests = mapperFacade.mapAsList(pageResult.getList(), RelateHavestDTO.class);
+
+                if(CollectionUtils.isNotEmpty(relateHavests)){
+                    relateHavests.stream().forEach(s->{
+                        StringBuffer sb = new StringBuffer();
+                        // 技术领域
+                        if(s.getTechDomain1() != null){
+                            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                            if(tfc1 != null){
+                                sb.append(tfc1.getName()).append(",");
+                            }
+                        }
+                        if(s.getTechDomain2() != null){
+                            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                            if(tfc2 != null){
+                                sb.append(tfc2.getName()).append(",");
+                            }
+                        }
+
+                        if(s.getTechDomain() != null){
+                            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                            if(tfc != null){
+                                sb.append(tfc.getName()).append(",");
+                            }
+                        }
+                        s.setTechDomainName(sb.toString());
+                    });
+                }
+
+                relateDTO.setHavests(relateHavests);
+            }
+
+
+            // 三个技术经纪人
+            TechEconomicManRequest techEconomicManRequest = new TechEconomicManRequest();
+            techEconomicManRequest.setPageNum(1);
+            techEconomicManRequest.setPageSize(3);
+            // techEconomicManRequest.setSearchFiled(label);
+            PageResult<TechEconomicMan> pages = techEconomicManService.pageQuery(techEconomicManRequest);
+            if(pages.getList() != null && pages.getList().size() >0){
+                List<TechEconomicManRecommondDTO> economics = mapperFacade.mapAsList(pages.getList(), TechEconomicManRecommondDTO.class);
+                economics.stream().forEach(s->{
+                    s.setLevelName(LevelEnum.getNameByIndex(s.getLevel()));
+                });
+
+                relateDTO.setEconomics(economics);
+            }
+        }
+
+        return relateDTO;
     }
 
 

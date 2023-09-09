@@ -64,5 +64,5 @@ public interface BillboardService extends IService<Billboard> {
 
     List<Billboard> getRelatedBillboardByCompanyId(Long id);
 
-    void add(Long id);
+    void addPv(Long id);
 }

@@ -33,7 +33,23 @@ public class SearchHavestResponse implements Serializable {
     @ApiModelProperty(value = "展示图：从详情中获取第一张图片，记录下来")
     private String guidePicture;
 
-    @ApiModelProperty(value = "技术领域：字典中获取")
+    @ApiModelProperty(value = "技术领域第一级")
+    private String techDomain1;
+
+    @ApiModelProperty(value = "技术领域第二级")
+    private String techDomain2;
+
+    @ApiModelProperty(value = "技术领域第三级")
     private String techDomain;
+
+    @ApiModelProperty(value = "技术领域第一级显示名称")
+    private String techDomain1Name;
+
+    @ApiModelProperty(value = "技术领域第二级显示名称")
+    private String techDomain2Name;
+
+    @ApiModelProperty(value = "技术领域第三级显示名称")
+    private String techDomainName;
+
 
 }

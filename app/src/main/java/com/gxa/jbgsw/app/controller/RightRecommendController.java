@@ -199,4 +199,25 @@ public class RightRecommendController extends BaseController {
         return indexFeignApi.getRelatedBillboardByCompanyId(id);
     }
 
+
+
+
+    @ApiOperation("根据经纪人ID获取相关成果、经纪人， （经纪人详情页使用）")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "经纪人ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/index/getRelatedByEconomicId")
+    ApiResult<RelateEconomicDTO>  getRelatedByEconomicId(@RequestParam(value = "id") Long id) {
+        ApiResult<RelateEconomicDTO> apiResult = new ApiResult<>();
+        RelateEconomicDTO relateDTO = indexFeignApi.getRelatedByEconomicId(id);
+        apiResult.setData(relateDTO);
+
+        return apiResult;
+    }
+
+
+
+
+
+
 }

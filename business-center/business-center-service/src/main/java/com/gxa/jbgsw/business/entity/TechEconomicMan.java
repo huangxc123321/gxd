@@ -111,4 +111,15 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "总促成:是指完成项目的总数量，完成项目以评价完成为准")
     private Integer successTotal;
 
+    @ApiModelProperty(value = "技术领域(第一级)")
+    private Long techDomain1;
+
+    @ApiModelProperty(value = "技术领域(第二级)：字典中获取")
+    private Long techDomain2;
+
+    @ApiModelProperty(value = "技术领域显示名称(第三级，也就是最后)")
+    private Long techDomain;
+
+
+
 }

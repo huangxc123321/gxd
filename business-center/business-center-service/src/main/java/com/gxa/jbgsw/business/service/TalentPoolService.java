@@ -21,7 +21,7 @@ public interface TalentPoolService extends IService<TalentPool> {
 
     void add(TalentPoolPO talentPoolDTO);
 
-    void updateTalentPool(TalentPoolPO talentPoolDTO) ;
+    void updateTalentPool(TalentPoolUpdateDTO talentPoolDTO) ;
 
     List<TalentPool> getTalentPoolByTech(String key);
 

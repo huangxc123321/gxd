@@ -96,13 +96,19 @@ public class TalentPoolFontController extends BaseController {
 
     @ApiOperation("编辑帅才信息")
     @PostMapping("/talent/pool/update")
-    void update(@RequestBody TalentPoolPO talentPoolPO) throws BizException {
-        if(talentPoolPO == null || talentPoolPO.getId() == null){
+    void update(@RequestBody TalentPoolUpdateDTO talentPoolUpdateDTO) throws BizException {
+        if(talentPoolUpdateDTO == null || talentPoolUpdateDTO.getId() == null){
             throw new BizException(BusinessErrorCode.BUSINESS_PARAMS_ERROR);
         }
-        talentPoolPO.setUpdateBy(this.getUserId());
 
-        talentPoolFeignApi.update(talentPoolPO);
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        talentPoolUpdateDTO.setUpdateBy(userId);
+        talentPoolUpdateDTO.setUpdateAt(new Date());
+
+        talentPoolFeignApi.update(talentPoolUpdateDTO);
     }
 
 

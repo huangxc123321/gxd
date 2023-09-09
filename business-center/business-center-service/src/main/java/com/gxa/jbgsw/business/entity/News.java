@@ -82,4 +82,10 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "发布者名称")
     private String createName;
 
+    @ApiModelProperty(value = "pv")
+    private Integer pv;
+
+    @ApiModelProperty(value = "分享数")
+    private Integer shares;
+
 }

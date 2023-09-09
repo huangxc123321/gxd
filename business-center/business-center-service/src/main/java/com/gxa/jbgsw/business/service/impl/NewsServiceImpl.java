@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.Billboard;
@@ -238,6 +239,24 @@ public class NewsServiceImpl extends ServiceImpl<NewsMapper, News> implements Ne
             return mapperFacade.map(news, NewsRelatedDTO.class);
         }
         return null;
+    }
+
+    @Override
+    public void addPv(Long id) {
+        UpdateWrapper<News> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setSql("pv = pv +" + 1)
+                .eq("id", id);
+
+        newsMapper.update(null, updateWrapper);
+    }
+
+    @Override
+    public void addShares(Long id) {
+        UpdateWrapper<News> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setSql("shares = shares +" + 1)
+                .eq("id", id);
+
+        newsMapper.update(null, updateWrapper);
     }
 
 }

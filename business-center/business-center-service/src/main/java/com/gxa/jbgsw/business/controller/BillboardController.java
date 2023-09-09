@@ -86,27 +86,17 @@ public class BillboardController implements BillboardApi {
                 .append(billboard.getAreaName());
         billboard.setQueryKeys(sb.toString());
 
-        // 如果是企业榜，看发布人是否为空， 如果不为空看是否可以查询到企业，如果能够查到，就吧图片加入
-        if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(billboardDTO.getType())
-                && StrUtil.isNotBlank(billboardDTO.getUnitName())){
-            CompanyDTO companyDTO = companyService.getCompanyByName(billboardDTO.getUnitName());
-            if(companyDTO != null){
-                billboard.setUnitLogo(companyDTO.getLogo());
-            }
-        }
-
         billboardService.save(billboard);
 
         // 发布过后生成成果推荐，帅才推荐，经纪人推荐相关数据, 写定时任务
         String key = RedisKeys.BILLBOARD_RELATED_RECOMMEND_TASK + billboard.getId();
         // 过期时间
         stringRedisTemplate.opsForValue().set(key, String.valueOf(billboard.getId()), 1, TimeUnit.MINUTES);
-
     }
 
     @Override
     public void addPv(Long id) {
-        billboardService.add(id);
+        billboardService.addPv(id);
     }
 
     @Override

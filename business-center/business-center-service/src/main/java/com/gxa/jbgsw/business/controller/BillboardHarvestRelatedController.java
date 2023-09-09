@@ -72,26 +72,27 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
                         s.setHstar(s.getStar());
                     }
                 }
-
-
                 // 技术领域
                 StringBuffer sb = new StringBuffer();
-                TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechKeys()));
-                if(tfc1 != null){
-                    sb.append(tfc1.getName());
-                    sb.append(CharUtil.COMMA);
-                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc1.getPid()));
-                    if(tfc2 != null){
-                        sb.append(tfc2.getName());
-                        sb.append(CharUtil.COMMA);
-                        TechnicalFieldClassifyDTO tfc3 = technicalFieldClassifyFeignApi.getById(Long.valueOf(tfc2.getPid()));
-                        if(tfc3 != null){
-                            sb.append(tfc3.getName());
-                        }
+                if(s.getTechDomain1() != null){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                    if(tfc1 != null){
+                        sb.append(tfc1.getName()).append(",");
                     }
                 }
-                s.setTechKeys(sb.toString().replace("所有分类,", ""));
-                s.setTechKeysName(sb.toString().replace("所有分类,", ""));
+                if(s.getTechDomain2() != null){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName()).append(",");
+                    }
+                }
+                if(s.getTechDomain() != null){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc != null){
+                        sb.append(tfc.getName());
+                    }
+                }
+                s.setTechDomainName(sb.toString());
             });
         }
         return responses;

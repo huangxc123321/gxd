@@ -1,5 +1,6 @@
 package com.gxa.jbgsw.user.protocol.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.gxa.jbgsw.common.utils.PageRequest;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -18,10 +19,10 @@ public class UserRequest extends PageRequest implements Serializable {
     private String searchFiled;
 
     @ApiModelProperty(value = "创建开始时间")
-    private Date startDate;
+    private String startDate;
 
     @ApiModelProperty(value = "创建结束时间")
-    private Date endDate;
+    private String endDate;
 
     @ApiModelProperty(value = "认证状态： 0 待审核  1 已通过 2 未通过")
     private Integer status;

@@ -103,13 +103,13 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 }
 
 
-                // 行业  === 技术领域
+                // 行业  === 个人简介
                 Integer categories = billboard.getCategories();
                 DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
                 if(dictionaryDTO != null){
                     String categoriesName = dictionaryDTO.getDicValue();
-                    String techDomain =  s.getQueryKeys();
-                    String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, techDomain);
+                    String remark =  s.getRemark();
+                    String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, remark);
                     if(StrUtil.isNotBlank(techSameWorkds)){
                         // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分
                         if(techSameWorkds.length()>=2){
@@ -127,11 +127,11 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                  *  地区 === 地区
                  */
                 // 榜单发布地区
-                String cityName = billboard.getCityName();
+                String billboradAddress = billboard.getProvinceName()+billboard.getCityName()+billboard.getAreaName();
                 // 帅才地区
-                String address = s.getCityName();
+                String address = s.getProvinceName()+s.getCityName()+s.getAreaName();
                 // 匹配地区
-                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(cityName, address);
+                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){

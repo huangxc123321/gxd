@@ -82,7 +82,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
 
         // 如果是企业类型的还需要生成一个企业数据
-        if(user.getUnitNature().equals(UserTypeEnum.BUZ.getCode())
+        if(user.getUnitNature().equals(UserTypeEnum.GOV.getCode())
+                || user.getUnitNature().equals(UserTypeEnum.BUZ.getCode())
                 || user.getUnitNature().equals(UserTypeEnum.TEAM.getCode())
                 || user.getUnitNature().equals(UserTypeEnum.EDU.getCode())){
             CompanyDTO companyDTO = new CompanyDTO();

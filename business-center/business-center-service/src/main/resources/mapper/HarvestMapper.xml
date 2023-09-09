@@ -145,6 +145,7 @@
         a.tech_domain2 AS techDomain2,
         a.holder,
         a.remark,
+        a.guide_picture AS guidePicture,
         a.create_at AS createAt
         FROM
         t_harvest a

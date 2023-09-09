@@ -23,7 +23,7 @@ public interface TalentPoolApi {
     void add(@RequestBody TalentPoolPO talentPoolPO);
 
     @PostMapping("/talent/pool/update")
-    void update(@RequestBody TalentPoolPO talentPoolPO);
+    void update(@RequestBody TalentPoolUpdateDTO talentPoolPO);
 
     @PostMapping("/talent/pool/getTalentPoolByTech")
     List<TalentPoolDTO> getTalentPoolByTech(@RequestParam("key") String key);

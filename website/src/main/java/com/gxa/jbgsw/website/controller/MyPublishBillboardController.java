@@ -1,6 +1,5 @@
 package com.gxa.jbgsw.website.controller;
 
-import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
@@ -9,6 +8,7 @@ import com.gxa.jbgsw.business.client.TechEconomicManAppraiseApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
 import com.gxa.jbgsw.common.exception.BizException;
@@ -196,8 +196,15 @@ public class MyPublishBillboardController extends BaseController {
             billboardDTO.setUnitName(this.getUnitName());
         }
 
-        // 判断是否政府发布政府榜单
-        // TODO: 2023/7/7 0007 现在的流程暂时不用判断
+        // 如果是企业榜，还要有logo
+        if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(billboardDTO.getType())){
+            UserResponse userResponse = this.getUser();
+            if(userResponse != null){
+                billboardDTO.setUnitName(userResponse.getUnitName());
+                billboardDTO.setUnitLogo(userResponse.getUnitLogo());
+            }
+        }
+
 
         billboardFeignApi.add(billboardDTO);
     }
