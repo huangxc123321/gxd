@@ -20,7 +20,7 @@ public class SearchGovRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "省份地区地址： 省、市、区一级别的地区ID")
     private String addrId;
 
-    @ApiModelProperty(value = "发榜状态：0 待揭榜、1 已签约、2 解决中、3 已解决")
+    @ApiModelProperty(value = "发榜状态：待揭榜 1，攻关中 2，已完成 3")
     private Integer status;
 
     @ApiModelProperty(value = "发榜金额: 最低金额")

@@ -64,6 +64,15 @@ public class BillboardFontController extends BaseController {
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
 
+    @ApiOperation(value = "测试匹配", notes = "测试匹配")
+    @ApiImplicitParams({
+            @ApiImplicitParam(value = "榜单ID", name = "id", dataType = "Long", paramType = "query"),
+    })
+    @GetMapping("/billboard/pipei")
+    public void pipei(@RequestParam("id")Long id){
+        billboardFeignApi.pipei(Long.valueOf(id));
+
+    }
 
     @ApiOperation(value = "查看详情", notes = "查看详情")
     @ApiImplicitParams({

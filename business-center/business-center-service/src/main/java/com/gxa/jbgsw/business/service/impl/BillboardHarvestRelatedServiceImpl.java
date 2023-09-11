@@ -67,22 +67,22 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
         // TODO: 2023/7/20 0020 还有一些条件，后期加上
         List<Harvest> harvests = harvestService.list();
         if(harvests != null && harvests.size()>0){
-            // 分数
-            AtomicReference<Integer> sorce = new AtomicReference<>(0);
             List<BillboardHarvestRelated> relateds = new ArrayList<>();
             List<BillboardHarvestRelated> finalRelateds = relateds;
-            harvests.stream().forEach(s->{
+            for(int i=0; i<harvests.size(); i++){
+                int sorce = 0;
+                Harvest s = harvests.get(i);
+
+
                 String title = billboard.getTitle();
                 // 匹配标题
                 String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getName());
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=2 && sameWords.length() <3){
-                        sorce.set(sorce.get().intValue() + 1);
+                        sorce = sorce +1;
                     }else if(sameWords.length()>=3){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -93,13 +93,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
-                        sorce.set(sorce.get().intValue() + 5);
+                        sorce = sorce +5;
                     }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
-                        sorce.set(sorce.get().intValue() + 4);
+                        sorce = sorce +4;
                     }else if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +1;
                     }
                 }
 
@@ -108,16 +106,14 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 // 行业名称
                 DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
                 if(dictionaryDTO != null){
-                   String categoriesName = dictionaryDTO.getDicValue();
+                    String categoriesName = dictionaryDTO.getDicValue();
                     String categoriesWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, s.getQueryKeys());
                     if(StrUtil.isNotBlank(categoriesWords)){
                         // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                         if(sameWords.length()>=2 && sameWords.length() <3){
-                            sorce.set(sorce.get().intValue() + 1);
+                            sorce = sorce +1;
                         }else if(sameWords.length()>=3){
-                            sorce.set(sorce.get().intValue() + 2);
-                        }else{
-                            sorce.set(sorce.get().intValue() + 0);
+                            sorce = sorce +2;
                         }
                     }
                 }
@@ -131,25 +127,21 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 1);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +1;
                     }
                 }
 
-                BigDecimal a = new BigDecimal(sorce.get());
-                BigDecimal b = new BigDecimal(2);
-
-                BigDecimal c = a.divide(b, 2, RoundingMode.UP);
 
                 BillboardHarvestRelated related = new BillboardHarvestRelated();
                 related.setBillboardId(billboardId);
-                related.setSStar(c.doubleValue());
+                related.setSStar(Double.valueOf(sorce>5?5:sorce));
                 related.setHarvestId(s.getId());
                 related.setCreateAt(new Date());
 
-                finalRelateds.add(related);
-            });
+                if(related.getSStar() >0 ){
+                    finalRelateds.add(related);
+                }
+            }
 
             // 排序，选出分最多的十条
             relateds.stream().sorted(Comparator.comparing(BillboardHarvestRelated::getSStar).reversed());
@@ -224,11 +216,13 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
 
         List<Billboard> billboards = billboardService.list(lambdaQueryWrapper);
         if(billboards != null && billboards.size()>0){
-            // 分数
-            AtomicReference<Integer> sorce = new AtomicReference<>(0);
             List<BillboardHarvestRelated> relateds = new ArrayList<>();
             List<BillboardHarvestRelated> finalRelateds = relateds;
-            billboards.stream().forEach(s->{
+
+
+            for(int i=0; i<billboards.size(); i++){
+                int sorce = 0;
+                Billboard s = billboards.get(i);
                 // 成果名称
                 String name = harvest.getName();
                 // 匹配标题
@@ -236,11 +230,9 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=2 && sameWords.length() <3){
-                        sorce.set(sorce.get().intValue() + 1);
+                        sorce = sorce +1;
                     }else if(sameWords.length()>=3){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -251,13 +243,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
-                        sorce.set(sorce.get().intValue() + 5);
+                        sorce = sorce +5;
                     }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
-                        sorce.set(sorce.get().intValue() + 4);
+                        sorce = sorce +4;
                     }else if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -271,9 +261,7 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                     String hyNum = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, harvest.getQueryKeys());
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 1);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +1;
                     }
                 }
 
@@ -285,25 +273,19 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 1);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +1;
                     }
                 }
 
-                BigDecimal a = new BigDecimal(sorce.get());
-                BigDecimal b = new BigDecimal(2);
-
-                BigDecimal c = a.divide(b, 2, RoundingMode.UP);
-
                 BillboardHarvestRelated related = new BillboardHarvestRelated();
                 related.setBillboardId(s.getId());
-                related.setSStar(c.doubleValue());
+                related.setSStar(Double.valueOf(sorce>5?5:sorce));
                 related.setHarvestId(harvest.getId());
                 related.setCreateAt(new Date());
 
                 finalRelateds.add(related);
-            });
+            }
+
 
             // 排序，选出分最多的十条
             relateds.stream().sorted(Comparator.comparing(BillboardHarvestRelated::getSStar).reversed());

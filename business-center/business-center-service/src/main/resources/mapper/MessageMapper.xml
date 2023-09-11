@@ -7,14 +7,14 @@
          SELECT
              b.id,
              c.id AS billboardId,
-             c.title,
+             a.title,
              c.amount,
              a.create_at AS createAt,
              b.`status`,
              a.read_flag AS readFlag
          FROM
              t_message a
-         LEFT JOIN t_billboard_economic_related AS b ON a.pid = b.id
+         LEFT JOIN t_billboard_economic_related AS b ON a.pid = b.ida
          LEFT JOIN t_billboard AS c ON c.id = b.billboard_id
          WHERE
              a.user_id = #{createBy}

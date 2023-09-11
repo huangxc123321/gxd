@@ -56,6 +56,9 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
             List<MyAttentionInfo> attentionInfos = attentionMapper.getMyAttentionInfos(myAttentionRequest);
             response.setBillboards(attentionInfos);
 
+            response.setPageNum(myAttentionRequest.getPageNum());
+            response.setPageSize(myAttentionRequest.getPageSize());
+            response.setTotal(govNum);
         }
         else if(AttentionTypeEnum.BUZ.getCode().equals(myAttentionRequest.getType())){
             Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
@@ -67,6 +70,9 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
 
             List<MyAttentionInfo> attentionInfos = attentionMapper.getMyBuzAttentionInfos(myAttentionRequest);
             response.setBillboards(attentionInfos);
+            response.setPageNum(myAttentionRequest.getPageNum());
+            response.setPageSize(myAttentionRequest.getPageSize());
+            response.setTotal(buzNum);
 
         } else if(AttentionTypeEnum.TALENT.getCode().equals(myAttentionRequest.getType())){
             Integer govNum = getAttentionNum(myAttentionRequest.getCreateBy(), AttentionTypeEnum.GOV.getCode());
@@ -86,6 +92,9 @@ public class AttentionServiceImpl extends ServiceImpl<AttentionMapper, Attention
                 });
             }
             response.setBillboards(attentionInfos);
+            response.setPageNum(myAttentionRequest.getPageNum());
+            response.setPageSize(myAttentionRequest.getPageSize());
+            response.setTotal(talentNum);
         }
 
         return response;

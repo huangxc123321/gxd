@@ -155,8 +155,59 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         return techEconomicManMapper.getLabels();
     }
 
+
+
+
     @Override
     public PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires(TechEconomicManRequiresRequest request) {
+        PageHelper.startPage(request.getPageNum(), request.getPageSize());
+
+        List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);
+
+
+//        if(CollectionUtils.isNotEmpty(responses)){
+//            responses.stream().forEach(s->{
+//                s.setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(s.getStatus()));
+//
+//                // 相关成果
+//                List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
+//                StringBuffer sb = new StringBuffer();
+//                if(CollectionUtils.isNotEmpty(bs)){
+//                    for(int i=0; i<bs.size(); i++){
+//                        if(i == bs.size() - 1){
+//                            sb.append(bs.get(i).getName());
+//                        }else{
+//                            sb.append(bs.get(i).getName()).append(CharUtil.COMMA);
+//                        }
+//                    }
+//                }
+//                s.setHavests(sb.toString());
+//
+//                // 相关帅才
+//                StringBuffer tbs = new StringBuffer();
+//                List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
+//                if(CollectionUtils.isNotEmpty(ts)){
+//                    for(int i=0; i<ts.size(); i++){
+//                        if(i == ts.size() - 1){
+//                            tbs.append(ts.get(i).getName());
+//                        }else{
+//                            tbs.append(ts.get(i).getName()).append(CharUtil.COMMA);
+//                        }
+//                    }
+//                }
+//                s.setTalents(tbs.toString());
+//            });
+//        }
+
+        PageInfo<TechEconomicManRequiresResponse> pageInfo = new PageInfo<>(responses);
+        //类型转换
+        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<TechEconomicManRequiresResponse>>() {
+        }.build(), new TypeBuilder<PageResult<TechEconomicManRequiresResponse>>() {}.build());
+    }
+
+
+    // 备份
+    public PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires_old(TechEconomicManRequiresRequest request) {
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
 
         List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);

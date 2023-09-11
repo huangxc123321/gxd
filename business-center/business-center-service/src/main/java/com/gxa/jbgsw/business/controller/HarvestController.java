@@ -287,6 +287,28 @@ public class HarvestController implements HarvestApi {
             List<HarvestResponse> responses = mapperFacade.mapAsList(harvests, HarvestResponse.class);
             responses.forEach(s->{
 
+                // 技术领域
+                if(s.getTechDomain1() != null){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                    }
+                }
+                if(s.getTechDomain2() != null){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                    }
+                }
+                if(s.getTechDomain() != null){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
+                    }
+                }
+
+                s.setTechDomainName(s.getTechDomain1Name()+";"+s.getTechDomain2Name()+";"+s.getTechDomainName());
+
             });
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());

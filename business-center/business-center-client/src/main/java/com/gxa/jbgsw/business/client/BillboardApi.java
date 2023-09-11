@@ -63,4 +63,7 @@ public interface BillboardApi {
 
     @PostMapping(value = "/billboard/insertBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     void insertBatchIds(@RequestBody Long[] ids);
+
+    @GetMapping("/billboard/pipei")
+    void pipei(@RequestParam("id") Long id);
 }

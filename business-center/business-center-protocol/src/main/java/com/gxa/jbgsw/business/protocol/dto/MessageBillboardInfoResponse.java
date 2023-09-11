@@ -35,10 +35,10 @@ public class MessageBillboardInfoResponse implements Serializable {
     @ApiModelProperty(value = "视频URL地址")
     private String videoUrl;
 
-    @ApiModelProperty(value = "状态：待揭榜、已签约、解决中、已解决 (从字典中获取)", hidden = true)
+    @ApiModelProperty(value = "状态：待揭榜 1，攻关中 2，已完成 3 (从字典中获取)", hidden = true)
     private Integer status;
 
-    @ApiModelProperty(value = "状态：待揭榜、已签约、解决中、已解决 (从字典中获取)")
+    @ApiModelProperty(value = "状态：待揭榜 1，攻关中 2，已完成 3 (从字典中获取)")
     private String statusName;
 
     @JsonFormat(pattern = "yyyy.MM.dd",timezone = "GMT+8")

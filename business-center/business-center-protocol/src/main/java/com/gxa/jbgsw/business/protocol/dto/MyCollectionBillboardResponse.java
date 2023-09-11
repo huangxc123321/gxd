@@ -23,7 +23,7 @@ public class MyCollectionBillboardResponse implements Serializable {
     @ApiModelProperty(value = "需求详情")
     private String content;
 
-    @ApiModelProperty(value = "状态：待揭榜、已签约、解决中、已解决 (从字典中获取)", hidden = true)
+    @ApiModelProperty(value = "状态：待揭榜 1，攻关中 2，已完成 3 (从字典中获取)", hidden = true)
     private Integer status;
 
     @ApiModelProperty(value = "意向金额：0 面议， 其它为具体金额")

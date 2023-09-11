@@ -7,11 +7,10 @@ package com.gxa.jbgsw.business.protocol.enums;
  */
 public enum BillboardStatusEnum {
 
-    // 状态：0 待揭榜、1 已签约、2 解决中、3 已解决
-    WAIT(0, "待揭榜"),
-    SIGNED(1, "已签约"),
-    SOLVEING(2, "解决中"),
-    SOLVED(3, "已解决"),
+    // 状态：待揭榜1，攻关中2，已完成3
+    WAIT(1, "待揭榜"),
+    SOLVEING(2, "攻关中"),
+    SOLVED(3, "已完成"),
 
     ;
 

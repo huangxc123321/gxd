@@ -20,7 +20,6 @@
                LEFT JOIN t_tech_economic_man AS c ON a.economic_id = c.id
             WHERE
                 a.billboard_id = #{billboardId}
-                AND a.status = 2
                 ORDER BY a.create_at DESC
 
     </select>

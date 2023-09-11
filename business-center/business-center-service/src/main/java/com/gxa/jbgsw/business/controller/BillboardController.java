@@ -16,9 +16,7 @@ import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
-import com.gxa.jbgsw.business.service.BillboardService;
-import com.gxa.jbgsw.business.service.BillboardTemporaryService;
-import com.gxa.jbgsw.business.service.CompanyService;
+import com.gxa.jbgsw.business.service.*;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import io.swagger.annotations.Api;
@@ -58,6 +56,12 @@ public class BillboardController implements BillboardApi {
     StringRedisTemplate stringRedisTemplate;
     @Resource
     BillboardTemporaryService billboardTemporaryService;
+    @Resource
+    BillboardEconomicRelatedService billboardEconomicRelatedService;
+    @Resource
+    BillboardHarvestRelatedService billboardHarvestRelatedService;
+    @Resource
+    BillboardTalentRelatedService billboardTalentRelatedService;
 
     @Override
     public void add(BillboardDTO billboardDTO) {
@@ -327,6 +331,13 @@ public class BillboardController implements BillboardApi {
         // 删除临时数据
         billboardTemporaryService.deleteByCreateByAndIds(createBy, ids);
 
+    }
+
+    @Override
+    public void pipei(Long id) {
+        billboardHarvestRelatedService.addHarvestRelated(Long.valueOf(id));
+        billboardTalentRelatedService.addTalentRelated(Long.valueOf(id));
+        billboardEconomicRelatedService.addEconomicRelated(Long.valueOf(id));
     }
 }
 

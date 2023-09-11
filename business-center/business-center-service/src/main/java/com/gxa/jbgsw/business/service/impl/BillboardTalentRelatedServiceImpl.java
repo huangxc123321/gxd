@@ -65,22 +65,22 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
         List<TalentPool> talentPools = talentPoolService.list();
         if(talentPools != null && talentPools.size()>0){
             // 分数
-            AtomicReference<Integer> sorce = new AtomicReference<>(0);
             List<BillboardTalentRelated> relateds = new ArrayList<>();
             List<BillboardTalentRelated> finalRelateds = relateds;
-            talentPools.stream().forEach(s->{
+
+            for(int i=0; i<talentPools.size(); i++){
+                int sorce = 0;
                 String title = billboard.getTitle();
+                TalentPool s = talentPools.get(i);
 
                 // 榜单名称 ===== 研究方向
                 String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getQueryKeys());
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=2 && sameWords.length() <3){
-                        sorce.set(sorce.get().intValue() + 1);
+                        sorce = sorce +1;
                     }else if(sameWords.length()>=3){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -92,15 +92,12 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
-                        sorce.set(sorce.get().intValue() + 5);
+                        sorce = sorce +5;
                     }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
-                        sorce.set(sorce.get().intValue() + 4);
+                        sorce = sorce +4;
                     }else if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
-                }
 
 
                 // 行业  === 个人简介
@@ -113,11 +110,9 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                     if(StrUtil.isNotBlank(techSameWorkds)){
                         // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分
                         if(techSameWorkds.length()>=2){
-                            sorce.set(sorce.get().intValue() + 2);
+                            sorce = sorce +2;
                         }else if(techSameWorkds.length() ==2){
-                            sorce.set(sorce.get().intValue() + 1);
-                        }else{
-                            sorce.set(sorce.get().intValue() + 0);
+                            sorce = sorce +1;
                         }
                     }
                 }
@@ -135,23 +130,22 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 1);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +1;
                     }
                 }
 
-                BigDecimal a = new BigDecimal(sorce.get());
-                BigDecimal b = new BigDecimal(2);
-                BigDecimal c = a.divide(b, 2, RoundingMode.UP);
 
                 BillboardTalentRelated related = new BillboardTalentRelated();
                 related.setBillboardId(billboardId);
-                related.setSStar(c.doubleValue());
+                related.setSStar(Double.valueOf(sorce>5?5:sorce));
                 related.setTalentId(s.getId());
                 related.setCreateAt(new Date());
-                finalRelateds.add(related);
-            });
+
+                if(related.getSStar() >0 ){
+                    finalRelateds.add(related);
+                   }
+               }
+            }
 
             // 排序，选出分最多的十条
             relateds.stream().sorted(Comparator.comparing(BillboardTalentRelated::getSStar).reversed());

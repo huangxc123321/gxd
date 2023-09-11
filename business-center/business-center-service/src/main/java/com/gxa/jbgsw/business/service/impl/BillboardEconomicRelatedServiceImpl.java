@@ -15,28 +15,22 @@ import com.gxa.jbgsw.business.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardEconomicRelatedMapper;
 import com.gxa.jbgsw.business.protocol.dto.AppRequiresAccepptDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
-import com.gxa.jbgsw.business.protocol.dto.TechEconomicManRequest;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.gxa.jbgsw.common.utils.ComputeSimilarityRatio;
-import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
-import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * <p>
@@ -68,11 +62,15 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
         // TODO: 2023/7/20 0020 还有一些条件，后期加上
         List<TechEconomicMan> economics = techEconomicManService.list();
         if(economics != null && economics.size()>0){
-            // 分数
-            AtomicReference<Integer> sorce = new AtomicReference<>(0);
+
             List<BillboardEconomicRelated> relateds = new ArrayList<>();
             List<BillboardEconomicRelated> finalRelateds = relateds;
-            economics.stream().forEach(s->{
+
+            for(int i=0; i<economics.size(); i++){
+                // 分数
+                int sorce = 0;
+                TechEconomicMan  s = economics.get(i);
+
                 String title = billboard.getTitle();
 
                 // 榜单名称 === 专业标签
@@ -81,11 +79,9 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=2 && sameWords.length() <3){
-                        sorce.set(sorce.get().intValue() + 1);
+                        sorce = sorce +1;
                     }else if(sameWords.length()>=3){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -119,18 +115,16 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 // 加上标签
                 sb.append(s.getLabel());
 
-             String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sb.toString());
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sb.toString());
                 double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getLabel());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(sameWords.length()>=3 && num > 0.15){
-                        sorce.set(sorce.get().intValue() + 5);
+                        sorce = sorce +5;
                     }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
-                        sorce.set(sorce.get().intValue() + 4);
+                        sorce = sorce +4;
                     }else if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -145,11 +139,9 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                     mwords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, sb.toString());
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(mwords.length()>=2 && mwords.length() <3){
-                        sorce.set(sorce.get().intValue() + 1);
+                        sorce = sorce +1;
                     }else if(mwords.length()>=3){
-                        sorce.set(sorce.get().intValue() + 2);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +2;
                     }
                 }
 
@@ -163,49 +155,24 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
                     if(sameWords.length()>=2){
-                        sorce.set(sorce.get().intValue() + 1);
-                    }else{
-                        sorce.set(sorce.get().intValue() + 0);
+                        sorce = sorce +1;
                     }
                 }
 
-
-                BigDecimal a = new BigDecimal(sorce.get());
-                BigDecimal b = new BigDecimal(2);
-
-                BigDecimal c = a.divide(b, 2, RoundingMode.UP);
-
                 BillboardEconomicRelated related = new BillboardEconomicRelated();
                 related.setBillboardId(billboardId);
-                related.setSStar(c.doubleValue());
+                related.setSStar(Double.valueOf(sorce>5?5:sorce));
                 related.setEconomicId(s.getId());
                 related.setCreateAt(new Date());
 
-                // TODO: 2023/9/1 0001  暂时不知道为什么出错
-/*                UserResponse userResponse = userFeignApi.getUserByCode(s.getMobile());
-                if(userResponse != null){
-                    related.setEconomicUserId(userResponse.getId());
-                }*/
-
-                finalRelateds.add(related);
-            });
-
-/*            if(relateds == null || relateds.size()<1){
-                TechEconomicManRequest request = new TechEconomicManRequest();
-                PageResult<TechEconomicMan> pageResult = techEconomicManService.pageQuery(request);
-                List<TechEconomicMan> techEconomics = pageResult.getList();
-                if(!CollectionUtils.isEmpty(techEconomics)){
-                    techEconomics.stream().forEach(s->{
-                        BillboardEconomicRelated related = new BillboardEconomicRelated();
-                        related.setBillboardId(billboardId);
-                        related.setSStar(0D);
-                        related.setEconomicId(s.getId());
-                        related.setCreateAt(new Date());
-
-                        finalRelateds.add(related);
-                    });
+                if(related.getSStar().intValue() > 0){
+                    finalRelateds.add(related);
                 }
-            }*/
+            }
+
+
+
+
 
 
             // 排序，选出分最多的十条

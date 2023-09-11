@@ -36,6 +36,7 @@
         <result column="publish_person" property="publishPerson" jdbcType="VARCHAR" />
 
         <result column="is_create_Video" property="isCreateVideo" jdbcType="INTEGER" />
+        <result column="pv" property="pv" jdbcType="INTEGER" />
     </resultMap>
 
 
