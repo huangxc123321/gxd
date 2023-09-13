@@ -191,7 +191,7 @@ public class MyPublishBillboardController extends BaseController {
         billboardDTO.setCreateBy(userId);
         billboardDTO.setCreateAt(new Date());
         // 设置默认的待揭榜
-        billboardDTO.setStatus(0);
+        billboardDTO.setStatus(BillboardStatusEnum.WAIT.getCode());
         if(billboardDTO.getUnitName() == null){
             billboardDTO.setUnitName(this.getUnitName());
         }

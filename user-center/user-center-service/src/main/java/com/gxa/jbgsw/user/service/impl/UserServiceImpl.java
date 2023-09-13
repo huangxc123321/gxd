@@ -61,6 +61,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void deleteBatchIds(Long[] ids) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
         userMapper.deleteBatchIds(list);
+
+        for(int i=0; i<list.size(); i++){
+            Long id = list.get(i);
+
+            String key = RedisKeys.USER_INFO+id;
+            stringRedisTemplate.delete(key);
+        }
     }
 
     @Override

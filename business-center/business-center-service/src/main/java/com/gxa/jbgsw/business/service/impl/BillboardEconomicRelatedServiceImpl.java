@@ -78,9 +78,9 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getLabel());
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                    if(sameWords.length()>=2 && sameWords.length() <3){
+                    if(sameWords.length()>=3 && sameWords.length() <4){
                         sorce = sorce +1;
-                    }else if(sameWords.length()>=3){
+                    }else if(sameWords.length()>=4){
                         sorce = sorce +2;
                     }
                 }
@@ -119,11 +119,11 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getLabel());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(sameWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=3 && num > 0.15){
                         sorce = sorce +5;
-                    }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
                         sorce = sorce +4;
-                    }else if(sameWords.length()>=2){
+                    }else if(techWords.length()>=2){
                         sorce = sorce +2;
                     }
                 }
@@ -151,10 +151,10 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 // 帅才地区
                 String address = s.getProvinceName()+s.getCityName()+s.getAreaName();
                 // 匹配地区
-                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
-                if(StrUtil.isNotBlank(cityWords)){
-                    // 如果匹配2个字以下 0 分，匹配2个字给1分
-                    if(sameWords.length()>=2){
+                String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                if(StrUtil.isNotBlank(addressWorkds)){
+                    // 如果匹配4个字以下 0 分，匹配4个字给1分
+                    if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
                         sorce = sorce +1;
                     }
                 }

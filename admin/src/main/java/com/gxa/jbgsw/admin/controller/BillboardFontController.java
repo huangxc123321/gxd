@@ -10,6 +10,7 @@ import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardTypeEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.protocol.errcode.BusinessErrorCode;
@@ -273,7 +274,7 @@ public class BillboardFontController extends BaseController {
     void add(@RequestBody BillboardDTO billboardDTO) throws BizException {
         billboardDTO.setCreateBy(this.getUserId());
         // 设置默认的待揭榜
-        billboardDTO.setStatus(0);
+        billboardDTO.setStatus(BillboardStatusEnum.WAIT.getCode());
         if(StrUtil.isBlank(billboardDTO.getUnitName())){
             billboardDTO.setUnitName(this.getUnitName());
         }

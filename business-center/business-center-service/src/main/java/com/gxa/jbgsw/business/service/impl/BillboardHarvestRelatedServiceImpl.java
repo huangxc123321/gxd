@@ -78,10 +78,10 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 // 匹配标题
                 String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getName());
                 if(StrUtil.isNotBlank(sameWords)){
-                    // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                    if(sameWords.length()>=2 && sameWords.length() <3){
+                    // 如果匹配3个字以下 0 分，匹配3个字给1分， 匹配4个字以上给2分
+                    if(sameWords.length()>=3 && sameWords.length() <4){
                         sorce = sorce +1;
-                    }else if(sameWords.length()>=3){
+                    }else if(sameWords.length()>=4){
                         sorce = sorce +2;
                     }
                 }
@@ -92,11 +92,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getQueryKeys());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(sameWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=4 && num > 0.15){
                         sorce = sorce +5;
-                    }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=5 && num < 0.15 && num >= 0.1){
                         sorce = sorce +4;
-                    }else if(sameWords.length()>=2){
+                    }else if(techWords.length()>=3){
                         sorce = sorce +1;
                     }
                 }
@@ -110,9 +110,9 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                     String categoriesWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, s.getQueryKeys());
                     if(StrUtil.isNotBlank(categoriesWords)){
                         // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                        if(sameWords.length()>=2 && sameWords.length() <3){
+                        if(categoriesWords.length()>=3 && categoriesWords.length() <4){
                             sorce = sorce +1;
-                        }else if(sameWords.length()>=3){
+                        }else if(categoriesWords.length()>=4){
                             sorce = sorce +2;
                         }
                     }
@@ -123,10 +123,10 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 // 成果的单位
                 String unitName = s.getUnitName();
                 // 匹配地区
-                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(address, unitName);
-                if(StrUtil.isNotBlank(cityWords)){
-                    // 如果匹配2个字以下 0 分，匹配2个字给1分
-                    if(sameWords.length()>=2){
+                String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(address, unitName);
+                if(StrUtil.isNotBlank(addressWorkds)){
+                    // 如果匹配4个字以下 0 分，匹配4个字给1分
+                    if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
                         sorce = sorce +1;
                     }
                 }
@@ -242,11 +242,11 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 double num = ComputeSimilarityRatio.SimilarDegree(techKeys,harvest.getQueryKeys());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(sameWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=3 && num > 0.15){
                         sorce = sorce +5;
-                    }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
                         sorce = sorce +4;
-                    }else if(sameWords.length()>=2){
+                    }else if(techWords.length()>=2){
                         sorce = sorce +2;
                     }
                 }
@@ -260,7 +260,7 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
 
                     String hyNum = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, harvest.getQueryKeys());
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
-                    if(sameWords.length()>=2){
+                    if(hyNum.length()>=2){
                         sorce = sorce +1;
                     }
                 }
@@ -272,7 +272,7 @@ public class BillboardHarvestRelatedServiceImpl extends ServiceImpl<BillboardHar
                 String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboardAddress,address);
                 if(StrUtil.isNotBlank(cityWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
-                    if(sameWords.length()>=2){
+                    if(cityWords.length()>=2){
                         sorce = sorce +1;
                     }
                 }

@@ -76,10 +76,10 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 // 榜单名称 ===== 研究方向
                 String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getQueryKeys());
                 if(StrUtil.isNotBlank(sameWords)){
-                    // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                    if(sameWords.length()>=2 && sameWords.length() <3){
+                    // 如果匹配3个字以下 0 分，匹配3个字给1分， 匹配4个字以上给2分
+                    if(sameWords.length()>=3 && sameWords.length() <4){
                         sorce = sorce +1;
-                    }else if(sameWords.length()>=3){
+                    }else if(sameWords.length()>=4){
                         sorce = sorce +2;
                     }
                 }
@@ -91,11 +91,11 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getQueryKeys());
                 if(StrUtil.isNotBlank(techWords)){
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(sameWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=3 && num > 0.15){
                         sorce = sorce +5;
-                    }else if(sameWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
                         sorce = sorce +4;
-                    }else if(sameWords.length()>=2){
+                    }else if(techWords.length()>=2){
                         sorce = sorce +2;
                     }
 
@@ -109,9 +109,9 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                     String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, remark);
                     if(StrUtil.isNotBlank(techSameWorkds)){
                         // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分
-                        if(techSameWorkds.length()>=2){
+                        if(techSameWorkds.length()>=3){
                             sorce = sorce +2;
-                        }else if(techSameWorkds.length() ==2){
+                        }else if(techSameWorkds.length() ==3){
                             sorce = sorce +1;
                         }
                     }
@@ -126,10 +126,10 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 // 帅才地区
                 String address = s.getProvinceName()+s.getCityName()+s.getAreaName();
                 // 匹配地区
-                String cityWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
-                if(StrUtil.isNotBlank(cityWords)){
+                String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                if(StrUtil.isNotBlank(addressWorkds)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
-                    if(sameWords.length()>=2){
+                    if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
                         sorce = sorce +1;
                     }
                 }

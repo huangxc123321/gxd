@@ -7,6 +7,8 @@ public class RedisKeys {
     public static final String USER_INFO = BASE_RSS + "user:info:";
     /** 用户信息TOKEN **/
     public static final String USER_TOKEN = BASE_RSS + "user:token:";
+    /** 二维码的UUID **/
+    public static final String USER_UUID= BASE_RSS + "user:uuid:";
     /** 验证码 **/
     public static final String USER_VALIDATE_CODE = BASE_RSS + "user:validate:code:";
     /** 部门信息 **/

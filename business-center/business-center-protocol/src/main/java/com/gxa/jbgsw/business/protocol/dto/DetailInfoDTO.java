@@ -99,6 +99,9 @@ public class DetailInfoDTO implements Serializable {
     @ApiModelProperty(value = "pv")
     private Integer pv = 0;
 
+    @ApiModelProperty(value = "审核状态： 0 待审核  1 审核通过  2 审核不通过")
+    private Integer auditStatus;
+
     @ApiModelProperty(value = "揭榜单位详情")
     List<BillboardGainDTO> billboardGains = new ArrayList<>();
 

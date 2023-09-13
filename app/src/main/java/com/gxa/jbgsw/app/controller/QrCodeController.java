@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.ApiResult;
 import com.gxa.jbgsw.common.utils.BaseController;
+import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.QrConfirmLoginDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.dto.UuidDTO;
@@ -30,10 +31,6 @@ import java.util.concurrent.TimeUnit;
 public class QrCodeController extends BaseController {
     @Resource
     StringRedisTemplate stringRedisTemplate;
-    /**
-     * token存储map
-     */
-    private static final Map<String, String> TOKEN_MAP = new ConcurrentHashMap<>();
 
     @ApiOperation("获取二维码返回的唯一ID，用户PC生成二维码")
     @GetMapping("/qr/initQRCodeInfo")
@@ -67,14 +64,15 @@ public class QrCodeController extends BaseController {
         UuidDTO uuidDTO = JSONObject.parseObject(uuidStr, UuidDTO.class);
         if(!QrCodeStatusEnum.SCANNED.getStatusCode().equals(uuidDTO.getStatus())){
             // 用户信息
-            String userInfo = stringRedisTemplate.opsForValue().get(qrConfirmLoginDTO.getToken());
+            String userInfo = stringRedisTemplate.opsForValue().get(RedisKeys.USER_TOKEN+qrConfirmLoginDTO.getToken());
             if(userInfo == null || StrUtil.isBlank(userInfo)){
                 throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
             }
             //通过base64将UUID转码生成token
-            TOKEN_MAP.put(qrConfirmLoginDTO.getUuid(), qrConfirmLoginDTO.getToken());
+            // TOKEN_MAP.put(qrConfirmLoginDTO.getUuid(), qrConfirmLoginDTO.getToken());
+            stringRedisTemplate.opsForValue().set(RedisKeys.USER_UUID+qrConfirmLoginDTO.getUuid(), qrConfirmLoginDTO.getToken(), 60, TimeUnit.MINUTES);
 
-            // 已确认: 状态为2
+            // 已确认: 状态为3 已经登录
             uuidDTO.setStatus(QrCodeStatusEnum.CONFIRMED.getStatusCode());
             // 保存redis, 过期时间为一小时
             stringRedisTemplate.opsForValue().set(qrConfirmLoginDTO.getUuid(), JSONObject.toJSONString(uuidDTO),60, TimeUnit.MINUTES);
@@ -99,17 +97,18 @@ public class QrCodeController extends BaseController {
         UuidDTO uuidDTO = JSONObject.parseObject(uuidStr, UuidDTO.class);
         if(uuidDTO.getStatus().equals(QrCodeStatusEnum.CONFIRMED.getStatusCode())){
             // 已经登录返回token
-            String appToken = TOKEN_MAP.get(uuid);
+            // String appToken = TOKEN_MAP.get(uuid);
+            String appToken =  stringRedisTemplate.opsForValue().get(RedisKeys.USER_UUID+uuid);
+
             // 用户信息
-            String userInfo = stringRedisTemplate.opsForValue().get(appToken);
-            if(StrUtil.isNotBlank(userInfo)){
+            String userId = stringRedisTemplate.opsForValue().get(RedisKeys.USER_TOKEN+appToken);
+            if(StrUtil.isNotBlank(userId)){
+                String userInfo = stringRedisTemplate.opsForValue().get(RedisKeys.USER_INFO+userId);
                 UserResponse userResponse = JSONObject.parseObject(userInfo, UserResponse.class);
                 apiResult.setData(userResponse);
 
                 return apiResult;
             }
-            // 清除临时变量
-            TOKEN_MAP.remove(uuid);
         }
 
         return apiResult;

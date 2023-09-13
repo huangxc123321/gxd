@@ -106,7 +106,7 @@ public class BillboardResponse implements Serializable {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss",timezone = "GMT+8")
     @ApiModelProperty(value = "审核时间")
-    private Long auditCreateAt;
+    private Date auditCreateAt;
 
     @ApiModelProperty(value = "发榜人")
     private String publishPerson;
