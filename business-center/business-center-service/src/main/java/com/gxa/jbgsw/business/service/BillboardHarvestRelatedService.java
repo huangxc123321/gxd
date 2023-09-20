@@ -31,4 +31,6 @@ public interface BillboardHarvestRelatedService extends IService<BillboardHarves
     void deleteByHarvestId(List<Long> list);
 
     void addBillboardRelated(Long valueOf);
+
+    void deleteByBillboardId(List<Long> list);
 }

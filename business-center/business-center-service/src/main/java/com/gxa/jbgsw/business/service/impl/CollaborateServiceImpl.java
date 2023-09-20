@@ -161,7 +161,8 @@ public class CollaborateServiceImpl extends ServiceImpl<CollaborateMapper, Colla
     public Collaborate getCollaborateInfo(Long userId, Long id) {
         LambdaQueryWrapper<Collaborate> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(Collaborate::getLaunchUserId, userId);
-        lambdaQueryWrapper.eq(Collaborate::getPid, id);
+        lambdaQueryWrapper.and(wrapper-> wrapper.eq(Collaborate::getLaunchUserId, userId).or().eq(Collaborate::getHarvestUserId, userId))
+                .eq(Collaborate::getPid, id);
 
         List<Collaborate> collaborates = collaborateMapper.selectList(lambdaQueryWrapper);
         if(CollectionUtils.isNotEmpty(collaborates)){

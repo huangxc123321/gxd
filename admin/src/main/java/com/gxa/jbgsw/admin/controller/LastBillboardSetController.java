@@ -60,7 +60,7 @@ public class LastBillboardSetController extends BaseController {
     @ApiOperation(value = "置顶", notes = "置顶")
     @GetMapping("/last/billboard/set/top")
     public void top(@RequestParam(value = "id") Long id){
-        lastBillboardSetFeignApi.top(id);
+        lastBillboardSetFeignApi.updatelastNewTop(id);
     }
 
     @ApiOperation(value = "取消置顶", notes = "取消置顶")

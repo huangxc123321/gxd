@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.gxa.jbgsw.business.entity.*;
@@ -238,5 +239,14 @@ public class HarvestServiceImpl extends ServiceImpl<HarvestMapper, Harvest> impl
                 patentService.updateBatchById(ps);
             }
         }
+    }
+
+    @Override
+    public void updateUnitName(String oldUnitName, String unitName) {
+        LambdaUpdateWrapper<Harvest> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(Harvest::getUnitName, unitName)
+                .eq(Harvest::getUnitName, oldUnitName);
+
+        harvestMapper.update(null, lambdaUpdateWrapper);
     }
 }

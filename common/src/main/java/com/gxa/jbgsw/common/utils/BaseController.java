@@ -40,6 +40,7 @@ public class BaseController {
         Long userId = null;
 
         String token = this.getRequest().getHeader("token");
+
         if(StrUtil.isNotBlank(token)){
             String id = stringRedisTemplate.opsForValue().get(RedisKeys.USER_TOKEN+token);
             if(StrUtil.isNotBlank(id)){

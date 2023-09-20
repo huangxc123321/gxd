@@ -71,9 +71,16 @@ public class IndexController extends BaseController {
     MessageFeignApi messageFeignApi;
     @Resource
     TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
+    @Resource
+    HotSearchWordsFeignApi hotSearchWordsFeignApi;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
 
+    @ApiOperation("获取热搜词")
+    @GetMapping("/hot/getHotSearchWords")
+    public List<HotSearchWordResponse> getHotSearchWords() {
+        return hotSearchWordsFeignApi.getHotSearchWords();
+    }
 
     @ApiOperation("获取最新的榜单信息")
     @GetMapping("/index/searchNew")
@@ -218,13 +225,16 @@ public class IndexController extends BaseController {
             }
         }
 
-        // 是否或者
+        // 是否合作
         if(userId != null){
             CollaborateDTO collaborateDTO = collaborateFeignApi.getCollaborateInfo(userId, id);
             if(collaborateDTO != null){
                 havestDetailInfo.setCollaborate(true);
             }
         }
+
+
+
         apiResult.setData(havestDetailInfo);
 
         return apiResult;
@@ -264,6 +274,18 @@ public class IndexController extends BaseController {
                         }
                     }
 
+                    StringBuffer sb  = new StringBuffer();
+                    if(StrUtil.isNotBlank(s.getTechDomain1Name())){
+                        sb.append(s.getTechDomain1Name()).append(";");
+                    }
+                    if(StrUtil.isNotBlank(s.getTechDomain2Name())){
+                        sb.append(s.getTechDomain2Name()).append(";");
+                    }
+                    if(StrUtil.isNotBlank(s.getTechDomainName())){
+                        sb.append(s.getTechDomainName()).append(";");
+                    }
+                    s.setTechDomainName(sb.toString());
+
                 });
             }
 
@@ -296,6 +318,19 @@ public class IndexController extends BaseController {
                 telentPoolDTO.setCollaborate(true);
             }
         }
+
+        StringBuffer sb  = new StringBuffer();
+        if(StrUtil.isNotBlank(telentPoolDTO.getTechDomain1Name())){
+            sb.append(telentPoolDTO.getTechDomain1Name()).append(";");
+        }
+        if(StrUtil.isNotBlank(telentPoolDTO.getTechDomain2Name())){
+            sb.append(telentPoolDTO.getTechDomain2Name()).append(";");
+        }
+        if(StrUtil.isNotBlank(telentPoolDTO.getTechDomainName())){
+            sb.append(telentPoolDTO.getTechDomainName()).append(";");
+        }
+        telentPoolDTO.setTechDomainName(sb.toString());
+
         apiResult.setData(telentPoolDTO);
 
         return apiResult;

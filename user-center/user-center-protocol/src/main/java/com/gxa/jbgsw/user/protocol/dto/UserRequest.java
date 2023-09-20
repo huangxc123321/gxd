@@ -33,4 +33,7 @@ public class UserRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "单位性质： 0 政府部门 1 企业 2 科研机构/团队 3大学院校 4 个人")
     private Integer unitNature;
 
+    @ApiModelProperty(value = "平台类型： 0 app , 1 后台", hidden = true)
+    private Integer platform ;
+
 }

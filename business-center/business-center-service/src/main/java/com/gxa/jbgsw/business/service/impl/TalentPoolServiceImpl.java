@@ -21,9 +21,11 @@ import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.RedisKeys;
 import ma.glasnost.orika.MapperFacade;
 import ma.glasnost.orika.metadata.TypeBuilder;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -31,6 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -55,6 +58,8 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
     MapperFacade mapperFacade;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -107,8 +112,12 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         sb.append(talentPool.getName()).append(",").append(talentPool.getHighestEdu()).append(",")
                 .append(talentPool.getJob()).append(",").append(talentPool.getResearchDirection());
         talentPool.setQueryKeys(sb.toString());
-
         this.save(talentPool);
+
+        // 帅才匹配榜单
+        String key = RedisKeys.TALENT_RELATED_RECOMMEND_TASK + talentPool.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(talentPool.getId()), 1, TimeUnit.MINUTES);
     }
 
     @Override
@@ -118,6 +127,11 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         BeanUtil.copyProperties(talentPoolPO, talentPool);
 
         talentPoolMapper.updateById(talentPool);
+
+        // 帅才匹配榜单
+        String key = RedisKeys.TALENT_RELATED_RECOMMEND_TASK + talentPool.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(talentPool.getId()), 1, TimeUnit.MINUTES);
     }
 
     @Override

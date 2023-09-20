@@ -6,7 +6,6 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
-import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
@@ -19,7 +18,6 @@ import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.MessageLogInfo;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
-import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
@@ -360,7 +358,8 @@ public class BillboardFontController extends BaseController {
             // 派单接收人
             TechEconomicManResponse t = techEconomicManFeignApi.getTechEconomicManById(billboardEconomicRelatedDTO.getEconomicId());
             if(t != null){
-                UserResponse userDTO = userFeignApi.getUserByCode(t.getMobile());
+                // 平台类型： 0 app , 1 后台
+                UserResponse userDTO = userFeignApi.getUserByCode(t.getMobile(), 0);
                 if(userDTO != null){
                     messageDTO.setUserId(userDTO.getId());
                 }

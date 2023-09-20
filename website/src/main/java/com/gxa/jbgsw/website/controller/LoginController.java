@@ -4,6 +4,7 @@ import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.dto.LoginRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserPlatformEnum;
 import com.gxa.jbgsw.website.feignapi.LoginFeignApi;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +32,7 @@ public class LoginController extends BaseController {
     UserResponse login(@RequestBody LoginRequest request) throws BizException, IllegalAccessException {
         HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpServletResponse servletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
+        request.setPlatform(UserPlatformEnum.APP.getCode());
         UserResponse response = loginFeignApi.login(request);
         if(response != null){
             servletResponse.setHeader("token", response.getToken());

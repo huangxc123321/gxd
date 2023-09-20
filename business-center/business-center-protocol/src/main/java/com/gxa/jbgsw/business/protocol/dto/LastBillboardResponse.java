@@ -54,5 +54,6 @@ public class LastBillboardResponse implements Serializable {
     @ApiModelProperty(value = "是否置顶： 0 不置顶 1 置顶")
     private Integer isTop;
 
-
+    @ApiModelProperty(value = "是否置顶(最新榜单)： 0 不置顶 1 置顶")
+    private Integer lastNewTop;
 }

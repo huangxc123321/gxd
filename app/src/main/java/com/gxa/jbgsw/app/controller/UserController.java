@@ -9,6 +9,7 @@ import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UpdatePasswordDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserPlatformEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.app.feignapi.UserFeignApi;
 import io.swagger.annotations.Api;
@@ -61,6 +62,7 @@ public class UserController extends BaseController {
         userDTO.setCreateBy(this.getUserId());
         // 设置默认密码: 123456
         userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+        userDTO.setPlatform(UserPlatformEnum.APP.getCode());
         userFeignApi.add(userDTO);
     }
 
@@ -71,6 +73,7 @@ public class UserController extends BaseController {
             throw new BizException(UserErrorCode.USER_PARAMS_ERROR);
         }
         userDTO.setUpdateBy(this.getUserId());
+        userDTO.setPlatform(UserPlatformEnum.APP.getCode());
         userFeignApi.update(userDTO);
         String  token = this.getToken();
         if(StrUtil.isNotBlank(token)){
@@ -89,5 +92,9 @@ public class UserController extends BaseController {
         userFeignApi.updatePassword(updatePasswordDTO);
     }
 
-
+    @ApiOperation("测试发送短信")
+    @GetMapping("/user/send/msg")
+   void testSmsSend() throws Exception {
+       userFeignApi.sendSms();
+   }
 }

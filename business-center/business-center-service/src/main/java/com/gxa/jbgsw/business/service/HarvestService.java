@@ -44,4 +44,6 @@ public interface HarvestService extends IService<Harvest> {
     List<Harvest> getHarvesByTechDomainLimit(String techDomain, int i);
 
     void updateHarvest(Harvest harvest, List<PatentDTO> patents);
+
+    void updateUnitName(String oldUnitName, String unitName);
 }

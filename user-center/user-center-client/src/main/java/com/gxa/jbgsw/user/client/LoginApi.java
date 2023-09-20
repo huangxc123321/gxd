@@ -17,4 +17,6 @@ public interface LoginApi {
     @GetMapping("/get/validate/code")
     String getValidateCode(@RequestParam("mobile") String mobile) throws Exception;
 
+    @PostMapping("/loginAdmin")
+    UserResponse loginAdmin(@RequestBody LoginRequest request) throws BizException;
 }

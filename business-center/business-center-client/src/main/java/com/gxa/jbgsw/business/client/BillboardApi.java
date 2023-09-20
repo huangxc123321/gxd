@@ -66,4 +66,7 @@ public interface BillboardApi {
 
     @GetMapping("/billboard/pipei")
     void pipei(@RequestParam("id") Long id);
+
+    @GetMapping("/billboard/updateUnitName")
+    void updateUnitName(@RequestParam("oldUnitName") String oldUnitName, @RequestParam("unitName") String unitName);
 }

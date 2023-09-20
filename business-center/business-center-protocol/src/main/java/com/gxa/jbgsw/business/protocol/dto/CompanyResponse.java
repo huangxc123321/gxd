@@ -93,4 +93,6 @@ public class CompanyResponse implements Serializable {
     @ApiModelProperty(value = "拥有成果")
     private Integer harvestNum;
 
+    @ApiModelProperty(value = "单位性质： 0 政府部门 1 企业 2 科研机构/团队 3大学院校 4 个人")
+    private Integer unitNature;
 }

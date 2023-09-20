@@ -18,6 +18,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -36,24 +37,22 @@ public class SmsServiceImpl implements SmsService {
     // 无需修改,用于格式化鉴权头域,给"Authorization"参数赋值
     private static final String AUTH_HEADER_VALUE = "WSSE realm=\"SDP\",profile=\"UsernameToken\",type=\"Appkey\"";
 
+    @Value("${sms.appKey}")
+    String appKey;
+    @Value("${sms.appSecret}")
+    String appSecret;
+    @Value("${sms.sender}")
+    String sender;
+    @Value("${sms.templateId}")
+    String templateId;
+    @Value("${sms.signature}")
+    String signature;
+
     @Override
     public int send(SmsMessageDTO smsMessage) throws Exception {
         // 必填,请参考"开发准备"获取如下数据,替换为实际值
         String url = "https://rtcsms.cn-north-1.myhuaweicloud.com:10743/sms/batchSendSms/v1"; //APP接入地址+接口访问URI
-        String appKey = "Al8yIkSnb4he5wq4fbQFf3DJ8A01"; //APP_Key
-        String appSecret = "g47Qhqz69K9W4UXOCNRUfjUo8k38"; //APP_Secret
-        // String sender = "8820110814637"; // 安天智慧物联 的通道号
-
-        String sender = "8822062930199";  // 智慧物联 的通道号
-
-        // 模板ID
-        String templateId = "58c19c751e2842fa81bffe26ff68a0f7";
-
-
         // 条件必填,国内短信关注,当templateId指定的模板类型为通用模板时生效且必填,必须是已审核通过的,与模板类型一致的签名名称
-        // 国际/港澳台短信不用关注该参数
-        String signature = "智慧物联"; //签名名称
-
         // 必填,全局号码格式(包含国家码),示例:+86151****6789,多个号码之间用英文逗号分隔
         String receiver = ""; //短信接收人号码
         StringBuffer sb = new StringBuffer();
@@ -70,9 +69,7 @@ public class SmsServiceImpl implements SmsService {
          * 模板中的每个变量都必须赋值，且取值不能为空
          * 查看更多模板和变量规范:产品介绍>模板和变量规范
          */
-        //String templateParas = "[\"369751\"]"; //模板变量，此处以单变量验证码短信为例，请客户自行生成6位验证码，并定义为字符串类型，以杜绝首位0丢失的问题（例如：002569变成了2569）。
 
-        // type: 0 验证, 1 告警
         String templateParas = null;
         StringBuffer paras = new StringBuffer();
         // 验证码参数
@@ -94,15 +91,6 @@ public class SmsServiceImpl implements SmsService {
             System.out.println("wsse header is null.");
             return 500;
         }
-
-        //如果JDK版本低于1.8,可使用如下代码
-        //CloseableHttpClient client = HttpClients.custom()
-        //        .setSSLContext(new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
-        //            @Override
-        //            public boolean isTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
-        //                return true;
-        //            }
-        //        }).build()).setSSLHostnameVerifier(new DefaultHostnameVerifier()).build();
 
         //如果JDK版本是1.8,可使用如下代码
         CloseableHttpClient client = HttpClients.custom()

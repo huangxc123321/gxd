@@ -5,9 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.UserFeignApi;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.*;
-import com.gxa.jbgsw.user.protocol.dto.UserDTO;
-import com.gxa.jbgsw.user.protocol.dto.UserRequest;
-import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.dto.*;
+import com.gxa.jbgsw.user.protocol.enums.UserPlatformEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,6 +38,7 @@ public class UserFontController extends BaseController {
     @ApiOperation("获取用户列表")
     @PostMapping("/user/pageQuery")
     PageResult<UserResponse> pageQuery(@RequestBody UserRequest request){
+        request.setPlatform(UserPlatformEnum.ADMIN.getCode());
         PageResult<UserResponse> pageResult = userFeignApi.pageQuery(request);
         log.info("Result：{}", JSONObject.toJSONString(pageResult));
 
@@ -68,6 +68,7 @@ public class UserFontController extends BaseController {
         userDTO.setCreateBy(this.getUserId());
         // 设置默认密码: 123456
         userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+        userDTO.setPlatform(UserPlatformEnum.ADMIN.getCode());
         userFeignApi.add(userDTO);
     }
 
@@ -101,6 +102,7 @@ public class UserFontController extends BaseController {
         userDTO.setCreateBy(this.getUserId());
         // 设置默认密码: 123456
         userDTO.setPassword(ConstantsUtils.defalutMd5Password);
+        userDTO.setPlatform(UserPlatformEnum.ADMIN.getCode());
         userFeignApi.add(userDTO);
     }
 
@@ -111,6 +113,7 @@ public class UserFontController extends BaseController {
             throw new BizException(UserErrorCode.USER_PARAMS_ERROR);
         }
         userDTO.setUpdateBy(this.getUserId());
+        userDTO.setPlatform(UserPlatformEnum.ADMIN.getCode());
         userFeignApi.updateUserAdmin(userDTO);
 
         String token = this.getToken();
@@ -128,6 +131,17 @@ public class UserFontController extends BaseController {
     @GetMapping("/user/update/useStatus")
     void updateUseStatus(@RequestParam("id")Long id, @RequestParam("useStauts")Integer useStauts) throws BizException {
         userFeignApi.updateUseStatus(id, useStauts);
+    }
+
+    @ApiOperation("修改用户密码")
+    @PostMapping("/user/update/updateAdminPassword")
+    void updatePassword(@RequestBody UpdateAdminPasswordDTO updateAdminPasswordDTO) throws BizException {
+        Long userId = this.getUserId();
+        if(userId == null){
+            throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
+        }
+        updateAdminPasswordDTO.setId(userId);
+        userFeignApi.updateAdminPassword(updateAdminPasswordDTO);
     }
 
 }

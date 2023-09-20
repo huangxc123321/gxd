@@ -16,7 +16,7 @@ public interface UserApi {
     UserResponse getUserById(@RequestParam("id") Long id);
 
     @GetMapping("/user/getUserByCode")
-    UserResponse getUserByCode(@RequestParam("code") String code);
+    UserResponse getUserByCode(@RequestParam("code") String code, @RequestParam("platform") Integer platform);
 
     @PostMapping(value = "/user/deleteBatchIds",consumes = MediaType.APPLICATION_JSON_VALUE)
     public void deleteBatchIds(@RequestBody Long[] ids);
@@ -44,5 +44,11 @@ public interface UserApi {
 
     @PostMapping("/user/updateUserAdmin")
     void updateUserAdmin(@RequestBody UserDTO userDTO);
+
+    @GetMapping("/user/send/msg")
+    void sendSms() throws Exception;
+
+    @PostMapping("/user/update/updateAdminPassword")
+    void updateAdminPassword(@RequestBody UpdateAdminPasswordDTO updateAdminPasswordDTO);
 }
 

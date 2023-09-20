@@ -26,6 +26,12 @@ public class RedisKeys {
     /** 任务推荐任务 **/
     public static final String HARVEST_RELATED_RECOMMEND_TASK = BASE_RSS + "harvest:related:recommend:";
 
+    /** 经纪人榜单匹配推荐任务 **/
+    public static final String ECONOMIC_RELATED_RECOMMEND_TASK = BASE_RSS + "billboard:related:economic:";
+
+    /**帅才匹配榜单推荐任务 **/
+    public static final String TALENT_RELATED_RECOMMEND_TASK = BASE_RSS + "billboard:related:talent:";
+
     /** 新闻发布时间 **/
     public static final String TECH_DOMAIN_VALUE = BASE_RSS + "tech:domain:value:";
 }

@@ -27,11 +27,11 @@ public class LoginServiceImpl implements LoginService {
         UserResponse userResponse = null;
         // 0 账号+密码登录
         if(LoginWayEnum.ACCOUNT_PASSWORD.getCode().equals(loginRequest.getLoginWay())){
-            userResponse = userService.getUserByCode(loginRequest.getMobile());
+            userResponse = userService.getUserByCode(loginRequest.getMobile(), loginRequest.getPlatform());
         }
         // 1 账号+验证码
         else if(LoginWayEnum.ACCOUNT_VALIDATECODE.getCode().equals(loginRequest.getLoginWay())){
-            userResponse = userService.getUserByValidateCode(loginRequest.getMobile(), loginRequest.getValidateCode());
+            userResponse = userService.getUserByValidateCode(loginRequest.getMobile(), loginRequest.getValidateCode(), loginRequest.getPlatform());
         }
         // 2 扫描二维码登录
         else if(LoginWayEnum.SCAN_QR_TOKEN.getCode().equals(loginRequest.getLoginWay())){

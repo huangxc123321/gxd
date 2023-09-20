@@ -331,5 +331,10 @@ public class HarvestController implements HarvestApi {
         return harvestService.getHoloder(holder);
     }
 
+    @Override
+    public void updateUnitName(String oldUnitName, String unitName) {
+        harvestService.updateUnitName(oldUnitName, unitName);
+    }
+
 }
 

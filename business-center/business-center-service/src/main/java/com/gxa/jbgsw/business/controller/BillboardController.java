@@ -339,5 +339,10 @@ public class BillboardController implements BillboardApi {
         billboardTalentRelatedService.addTalentRelated(Long.valueOf(id));
         billboardEconomicRelatedService.addEconomicRelated(Long.valueOf(id));
     }
+
+    @Override
+    public void updateUnitName(String oldUnitName, String unitName) {
+        billboardService.updateUnitName(oldUnitName, unitName);
+    }
 }
 

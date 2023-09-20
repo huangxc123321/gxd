@@ -5,13 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.gxa.jbgsw.business.client.BillboardApi;
 import com.gxa.jbgsw.business.protocol.dto.CompanyDTO;
 import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.entity.User;
+import com.gxa.jbgsw.user.feignapi.BillboardFeignApi;
 import com.gxa.jbgsw.user.feignapi.CompanyFeignApi;
+import com.gxa.jbgsw.user.feignapi.HavestFeignApi;
 import com.gxa.jbgsw.user.mapper.UserMapper;
+import com.gxa.jbgsw.user.protocol.dto.UpdateAdminPasswordDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
@@ -37,14 +41,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Resource
     CompanyFeignApi companyFeignApi;
     @Resource
+    BillboardFeignApi billboardFeignApi;
+    @Resource
+    HavestFeignApi havestFeignApi;
+    @Resource
     StringRedisTemplate stringRedisTemplate;
     @Resource
     MapperFacade mapperFacade;
 
     @Override
-    public UserResponse getUserByCode(String code) {
+    public UserResponse getUserByCode(String code, Integer platform) {
         LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(User::getMobile, code);
+        if(platform != null){
+            lambdaQueryWrapper.eq(User::getPlatform, platform);
+        }
         lambdaQueryWrapper.last("limit 1");
         User user = userMapper.selectOne(lambdaQueryWrapper);
 
@@ -87,7 +98,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     public void add(User user) {
         this.save(user);
 
-
         // 如果是企业类型的还需要生成一个企业数据
         if(user.getUnitNature().equals(UserTypeEnum.GOV.getCode())
                 || user.getUnitNature().equals(UserTypeEnum.BUZ.getCode())
@@ -112,6 +122,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 companyDTO.setStatus(0);
                 companyDTO.setScopeBusiness(user.getScopeBusiness());
                 companyDTO.setMobile(user.getMobile());
+                companyDTO.setUnitNature(user.getUnitNature());
+
 
                 companyFeignApi.add(companyDTO);
             }
@@ -176,6 +188,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setTradeType(userDTO.getTradeType());
         user.setUnitNature(userDTO.getUnitNature());
         user.setJob(userDTO.getJob());
+
+        if(user.getUnitName()!= null && !user.getUnitName().equals(userDTO.getUnitName())){
+            billboardFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
+            havestFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
+        }
+
+
         user.setUnitName(userDTO.getUnitName());
         user.setUnitLogo(userDTO.getUnitLogo());
         user.setRemark(userDTO.getRemark());
@@ -188,6 +207,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         this.updateById(user);
     }
 
+    @Override
+    public void updateAdminPassword(UpdateAdminPasswordDTO updateAdminPasswordDTO) {
+        LambdaUpdateWrapper<User> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(User::getPassword, updateAdminPasswordDTO.getPassword())
+                .eq(User::getId, updateAdminPasswordDTO.getId());
+
+        userMapper.update(null, lambdaUpdateWrapper);
+    }
 
 
     @Override
@@ -253,17 +280,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setBuzType(userDTO.getBuzType());
         user.setScopeBusiness(userDTO.getScopeBusiness());
         user.setRemark(userDTO.getRemark());
+
+        if(user.getUnitName()!= null && !user.getUnitName().equals(userDTO.getUnitName())){
+            billboardFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
+            havestFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
+        }
+
         user.setUnitLogo(userDTO.getUnitLogo());
         user.setUnitName(userDTO.getUnitName());
         user.setTechDomain(userDTO.getTechDomain());
         user.setTechDomain1(userDTO.getTechDomain1());
         user.setTechDomain2(userDTO.getTechDomain2());
+        user.setPlatform(user.getPlatform());
 
         this.updateById(user);
     }
 
     @Override
-    public UserResponse getUserByValidateCode(String mobile, String validateCode) {
+    public UserResponse getUserByValidateCode(String mobile, String validateCode, Integer platform) {
         // 从redis中获取验证码,对比
         String key = RedisKeys.USER_VALIDATE_CODE+mobile;
         Object value = stringRedisTemplate.opsForValue().get(key);
@@ -272,7 +306,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new BizException(UserErrorCode.LOGIN_VALIDATECODE_IS_ERROR);
         }
         // 通过手机号获取用户信息
-        UserResponse userResponse = this.getUserByCode(mobile);
+        UserResponse userResponse = this.getUserByCode(mobile, platform);
 
         return userResponse;
     }

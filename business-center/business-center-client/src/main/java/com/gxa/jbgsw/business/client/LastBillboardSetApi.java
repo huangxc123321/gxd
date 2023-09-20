@@ -29,4 +29,6 @@ public interface LastBillboardSetApi {
     @GetMapping("/last/billboard/detail")
     DetailInfoDTO detail(@RequestParam("id") Long id);
 
+    @GetMapping("/last/billboard/set/updatelastNewTop")
+    void updatelastNewTop(@RequestParam("id") Long id);
 }

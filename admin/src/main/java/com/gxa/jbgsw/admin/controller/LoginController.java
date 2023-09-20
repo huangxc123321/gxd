@@ -5,6 +5,7 @@ import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.dto.LoginRequest;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserPlatformEnum;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -43,7 +44,8 @@ public class LoginController extends BaseController {
     UserResponse login(@RequestBody LoginRequest request) throws BizException, IllegalAccessException, URISyntaxException {
         HttpServletRequest servletRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         HttpServletResponse servletResponse = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse();
-        UserResponse response = loginFeignApi.login(request);
+        request.setPlatform(UserPlatformEnum.ADMIN.getCode());
+        UserResponse response = loginFeignApi.loginAdmin(request);
         if(response != null){
             servletResponse.setHeader("token", response.getToken());
         }

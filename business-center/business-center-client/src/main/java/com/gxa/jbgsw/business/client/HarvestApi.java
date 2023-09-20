@@ -49,4 +49,7 @@ public interface HarvestApi {
 
     @GetMapping("/havest/getHoloder")
     List<String> getHoloder(@RequestParam("holder") String holder);
+
+    @GetMapping("/havest/updateUnitName")
+    void updateUnitName(@RequestParam("oldUnitName") String oldUnitName, @RequestParam("unitName") String unitName);
 }

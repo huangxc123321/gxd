@@ -57,6 +57,13 @@ public class NewsController extends BaseController {
     @GetMapping("/news/detail")
     public NewsDTO detail(@RequestParam("id")Long id){
         NewsDTO newsDTO = newsFeignApi.detail(id);
+
+        UserResponse userResponse = userFeignApi.getUserById(newsDTO.getCreateBy());
+        if(userResponse != null){
+            newsDTO.setCreateName(userResponse.getNick());
+        }
+
+
         return newsDTO;
     }
 

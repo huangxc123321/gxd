@@ -116,5 +116,6 @@ public class User implements Serializable {
     @ApiModelProperty(value = "个人类型: 1 经纪人 2 帅才 0 其它")
     private Integer type ;
 
-
+    @ApiModelProperty(value = "平台类型： 0 app , 1 后台")
+    private Integer platform ;
 }

@@ -62,6 +62,8 @@ public class IndexController implements IndexApi {
     CompanyService companyService;
     @Resource
     MapperFacade mapperFacade;
+    @Resource
+    HotSearchWordService hotSearchWordService;
 
     @Override
     public IndexResponse getIndex() {
@@ -87,6 +89,11 @@ public class IndexController implements IndexApi {
                 });
                 pageResult.setList(responses);
             }
+        }
+
+        // 生成热搜
+        if(StrUtil.isNotBlank(searchGovRequest.getSearchFiled())){
+            hotSearchWordService.add(searchGovRequest.getSearchFiled());
         }
 
         return pageResult;

@@ -18,6 +18,7 @@ import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.util.EntityUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -31,7 +32,12 @@ import java.io.IOException;
 @Slf4j
 @ResponseBody
 public class ChatGptController extends BaseController {
-    private static final String OPENAI_API_KEY = "noDdgfuEzLWVREkuT3BlbkFJXuJGpUNF5kwZL5G6gvde";
+
+    // private static final String OPENAI_API_KEY = "noDdgfuEzLWVREkuT3BlbkFJXuJGpUNF5kwZL5G6gvde";
+
+    @Value("${chatgpt.openai_api_key}")
+    private static String  openai_api_key;
+
     private static final String openai_api_url = "http";
     // private static final String url = "https://api.openai.com/v1/chat";
     private static final String url = "https://api.openai-proxy.com/v1/chat/completions";
@@ -59,7 +65,7 @@ public class ChatGptController extends BaseController {
 
             // 设置请求的头信息
             httpPost.setHeader("Content-Type", "application/json");
-            httpPost.setHeader("Authorization", "Bearer "+OPENAI_API_KEY);
+            httpPost.setHeader("Authorization", "Bearer "+openai_api_key);
             // 设置请求的数据
             httpPost.setEntity(data);
             // 发送HTTP请求并获取响应结果

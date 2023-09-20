@@ -43,7 +43,7 @@ public class BillboardRequest extends PageRequest implements Serializable {
     @ApiModelProperty(value = "按金额排序： 0 降序 1 升序")
     private Integer amountSort;
 
-    @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜")
+    @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜  2 最新榜单")
     private Integer type;
 
     @ApiModelProperty(value = "审核状态： 0 待审核  1 审核通过  2 审核不通过")

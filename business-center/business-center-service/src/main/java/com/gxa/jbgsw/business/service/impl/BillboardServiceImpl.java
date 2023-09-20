@@ -12,6 +12,7 @@ import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.business.entity.*;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardMapper;
+import com.gxa.jbgsw.business.mapper.HotSearchWordMapper;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.*;
@@ -63,6 +64,12 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     CollectionService collectionService;
     @Resource
     CompanyService companyService;
+    @Resource
+    BillboardTalentRelatedService billboardTalentRelatedService;
+    @Resource
+    BillboardEconomicRelatedService billboardEconomicRelatedService;
+    @Resource
+    HotSearchWordMapper hotSearchWordMapper;
 
     @Override
     public void deleteBatchIds(Long[] ids) {
@@ -71,6 +78,9 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
 
         // 收藏表也同时删除
         collectionService.deleteBatchByPid(list);
+        billboardTalentRelatedService.deleteByBillboardId(list);
+        billboardHarvestRelatedService.deleteByBillboardId(list);
+        billboardEconomicRelatedService.deleteByBillboardId(list);
     }
 
     @Override
@@ -90,10 +100,22 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     public void batchIdsTop(Long[] ids, int isTop) {
         List<Long> list = Arrays.stream(ids).collect(Collectors.toList());
 
-        // 先判断已经有几个置顶，最多四个置顶(判断置顶数量)
-        Integer tops = getTopNum();
-        if((tops.intValue() + list.size())>4){
-            throw new BizException(BusinessErrorCode.BILLBOARD_TOP_MAX_ERROR);
+        Billboard billboard = billboardMapper.selectById(ids[0]);
+        // 榜单类型： 0 政府榜 1 企业榜
+        Integer type = billboard.getType();
+
+        // 先判断已经有几个置顶，政府榜 9 个置顶， 企业榜5个置顶 (判断置顶数量)
+        Integer tops = getTopNum(type);
+
+        // 企业榜
+        if(BillboardTypeEnum.GOV_BILLBOARD.getCode().equals(type)){
+            if((tops.intValue() + list.size())>9){
+                throw new BizException(BusinessErrorCode.GOV_BILLBOARD_TOP_MAX_ERROR);
+            }
+        }else if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(type)){
+            if((tops.intValue() + list.size())>5){
+                throw new BizException(BusinessErrorCode.BUZ_BILLBOARD_TOP_MAX_ERROR);
+            }
         }
 
         LambdaUpdateWrapper<Billboard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
@@ -104,10 +126,11 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
     }
 
 
-    public Integer getTopNum() {
+    public Integer getTopNum(Integer type) {
         QueryWrapper<Billboard> queryWrapper = new QueryWrapper<>();
         queryWrapper.select("id")
-                .eq("is_top", IsTopEnum.TOP.getCode());
+                .eq("is_top", IsTopEnum.TOP.getCode())
+                .eq("type", type);
 
         Integer count = billboardMapper.selectCount(queryWrapper);
         return count;
@@ -548,5 +571,22 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         billboardMapper.update(null, updateWrapper);
     }
 
+    @Override
+    public void updateUnitName(String oldUnitName, String unitName) {
+        LambdaUpdateWrapper<Billboard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(Billboard::getUnitName, unitName)
+                           .eq(Billboard::getUnitName, oldUnitName);
+
+        billboardMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public void updatelastNewTop(Long id, Integer isTop) {
+        LambdaUpdateWrapper<Billboard> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(Billboard::getLastNewTop, isTop)
+                .eq(Billboard::getId, id);
+
+        billboardMapper.update(null, lambdaUpdateWrapper);
+    }
 
 }

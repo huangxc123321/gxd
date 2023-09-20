@@ -28,4 +28,8 @@ public interface BillboardEconomicRelatedService extends IService<BillboardEcono
     void deleteByEconomicId(List<Long> list);
 
     List<BillboardEconomicRelatedResponse> getAdminEconomicRecommend(Long billboardId);
+
+    void deleteByBillboardId(List<Long> list);
+
+    void addEconomicRelatedByEcomicId(Long id);
 }

@@ -42,9 +42,18 @@
             AND a.publish_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
             AND a.publish_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
         </if>
-        <if test="type != null ">
-            AND a.type = #{type}
-        </if>
+
+        <choose>
+            <when test="type != null and type ==2">
+               AND a.news_policy = 1
+            </when>
+            <otherwise>
+                AND  a.news_policy = 0
+            </otherwise>
+        </choose>
+        
+        
+
         ORDER BY a.publish_at desc
     </select>
 
@@ -63,9 +72,7 @@
             t_news a
         WHERE
             a.`status` = 0 AND a.publish_at is not null
-            <if test="type != null ">
-                AND a.news_policy = #{type}
-            </if>
+
             <if test="searchFiled != null and searchFiled != '' ">
                 AND a.title like CONCAT('%',#{searchFiled},'%')
             </if>
@@ -76,6 +83,16 @@
                 AND a.publish_at <![CDATA[ >= ]]> DATE_FORMAT(#{startDate},'%Y-%m-%d %H:%i')
                 AND a.publish_at <![CDATA[ <= ]]> DATE_FORMAT(#{endDate},'%Y-%m-%d %H:%i')
             </if>
+
+            <choose>
+                <when test="type != null and type ==0">
+                    AND a.news_policy = 0
+                </when>
+                <otherwise>
+                    AND a.news_policy = 1
+                </otherwise>
+            </choose>
+
             ORDER BY a.publish_at desc
 
     </select>

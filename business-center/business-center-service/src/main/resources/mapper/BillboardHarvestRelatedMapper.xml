@@ -21,9 +21,9 @@
              t_billboard_harvest_related AS a
            LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
            LEFT JOIN t_harvest AS c ON a.harvest_id = c.id
-        WHERE b.audit_status = 1 AND b.`status` =  0 AND a.s_star > 0 AND
+        WHERE b.audit_status = 1 AND a.s_star > 0 AND
             a.billboard_id = #{billboardId}
-            ORDER BY a.create_at DESC
+            ORDER BY a.s_star DESC, a.create_at DESC
    </select>
 
    <select id="getHarvestRecommendByHarvestId"
@@ -45,7 +45,7 @@
         WHERE
             a.harvest_id = #{harvestId}  and b.id is not null
 
-            ORDER BY a.create_at DESC
+            ORDER BY a.s_star DESC, a.create_at DESC
     </select>
 
    <select id="getHarvestByHarvestId" resultType="com.gxa.jbgsw.business.protocol.dto.BillboardResponse">
@@ -64,7 +64,7 @@
         t_billboard_harvest_related a
        LEFT JOIN t_billboard b ON a.billboard_id = b.id
        where a.harvest_id = #{harvestId}
-       ORDER BY a.create_at DESC
+       ORDER BY a.s_star DESC, a.create_at DESC
     </select>
 
    <select id="getBillboardstByHarvestId"
@@ -86,7 +86,7 @@
         t_billboard_harvest_related a
        LEFT JOIN t_billboard b ON a.billboard_id = b.id
        where a.harvest_id = #{harvestId}
-       ORDER BY a.create_at DESC
+       ORDER BY a.s_star DESC, a.create_at DESC
 
     </select>
 

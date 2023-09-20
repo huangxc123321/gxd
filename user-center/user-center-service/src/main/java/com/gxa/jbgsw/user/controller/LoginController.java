@@ -76,6 +76,45 @@ public class LoginController implements LoginApi {
         return String.valueOf(status);
     }
 
+    @Override
+    public UserResponse loginAdmin(LoginRequest loginRequest) throws BizException {
+        log.info(loginRequest.toString());
+        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+
+        UserResponse userResponse = loginService.login(loginRequest);
+        if(userResponse == null){
+            throw new BizException(UserErrorCode.USER_IS_NOT_ALLOW_LOGIN);
+        }
+
+        if(!userResponse.getPassword().equals(loginRequest.getPassword())){
+            throw new BizException(UserErrorCode.LOGIN_PASSWORD_ERROR);
+        }
+
+        // 查看用户角色
+        List<RolePO> roles = userRoleService.getRoleByUserId(userResponse.getId());
+        if(roles == null && roles.size() <1){
+            throw new BizException(UserErrorCode.USER_IS_NOT_ALLOW_LOGIN);
+        }
+
+        userResponse.setRoles(roles);
+
+        String token = null;
+        if(StrUtil.isNotBlank(userResponse.getToken())){
+            token = userResponse.getToken();
+        }else{
+            token = UUID.randomUUID().toString().replace("-", "");
+        }
+
+        ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getResponse().setHeader("token", token);
+        userResponse.setToken(token);
+        // token放到redis中
+        stringRedisTemplate.opsForValue().set(RedisKeys.USER_TOKEN+token, String.valueOf(userResponse.getId()), Integer.valueOf(expireTime), TimeUnit.SECONDS);
+        // 存储用户信息
+        stringRedisTemplate.opsForValue().set(RedisKeys.USER_INFO+userResponse.getId(), JSONObject.toJSONString(userResponse), Integer.valueOf(expireTime), TimeUnit.SECONDS);
+
+        return userResponse;
+    }
+
 
     @Override
     public UserResponse login(LoginRequest loginRequest) throws BizException {
@@ -85,6 +124,10 @@ public class LoginController implements LoginApi {
         UserResponse userResponse = loginService.login(loginRequest);
         if(userResponse == null){
             throw new BizException(UserErrorCode.LOGIN_CODE_ERROR);
+        }
+
+        if(!userResponse.getPassword().equals(loginRequest.getPassword())){
+            throw new BizException(UserErrorCode.LOGIN_PASSWORD_ERROR);
         }
 
         // 查看用户角色

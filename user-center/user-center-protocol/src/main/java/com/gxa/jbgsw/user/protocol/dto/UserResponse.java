@@ -115,4 +115,6 @@ public class UserResponse implements Serializable {
     @ApiModelProperty(value = "用户角色")
     List<RolePO> roles = new ArrayList<>();
 
+    @ApiModelProperty(value = "平台类型： 0 app , 1 后台", hidden = true)
+    private Integer platform ;
 }

@@ -131,4 +131,8 @@ private static final long serialVersionUID=1L;
     @ApiModelProperty(value = "pv")
     private Integer pv;
 
+    @ApiModelProperty(value = "是否置顶： 0 不置顶 1 置顶")
+    private Integer lastNewTop;
+
+
 }

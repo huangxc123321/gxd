@@ -14,6 +14,7 @@ import com.gxa.jbgsw.user.protocol.dto.*;
 import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.user.service.RoleService;
+import com.gxa.jbgsw.user.service.SmsService;
 import com.gxa.jbgsw.user.service.UserRoleService;
 import com.gxa.jbgsw.user.service.UserService;
 import io.swagger.annotations.Api;
@@ -37,7 +38,7 @@ public class UserController implements UserApi {
     @Resource
     UserService userService;
     @Resource
-    CompanyFeignApi companyFeignApi;
+    SmsService smsService;
     @Resource
     UserRoleService userRoleService;
 
@@ -55,8 +56,8 @@ public class UserController implements UserApi {
     }
 
     @Override
-    public UserResponse getUserByCode(String code) {
-        return userService.getUserByCode(code);
+    public UserResponse getUserByCode(String code, Integer platform) {
+        return userService.getUserByCode(code, platform);
     }
 
     @Override
@@ -138,5 +139,20 @@ public class UserController implements UserApi {
     @Override
     public void updateUserAdmin(UserDTO userDTO) {
         userService.updateUserAdmin(userDTO);
+    }
+
+    @Override
+    public void sendSms() throws Exception {
+        SmsMessageDTO smsMessage = new SmsMessageDTO();
+        smsMessage.setMobile("18038109306");
+        smsMessage.setType(1);
+        smsMessage.setContent("测试短信");
+
+        smsService.send(smsMessage);
+    }
+
+    @Override
+    public void updateAdminPassword(UpdateAdminPasswordDTO updateAdminPasswordDTO) {
+        userService.updateAdminPassword(updateAdminPasswordDTO);
     }
 }

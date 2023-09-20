@@ -14,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -66,28 +67,30 @@ public class LeaveWordsController extends BaseController {
         PageResult<LeaveWordsResponse> pageResult = leaveWordsFeignApi.pageQuery(request);
         List<LeaveWordsResponse> response = pageResult.getList();
 
-        List<Long> ids = new ArrayList<>();
-        List<Long> finalIds = ids;
-        response.stream().forEach(s->{
-            finalIds.add(s.getUpdateBy());
-        });
+        if(CollectionUtils.isNotEmpty(response)){
+            List<Long> ids = new ArrayList<>();
+            List<Long> finalIds = ids;
+            response.stream().forEach(s->{
+                finalIds.add(s.getUpdateBy());
+            });
 
-        // 去重
-        ids = finalIds.stream().distinct().collect(Collectors.toList());
-        Long[] userIds = new Long[ids.size()];
-        ids.toArray(userIds);
-        List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
-        response.forEach(s->{
-            if(s.getUpdateBy() != null){
-                UserResponse u = userResponses.stream()
-                        .filter(user -> s.getUpdateBy().equals(user.getId()))
-                        .findAny()
-                        .orElse(null);
-                if(u != null){
-                    s.setUpdateByName(u.getNick());
+            // 去重
+            ids = finalIds.stream().distinct().collect(Collectors.toList());
+            Long[] userIds = new Long[ids.size()];
+            ids.toArray(userIds);
+            List<UserResponse> userResponses = userFeignApi.getUserByIds(userIds);
+            response.forEach(s->{
+                if(s.getUpdateBy() != null){
+                    UserResponse u = userResponses.stream()
+                            .filter(user -> s.getUpdateBy().equals(user.getId()))
+                            .findAny()
+                            .orElse(null);
+                    if(u != null){
+                        s.setUpdateByName(u.getNick());
+                    }
                 }
-            }
-        });
+            });
+        }
 
         return pageResult;
     }

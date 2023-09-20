@@ -77,7 +77,7 @@ public class LastBillboardSetController implements LastBillboardSetApi {
     @Override
     public void cancelTop(Long id) {
         // 是否置顶： 0 不置顶 1 置顶
-        billboardService.updateTop(id, IsTopEnum.NO_TOP.getCode());
+        billboardService.updatelastNewTop(id, IsTopEnum.NO_TOP.getCode());
     }
 
     @Override
@@ -93,5 +93,11 @@ public class LastBillboardSetController implements LastBillboardSetApi {
         BeanUtils.copyProperties(billboard,detailInfoDTO);
 
         return detailInfoDTO;
+    }
+
+    @Override
+    public void updatelastNewTop(Long id) {
+        // 是否置顶： 0 不置顶 1 置顶
+        billboardService.updatelastNewTop(id, IsTopEnum.TOP.getCode());
     }
 }

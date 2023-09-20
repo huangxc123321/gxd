@@ -69,7 +69,6 @@ public class TalentPoolFontController extends BaseController {
         }
 
         talentPoolPO.setCreateBy(userId);
-
         talentPoolFeignApi.add(talentPoolPO);
 
         /**

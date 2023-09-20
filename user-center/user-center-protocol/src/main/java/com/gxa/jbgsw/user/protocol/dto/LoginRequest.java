@@ -24,4 +24,6 @@ public class LoginRequest implements Serializable {
     @ApiModelProperty(value = "登录方式： 0 账号+密码登录 1 账号+验证码登录 2 扫描二维码登录")
     private Integer loginWay = 0;
 
+    @ApiModelProperty(value = "平台类型： 0 app , 1 后台", hidden = true)
+    private Integer platform ;
 }

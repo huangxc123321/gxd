@@ -231,6 +231,124 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
         billboardTalentRelatedMapper.delete(lambdaQueryWrapper);
     }
 
+    @Override
+    public void deleteByBillboardId(List<Long> list) {
+        LambdaQueryWrapper<BillboardTalentRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.in(BillboardTalentRelated::getBillboardId, list);
+
+        billboardTalentRelatedMapper.delete(lambdaQueryWrapper);
+    }
+
+    @Override
+    public void addTalentRelatedByTalentId(Long id) {
+        TalentPool talentPool = talentPoolService.getById(id);
+
+        LambdaQueryWrapper<BillboardTalentRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        lambdaQueryWrapper.eq(BillboardTalentRelated::getTalentId, id);
+        lambdaQueryWrapper.eq(BillboardTalentRelated::getStatus, 0);
+        billboardTalentRelatedMapper.delete(lambdaQueryWrapper);
+
+        // 获取一百条
+        // TODO: 2023/7/20 0020 还有一些条件，后期加上
+        List<Billboard> billboards = billboardService.list();
+        if(billboards != null && billboards.size()>0){
+            // 分数
+            List<BillboardTalentRelated> relateds = new ArrayList<>();
+            List<BillboardTalentRelated> finalRelateds = relateds;
+
+            for(int i=0; i<billboards.size(); i++){
+                int sorce = 0;
+                String title = talentPool.getResearchDirection();
+                Billboard s = billboards.get(i);
+
+                // 榜单名称 ===== 研究方向
+                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getQueryKeys());
+                if(StrUtil.isNotBlank(sameWords)){
+                    // 如果匹配3个字以下 0 分，匹配3个字给1分， 匹配4个字以上给2分
+                    if(sameWords.length()>=3 && sameWords.length() <4){
+                        sorce = sorce +1;
+                    }else if(sameWords.length()>=4){
+                        sorce = sorce +2;
+                    }
+                }
+
+
+                // 技术关键词 === 研究成果
+                String techKeys = s.getTechKeys();
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, talentPool.getQueryKeys());
+                if(StrUtil.isNotBlank(techWords)){
+                    double num = ComputeSimilarityRatio.SimilarDegree(techKeys, talentPool.getQueryKeys());
+                    // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
+                    if(techWords.length()>=3 && num > 0.15){
+                        sorce = sorce +5;
+                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
+                        sorce = sorce +4;
+                    }else if(techWords.length()>=2){
+                        sorce = sorce +2;
+                    }
+
+
+                    // 行业  === 个人简介
+                    Integer categories = s.getCategories();
+                    DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
+                    if(dictionaryDTO != null){
+                        String categoriesName = dictionaryDTO.getDicValue();
+                        String remark =  talentPool.getRemark();
+
+                        if(StrUtil.isNotBlank(categoriesName) && StrUtil.isNotBlank(remark)){
+                            String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, remark);
+                            if(StrUtil.isNotBlank(techSameWorkds)){
+                                // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分
+                                if(techSameWorkds.length()>=3){
+                                    sorce = sorce +2;
+                                }else if(techSameWorkds.length() ==3){
+                                    sorce = sorce +1;
+                                }
+                            }
+                        }
+                    }
+
+
+                    /**
+                     *  地区 === 地区
+                     */
+                    // 榜单发布地区
+                    String billboradAddress = s.getProvinceName()+s.getCityName()+s.getAreaName();
+                    // 帅才地区
+                    String address = talentPool.getProvinceName()+talentPool.getCityName()+talentPool.getAreaName();
+                    // 匹配地区
+                    String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                    if(StrUtil.isNotBlank(addressWorkds)){
+                        // 如果匹配2个字以下 0 分，匹配2个字给1分
+                        if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
+                            sorce = sorce +1;
+                        }
+                    }
+
+
+                    BillboardTalentRelated related = new BillboardTalentRelated();
+                    related.setBillboardId(s.getId());
+                    related.setSStar(Double.valueOf(sorce>5?5:sorce));
+                    related.setTalentId(talentPool.getId());
+                    related.setCreateAt(new Date());
+
+                    if(related.getSStar() >0 ){
+                        finalRelateds.add(related);
+                    }
+                }
+            }
+
+            // 排序，选出分最多的十条
+            relateds.stream().sorted(Comparator.comparing(BillboardTalentRelated::getSStar).reversed());
+            if(relateds.size()>10){
+                relateds = relateds.subList(0,10);
+            }
+            // 批量保存
+            this.saveBatch(relateds);
+        }
+
+    }
+
 
     public DictionaryDTO getByCache(String typeCode, String code) {
         DictionaryDTO dictionary = new DictionaryDTO();

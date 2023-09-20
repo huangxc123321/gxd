@@ -171,12 +171,13 @@
         a.unit_name AS unitName,
         a.categories,
         a.seq_no AS seqNo,
-        a.is_top AS isTop
+        a.is_top AS isTop,
+        a.last_new_top AS lastNewTop
         FROM
         t_billboard AS a
         where a.audit_status = 1
 
-        ORDER BY a.is_top DESC, a.seq_no ASC
+        ORDER BY a.last_new_top DESC, a.seq_no ASC
         <if test="createAt != null ">
             <choose>
                 <when test="createAt == 0">

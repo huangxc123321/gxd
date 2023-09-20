@@ -14,6 +14,7 @@ import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.common.utils.ConstantsUtils;
 import com.gxa.jbgsw.common.utils.PageResult;
+import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserDTO;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
 import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
@@ -24,10 +25,12 @@ import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Api(tags = "技术经纪人管理")
 @RestController
@@ -44,6 +47,8 @@ public class TechEconomicManController extends BaseController {
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
     MapperFacade mapperFacade;
+    @Resource
+    StringRedisTemplate stringRedisTemplate;
 
 
     @ApiOperation(value = "获取专业标签", notes = "获取专业标签")
@@ -87,6 +92,11 @@ public class TechEconomicManController extends BaseController {
 
         techEconomicManFeignApi.add(techEconomicManDTO);
 
+        // 经纪人匹配榜单
+        String key = RedisKeys.ECONOMIC_RELATED_RECOMMEND_TASK + techEconomicManDTO.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(techEconomicManDTO.getId()), 1, TimeUnit.MINUTES);
+
         /**
          * 分配一个账号
          * 先判断手机号是否注册，如果没有注册则注册
@@ -113,6 +123,11 @@ public class TechEconomicManController extends BaseController {
         techEconomicManDTO.setUpdateAt(new Date());
 
         techEconomicManFeignApi.update(techEconomicManDTO);
+
+        // 经纪人匹配榜单
+        String key = RedisKeys.ECONOMIC_RELATED_RECOMMEND_TASK + techEconomicManDTO.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(techEconomicManDTO.getId()), 1, TimeUnit.MINUTES);
     }
 
     @ApiOperation("获取技术经纪人列表")

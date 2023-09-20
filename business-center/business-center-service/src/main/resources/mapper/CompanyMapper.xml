@@ -17,6 +17,7 @@
       a.province_name AS provinceName,
       a.city_name AS cityName,
       a.remark,
+      a.unit_nature AS unitNature,
       a.address
 
     FROM
@@ -35,6 +36,10 @@
      <if test="addrId != null ">
          AND (a.province_id = #{addrId} OR a.city_id = #{addrId} OR a.area_id = #{addrId})
      </if>
+     <if test="unitNature != null">
+         AND a.unit_nature =  #{unitNature}
+     </if>
+
      ORDER BY a.create_at DESC
 
  </select>
