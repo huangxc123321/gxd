@@ -52,10 +52,14 @@ public class TechEconomicManController implements TechEconomicManApi {
     }
 
     @Override
-    public void add(TechEconomicManDTO techEconomicManDTO) {
+    public Long add(TechEconomicManDTO techEconomicManDTO) {
         TechEconomicMan techEconomicMan = mapperFacade.map(techEconomicManDTO, TechEconomicMan.class);
 
-        techEconomicManService.save(techEconomicMan);
+        // 不能在serice中save, 否则返回id为空， 后面需要用到id所以不能用这个，用mapper来插入
+        // techEconomicManService.save(techEconomicMan);
+        techEconomicManService.insert(techEconomicMan);
+
+        return techEconomicMan.getId();
     }
 
     @Override
@@ -125,6 +129,11 @@ public class TechEconomicManController implements TechEconomicManApi {
     @Override
     public void deleteAgreements(Long id) {
         techEconomicManService.deleteAgreements(id);
+    }
+
+    @Override
+    public void pipei(Long id) {
+        techEconomicManService.pipei(id);
     }
 
 

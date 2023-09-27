@@ -21,4 +21,5 @@ public interface CompanyService extends IService<Company> {
 
     CompanyDTO getCompanyByName(String unitName);
 
+    void updateUnitName(String oldUnitName, String unitName);
 }

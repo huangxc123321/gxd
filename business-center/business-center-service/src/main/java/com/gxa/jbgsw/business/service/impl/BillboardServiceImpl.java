@@ -226,6 +226,10 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
                 .append(billboard.getAreaName());
         billboard.setQueryKeys(sb.toString());
 
+        if(StrUtil.isNotBlank(billboardDTO.getPublishPerson())){
+            billboard.setUnitName(billboardDTO.getPublishPerson());
+        }
+
         billboardMapper.updateById(billboard);
     }
 
@@ -400,7 +404,7 @@ public class BillboardServiceImpl extends ServiceImpl<BillboardMapper, Billboard
         // 已审核，待揭榜
         lambdaQueryWrapper.eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
                           .eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode())
-                          .orderByDesc(Billboard::getIsTop)
+                          .orderByDesc(Billboard::getLastNewTop)
                           .orderByDesc(Billboard::getCreateAt)
                           .last("LIMIT  4");
         List<Billboard> billboards = billboardMapper.selectList(lambdaQueryWrapper);

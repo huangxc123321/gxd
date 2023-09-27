@@ -111,6 +111,14 @@ public class CompanyController implements CompanyApi {
                 if(t != null){
                     s.setTypeName(t.getDicValue());
                 }
+
+                if(s.getUnitNature() != null){
+                    DictionaryDTO un = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.unit_nature.name(), String.valueOf(s.getUnitNature()));
+                    if(un != null){
+                        s.setUnitNatureName(un.getDicValue());
+                    }
+                }
+
             });
             pages.setList(responses);
             pages.setPageNum(pageResult.getPageNum());
@@ -178,5 +186,10 @@ public class CompanyController implements CompanyApi {
         companyPCResponse.setHarvests(harvests);
 
         return companyPCResponse;
+    }
+
+    @Override
+    public void updateUnitName(String oldUnitName, String unitName) {
+        companyService.updateUnitName(oldUnitName, unitName);
     }
 }

@@ -24,8 +24,10 @@ import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.ListResourceBundle;
 import java.util.stream.Collectors;
 
 /**
@@ -97,29 +99,35 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
                 List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
                 StringBuffer sb = new StringBuffer();
                 if(CollectionUtils.isNotEmpty(bs)){
+                    List<HavestVO> havests = new ArrayList<>();
+
                     for(int i=0; i<bs.size(); i++){
-                        if(i == bs.size() - 1){
-                            sb.append(bs.get(i).getName());
-                        }else{
-                            sb.append(bs.get(i).getName()).append(CharUtil.COMMA);
-                        }
+                        BillboardHarvestRelatedResponse b = bs.get(i);
+                        HavestVO vo = new HavestVO();
+                        vo.setId(b.getId());
+                        vo.setName(b.getName());
+
+                        havests.add(vo);
                     }
+
+                    s.setHavests(havests);
                 }
-                s.setHavests(sb.toString());
+
 
                 // 相关帅才
-                StringBuffer tbs = new StringBuffer();
                 List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
                 if(CollectionUtils.isNotEmpty(ts)){
-                    for(int i=0; i<ts.size(); i++){
-                        if(i == ts.size() - 1){
-                            tbs.append(ts.get(i).getName());
-                        }else{
-                            tbs.append(ts.get(i).getName()).append(CharUtil.COMMA);
-                        }
+                    List<HavestVO> talents = new ArrayList<>();
+                    for(int n=0; n<ts.size(); n++){
+                        BillboardTalentRelatedResponse b = ts.get(n);
+                        HavestVO vo = new HavestVO();
+                        vo.setId(b.getId());
+                        vo.setName(b.getName());
+
+                        talents.add(vo);
                     }
+                    s.setTalents(talents);
                 }
-                s.setTalents(tbs.toString());
             });
         }
 
@@ -135,14 +143,16 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
             // 查询企业榜的条数
             TechEconomicManRequiresRequest x = new TechEconomicManRequiresRequest();
             x.setType(BillboardTypeEnum.BUS_BILLBOARD.getCode());
-            long buzs = getOrders(request);
+            x.setEconomicId(request.getEconomicId());
+            long buzs = getOrders(x);
             myOrderResponse.setBuzs(buzs);
             myOrderResponse.setGovs(pageInfo.getTotal());
         }else{
             // 查询政府榜的条数
             TechEconomicManRequiresRequest g = new TechEconomicManRequiresRequest();
             g.setType(BillboardTypeEnum.GOV_BILLBOARD.getCode());
-            long govs = getOrders(request);
+            g.setEconomicId(request.getEconomicId());
+            long govs = getOrders(g);
             myOrderResponse.setGovs(govs);
             myOrderResponse.setBuzs(pageInfo.getTotal());
         }
@@ -163,87 +173,42 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
         PageHelper.startPage(request.getPageNum(), request.getPageSize());
 
         List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);
+        responses.stream().forEach(s->{
+            s.setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(s.getStatus()));
 
+            // 相关成果
+            List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
+            StringBuffer sb = new StringBuffer();
+            if(CollectionUtils.isNotEmpty(bs)){
+                List<HavestVO> havests = new ArrayList<>();
 
-//        if(CollectionUtils.isNotEmpty(responses)){
-//            responses.stream().forEach(s->{
-//                s.setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(s.getStatus()));
-//
-//                // 相关成果
-//                List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
-//                StringBuffer sb = new StringBuffer();
-//                if(CollectionUtils.isNotEmpty(bs)){
-//                    for(int i=0; i<bs.size(); i++){
-//                        if(i == bs.size() - 1){
-//                            sb.append(bs.get(i).getName());
-//                        }else{
-//                            sb.append(bs.get(i).getName()).append(CharUtil.COMMA);
-//                        }
-//                    }
-//                }
-//                s.setHavests(sb.toString());
-//
-//                // 相关帅才
-//                StringBuffer tbs = new StringBuffer();
-//                List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
-//                if(CollectionUtils.isNotEmpty(ts)){
-//                    for(int i=0; i<ts.size(); i++){
-//                        if(i == ts.size() - 1){
-//                            tbs.append(ts.get(i).getName());
-//                        }else{
-//                            tbs.append(ts.get(i).getName()).append(CharUtil.COMMA);
-//                        }
-//                    }
-//                }
-//                s.setTalents(tbs.toString());
-//            });
-//        }
+                for(int i=0; i<bs.size(); i++){
+                    BillboardHarvestRelatedResponse b = bs.get(i);
+                    HavestVO vo = new HavestVO();
+                    vo.setId(b.getId());
+                    vo.setName(b.getName());
 
-        PageInfo<TechEconomicManRequiresResponse> pageInfo = new PageInfo<>(responses);
-        //类型转换
-        return mapperFacade.map(pageInfo, new TypeBuilder<PageInfo<TechEconomicManRequiresResponse>>() {
-        }.build(), new TypeBuilder<PageResult<TechEconomicManRequiresResponse>>() {}.build());
-    }
-
-
-    // 备份
-    public PageResult<TechEconomicManRequiresResponse> queryEconomicManRequires_old(TechEconomicManRequiresRequest request) {
-        PageHelper.startPage(request.getPageNum(), request.getPageSize());
-
-        List<TechEconomicManRequiresResponse> responses = techEconomicManMapper.getEconomicManRequires(request);
-        if(CollectionUtils.isNotEmpty(responses)){
-            responses.stream().forEach(s->{
-                s.setStatusName(BillboardEconomicRelatedStatusEnum.getNameByIndex(s.getStatus()));
-
-                // 相关成果
-                List<BillboardHarvestRelatedResponse> bs = billboardHarvestRelatedService.getHarvestRecommend(s.getBillboardId());
-                StringBuffer sb = new StringBuffer();
-                if(CollectionUtils.isNotEmpty(bs)){
-                    for(int i=0; i<bs.size(); i++){
-                        if(i == bs.size() - 1){
-                            sb.append(bs.get(i).getName());
-                        }else{
-                            sb.append(bs.get(i).getName()).append(CharUtil.COMMA);
-                        }
-                    }
+                    havests.add(vo);
                 }
-                s.setHavests(sb.toString());
 
-                // 相关帅才
-                StringBuffer tbs = new StringBuffer();
-                List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
-                if(CollectionUtils.isNotEmpty(ts)){
-                    for(int i=0; i<ts.size(); i++){
-                        if(i == ts.size() - 1){
-                            tbs.append(ts.get(i).getName());
-                        }else{
-                            tbs.append(ts.get(i).getName()).append(CharUtil.COMMA);
-                        }
-                    }
+                s.setHavests(havests);
+            }
+
+            // 相关帅才
+            List<BillboardTalentRelatedResponse> ts = billboardTalentRelatedService.getTalentRecommend(s.getBillboardId());
+            if(CollectionUtils.isNotEmpty(ts)){
+                List<HavestVO> talents = new ArrayList<>();
+                for(int n=0; n<ts.size(); n++){
+                    BillboardTalentRelatedResponse b = ts.get(n);
+                    HavestVO vo = new HavestVO();
+                    vo.setId(b.getId());
+                    vo.setName(b.getName());
+
+                    talents.add(vo);
                 }
-                s.setTalents(tbs.toString());
-            });
-        }
+                s.setTalents(talents);
+            }
+        });
 
         PageInfo<TechEconomicManRequiresResponse> pageInfo = new PageInfo<>(responses);
         //类型转换
@@ -273,6 +238,16 @@ public class TechEconomicManServiceImpl extends ServiceImpl<TechEconomicManMappe
                 .eq(TechEconomicMan::getId, id);
 
         techEconomicManMapper.update(null, lambdaUpdateWrapper);
+    }
+
+    @Override
+    public void pipei(Long id) {
+        billboardEconomicRelatedService.addEconomicRelatedByEcomicId(id);
+    }
+
+    @Override
+    public void insert(TechEconomicMan techEconomicMan) {
+        techEconomicManMapper.insert(techEconomicMan);
     }
 
     private long getOrders(TechEconomicManRequiresRequest request) {

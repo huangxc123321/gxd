@@ -284,6 +284,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if(user.getUnitName()!= null && !user.getUnitName().equals(userDTO.getUnitName())){
             billboardFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
             havestFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
+            companyFeignApi.updateUnitName(user.getUnitName(), userDTO.getUnitName());
         }
 
         user.setUnitLogo(userDTO.getUnitLogo());

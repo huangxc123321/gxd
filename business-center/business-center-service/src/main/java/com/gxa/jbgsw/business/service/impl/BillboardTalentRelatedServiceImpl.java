@@ -11,6 +11,7 @@ import com.gxa.jbgsw.business.mapper.BillboardTalentRelatedMapper;
 import com.gxa.jbgsw.business.mapper.TalentPoolMapper;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.BillboardTalentRelatedService;
@@ -19,6 +20,7 @@ import com.gxa.jbgsw.business.service.HarvestService;
 import com.gxa.jbgsw.business.service.TalentPoolService;
 import com.gxa.jbgsw.common.utils.ComputeSimilarityRatio;
 import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.common.utils.StrCommon;
 import ma.glasnost.orika.MapperFacade;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -61,8 +63,12 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
         Billboard billboard = billboardService.getById(billboardId);
 
         // 获取一百条
-        // TODO: 2023/7/20 0020 还有一些条件，后期加上
-        List<TalentPool> talentPools = talentPoolService.list();
+        LambdaQueryWrapper<TalentPool> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+        // 条件：已审核
+        lambdaQueryWrapper.eq(TalentPool::getStatus, 1);
+        lambdaQueryWrapper.last("LIMIT 100");
+        List<TalentPool> talentPools = talentPoolService.list(lambdaQueryWrapper);
+
         if(talentPools != null && talentPools.size()>0){
             // 分数
             List<BillboardTalentRelated> relateds = new ArrayList<>();
@@ -74,12 +80,17 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 TalentPool s = talentPools.get(i);
 
                 // 榜单名称 ===== 研究方向
-                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getQueryKeys());
+                String researchDirection = s.getResearchDirection();
+                researchDirection = StrCommon.clear(researchDirection);
+
+                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, researchDirection);
+                sameWords = StrCommon.getResult(sameWords);
+
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配3个字以下 0 分，匹配3个字给1分， 匹配4个字以上给2分
-                    if(sameWords.length()>=3 && sameWords.length() <4){
+                    if(sameWords.length()>=6 && sameWords.length() <7){
                         sorce = sorce +1;
-                    }else if(sameWords.length()>=4){
+                    }else if(sameWords.length()>=8){
                         sorce = sorce +2;
                     }
                 }
@@ -87,15 +98,22 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
 
                 // 技术关键词 === 研究成果
                 String techKeys = billboard.getTechKeys();
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, s.getQueryKeys());
-                double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getQueryKeys());
+                techKeys = StrCommon.clear(techKeys);
+
+                String resultFiled = s.getResearchDirection() + s.getRemark();
+                resultFiled = StrCommon.clear(resultFiled);
+
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, resultFiled);
+                techWords = StrCommon.getResult(techKeys);
+
                 if(StrUtil.isNotBlank(techWords)){
+                    double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getResearchDirection());
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(techWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=6){
                         sorce = sorce +5;
-                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=5){
                         sorce = sorce +4;
-                    }else if(techWords.length()>=2){
+                    }else if(techWords.length()>=4){
                         sorce = sorce +2;
                     }
 
@@ -105,16 +123,18 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
                 if(dictionaryDTO != null){
                     String categoriesName = dictionaryDTO.getDicValue();
-                    String remark =  s.getRemark();
-                    String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, remark);
+                   // String remark =  s.getRemark();
+                    String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, resultFiled);
+                    techSameWorkds = StrCommon.getResult(techSameWorkds);
                     if(StrUtil.isNotBlank(techSameWorkds)){
                         // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分
-                        if(techSameWorkds.length()>=3){
+                        if(techSameWorkds.length()>=5){
                             sorce = sorce +2;
-                        }else if(techSameWorkds.length() ==3){
+                        }else if(techSameWorkds.length() ==4){
                             sorce = sorce +1;
                         }
                     }
+
                 }
 
 
@@ -122,15 +142,19 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                  *  地区 === 地区
                  */
                 // 榜单发布地区
+                boolean isAddress = false;
                 String billboradAddress = billboard.getProvinceName()+billboard.getCityName()+billboard.getAreaName();
                 // 帅才地区
                 String address = s.getProvinceName()+s.getCityName()+s.getAreaName();
                 // 匹配地区
                 String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                addressWorkds = StrCommon.getAddress(addressWorkds);
+
                 if(StrUtil.isNotBlank(addressWorkds)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分
-                    if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
+                    if(addressWorkds.length()>=4){
                         sorce = sorce +1;
+                        isAddress = true;
                     }
                 }
 
@@ -141,9 +165,14 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 related.setTalentId(s.getId());
                 related.setCreateAt(new Date());
 
-                if(related.getSStar() >0 ){
-                    finalRelateds.add(related);
-                   }
+                if(related.getSStar() >2 ){
+                    // 把只是匹配地区的排除，因为有些只是地区匹配，行业风牛马不相及
+                    if(isAddress && related.getSStar() != 1){
+                        relateds.add(related);
+                    }else if(related.getSStar() >2){
+                        relateds.add(related);
+                    }
+                }
                }
             }
 
@@ -153,7 +182,9 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 relateds = relateds.subList(0,10);
             }
             // 批量保存
-            this.saveBatch(relateds);
+            if(CollectionUtils.isNotEmpty(relateds)){
+                this.saveBatch(relateds);
+            }
         }
 
 
@@ -249,8 +280,15 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
         billboardTalentRelatedMapper.delete(lambdaQueryWrapper);
 
         // 获取一百条
-        // TODO: 2023/7/20 0020 还有一些条件，后期加上
-        List<Billboard> billboards = billboardService.list();
+        LambdaQueryWrapper<Billboard> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode())
+                .eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
+                .orderByDesc(Billboard::getCreateAt)
+                .last("LIMIT 100");
+
+        List<Billboard> billboards = billboardService.list(queryWrapper);
+
+
         if(billboards != null && billboards.size()>0){
             // 分数
             List<BillboardTalentRelated> relateds = new ArrayList<>();
@@ -258,16 +296,21 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
 
             for(int i=0; i<billboards.size(); i++){
                 int sorce = 0;
-                String title = talentPool.getResearchDirection();
+                String researchDirection = talentPool.getResearchDirection();
+                researchDirection = StrCommon.clear(researchDirection);
+
                 Billboard s = billboards.get(i);
 
-                // 榜单名称 ===== 研究方向
-                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getQueryKeys());
+                // 研究方向 ===== 榜单名称
+                String sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(researchDirection, s.getTitle());
+                sameWords = StrCommon.getResult(sameWords);
+
+
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配3个字以下 0 分，匹配3个字给1分， 匹配4个字以上给2分
-                    if(sameWords.length()>=3 && sameWords.length() <4){
+                    if(sameWords.length()>=6 && sameWords.length() <8){
                         sorce = sorce +1;
-                    }else if(sameWords.length()>=4){
+                    }else if(sameWords.length()>=8){
                         sorce = sorce +2;
                     }
                 }
@@ -275,15 +318,21 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
 
                 // 技术关键词 === 研究成果
                 String techKeys = s.getTechKeys();
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, talentPool.getQueryKeys());
+                techKeys = StrCommon.clear(techKeys);
+                String resultFiled = talentPool.getResearchDirection() + talentPool.getRemark();
+                resultFiled = StrCommon.clear(resultFiled);
+
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, resultFiled);
+                techWords = StrCommon.getResult(techWords);
+
                 if(StrUtil.isNotBlank(techWords)){
-                    double num = ComputeSimilarityRatio.SimilarDegree(techKeys, talentPool.getQueryKeys());
-                    // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(techWords.length()>=3 && num > 0.15){
+                    double num = ComputeSimilarityRatio.SimilarDegree(techKeys, talentPool.getResearchDirection());
+                    // 如果匹配1个字以下 0 分，匹配44个字给2分， 匹配5个字以上给4分， 匹配6个字以上给5分
+                    if(techWords.length()>=6){
                         sorce = sorce +5;
-                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=5){
                         sorce = sorce +4;
-                    }else if(techWords.length()>=2){
+                    }else if(techWords.length()>=4){
                         sorce = sorce +2;
                     }
 
@@ -293,15 +342,15 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                     DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
                     if(dictionaryDTO != null){
                         String categoriesName = dictionaryDTO.getDicValue();
-                        String remark =  talentPool.getRemark();
+                        if(StrUtil.isNotBlank(categoriesName) && StrUtil.isNotBlank(resultFiled)){
+                            String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, resultFiled);
+                            techSameWorkds = StrCommon.getResult(techSameWorkds);
 
-                        if(StrUtil.isNotBlank(categoriesName) && StrUtil.isNotBlank(remark)){
-                            String techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, remark);
                             if(StrUtil.isNotBlank(techSameWorkds)){
                                 // 如果匹配2个字以上2分，匹配2个字给1分，其它 0分
-                                if(techSameWorkds.length()>=3){
+                                if(techSameWorkds.length()>=5){
                                     sorce = sorce +2;
-                                }else if(techSameWorkds.length() ==3){
+                                }else if(techSameWorkds.length() ==4){
                                     sorce = sorce +1;
                                 }
                             }
@@ -313,15 +362,19 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                      *  地区 === 地区
                      */
                     // 榜单发布地区
+                    boolean isAddress = false;
                     String billboradAddress = s.getProvinceName()+s.getCityName()+s.getAreaName();
                     // 帅才地区
                     String address = talentPool.getProvinceName()+talentPool.getCityName()+talentPool.getAreaName();
                     // 匹配地区
                     String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                    addressWorkds = StrCommon.getAddress(addressWorkds);
+
                     if(StrUtil.isNotBlank(addressWorkds)){
                         // 如果匹配2个字以下 0 分，匹配2个字给1分
-                        if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
+                        if(addressWorkds.length()>=4){
                             sorce = sorce +1;
+                            isAddress = true;
                         }
                     }
 
@@ -332,8 +385,13 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                     related.setTalentId(talentPool.getId());
                     related.setCreateAt(new Date());
 
-                    if(related.getSStar() >0 ){
-                        finalRelateds.add(related);
+                    if(related.getSStar() >2 ){
+                        // 把只是匹配地区的排除，因为有些只是地区匹配，行业风牛马不相及
+                        if(isAddress && related.getSStar() != 1){
+                            relateds.add(related);
+                        }else if(related.getSStar() >2){
+                            relateds.add(related);
+                        }
                     }
                 }
             }
@@ -344,7 +402,9 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 relateds = relateds.subList(0,10);
             }
             // 批量保存
-            this.saveBatch(relateds);
+            if(CollectionUtils.isNotEmpty(relateds)){
+                this.saveBatch(relateds);
+            }
         }
 
     }

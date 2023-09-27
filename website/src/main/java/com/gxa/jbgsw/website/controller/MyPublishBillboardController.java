@@ -1,8 +1,10 @@
 package com.gxa.jbgsw.website.controller;
 
+import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.basis.protocol.enums.DictionaryTypeEnum;
 import com.gxa.jbgsw.business.client.TechEconomicManAppraiseApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
@@ -59,6 +61,8 @@ public class MyPublishBillboardController extends BaseController {
     MessageFeignApi messageFeignApi;
     @Resource
     UserFeignApi userFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
 
 
 
@@ -254,6 +258,34 @@ public class MyPublishBillboardController extends BaseController {
                 if(edu != null){
                     s.setHighestEduName(edu.getDicValue());
                 }
+
+
+                StringBuffer sb = new StringBuffer();
+                if(s.getTechDomain1() != null && !"".equals(s.getTechDomain1())){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                        sb.append(tfc1.getName()).append(CharUtil.COMMA);
+                    }
+                }
+                if(s.getTechDomain2() != null  && !"".equals(s.getTechDomain2())){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                        sb.append(tfc2.getName()).append(CharUtil.COMMA);
+                    }
+                }
+                if(s.getTechDomain() != null  && !"".equals(s.getTechDomain())){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
+                        sb.append(tfc.getName()).append(CharUtil.COMMA);
+                    }
+                }
+
+                String temp = sb.toString().substring(0, sb.toString().length()-1);
+                s.setTechDomainName(sb.toString());
+
             });
         }
         detailInfo.setTalentRecommends(talentRecommends);

@@ -2,10 +2,8 @@ package com.gxa.jbgsw.website.controller;
 
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.common.exception.BizException;
 import com.gxa.jbgsw.common.utils.BaseController;
 import com.gxa.jbgsw.user.protocol.dto.UploadReslutDTO;
-import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.obs.services.ObsClient;
 import com.obs.services.ObsConfiguration;
 import com.obs.services.model.AuthTypeEnum;
@@ -13,6 +11,7 @@ import com.obs.services.model.PutObjectResult;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,9 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.BindException;
+import java.io.*;
 import java.util.UUID;
 
 @Api(tags = "文件上传管理")
@@ -45,6 +42,29 @@ public class UploadFileController extends BaseController {
     private static AuthTypeEnum authType = AuthTypeEnum.OBS;
     public static ObsClient obsClient;
 
+
+    //将文件转换成Byte数组
+    public static byte[] getBytesByFile(String pathStr) {
+        File file = new File(pathStr);
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            ByteArrayOutputStream bos = new ByteArrayOutputStream(1000);
+            byte[] b = new byte[1000];
+            int n;
+            while ((n = fis.read(b)) != -1) {
+                bos.write(b, 0, n);
+            }
+            fis.close();
+            byte[] data = bos.toByteArray();
+            bos.close();
+            return data;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
     @ApiOperation("上传文件")
     @PostMapping(value = "/file/uploadfile",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public UploadReslutDTO uploadfile(@RequestParam("bucketName") String bucketName, @RequestParam("file") MultipartFile file) throws IOException {
@@ -59,7 +79,30 @@ public class UploadFileController extends BaseController {
             String fileTyle = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."),file.getOriginalFilename().length());
             String filename = UUID.randomUUID().toString().replace("-", "") +fileTyle;
 
-            byte[] bytes = file.getBytes();
+            String os = System.getProperty("os.name").toLowerCase();
+            byte[] bytes = null;
+
+            if (os.contains("win")) {
+                // Windows操作系统
+                String tempPath = "C:\\\\temp";
+
+                File directory = new File(tempPath);
+                if (!directory.exists()){
+                    directory.mkdirs();
+                }
+
+                File destFile = new File(tempPath, filename);
+
+                FileUtils.copyInputStreamToFile(file.getInputStream(), destFile);
+
+                bytes = getBytesByFile(destFile.getPath());
+            } else if (os.contains("nix") || os.contains("nux") || os.contains("linux")) {
+                // Linux操作系统
+                bytes = file.getBytes();
+            }else{
+                // Linux操作系统
+                bytes = file.getBytes();
+            }
             // upload(bytes, filename, file.getContentType());
             PutObjectResult putObjectResult = obsClient.putObject(bucketName, filename, new ByteArrayInputStream(bytes));
 

@@ -85,6 +85,12 @@ public class UploadFileController extends BaseController {
             if (os.contains("win")) {
                 // Windows操作系统
                 String tempPath = "C:\\\\temp";
+
+                File directory = new File(tempPath);
+                if (!directory.exists()){
+                    directory.mkdirs();
+                }
+
                 File destFile = new File(tempPath, filename);
 
                 FileUtils.copyInputStreamToFile(file.getInputStream(), destFile);

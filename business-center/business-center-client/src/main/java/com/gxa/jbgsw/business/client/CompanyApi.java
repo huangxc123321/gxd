@@ -41,4 +41,7 @@ public interface CompanyApi {
 
     @GetMapping("/company/getCompanyByName")
     CompanyPCResponse getCompanyByName(@RequestParam("name") String name);
+
+    @GetMapping("/company/updateUnitName")
+    void updateUnitName(@RequestParam("oldUnitName") String oldUnitName, @RequestParam("unitName") String unitName);
 }

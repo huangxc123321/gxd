@@ -11,6 +11,9 @@
           c.highest_edu AS highestEdu,
           c.research_direction AS researchDirection,
           c.project,
+          c.tech_domain1 AS techDomain1,
+          c.tech_domain2 AS techDomain2,
+          c.tech_domain AS techDomain,
           a.s_star AS star
         FROM
              t_billboard_talent_related AS a

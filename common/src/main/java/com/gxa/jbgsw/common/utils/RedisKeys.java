@@ -32,6 +32,6 @@ public class RedisKeys {
     /**帅才匹配榜单推荐任务 **/
     public static final String TALENT_RELATED_RECOMMEND_TASK = BASE_RSS + "billboard:related:talent:";
 
-    /** 新闻发布时间 **/
+    /** 技术领域 **/
     public static final String TECH_DOMAIN_VALUE = BASE_RSS + "tech:domain:value:";
 }

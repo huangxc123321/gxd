@@ -112,7 +112,10 @@ public class TalentPoolServiceImpl extends ServiceImpl<TalentPoolMapper, TalentP
         sb.append(talentPool.getName()).append(",").append(talentPool.getHighestEdu()).append(",")
                 .append(talentPool.getJob()).append(",").append(talentPool.getResearchDirection());
         talentPool.setQueryKeys(sb.toString());
-        this.save(talentPool);
+
+        // this.save(talentPool);
+        // 这个有返回ID
+        talentPoolMapper.insert(talentPool);
 
         // 帅才匹配榜单
         String key = RedisKeys.TALENT_RELATED_RECOMMEND_TASK + talentPool.getId();

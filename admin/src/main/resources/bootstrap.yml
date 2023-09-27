@@ -5,6 +5,8 @@ server:
     uri-encoding: UTF-8
     remote-ip-header: x-forward-for
     max-http-header-size: 8096
+    basedir: c:\\temp
+
   servlet:
     session:
       timeout: 43200m
@@ -27,8 +29,6 @@ spring:
       enabled: true
       max-file-size: 50MB
       max-request-size: 100MB
-
-
 
 feign:
   httpclient:

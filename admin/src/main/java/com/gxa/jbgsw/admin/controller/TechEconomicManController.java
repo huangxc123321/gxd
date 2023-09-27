@@ -50,6 +50,12 @@ public class TechEconomicManController extends BaseController {
     @Resource
     StringRedisTemplate stringRedisTemplate;
 
+    @ApiOperation(value = "匹配测试", notes = "匹配测试")
+    @GetMapping("/tech/broker/pipei")
+    public void pipei(@RequestParam("id") Long id){
+        techEconomicManFeignApi.pipei(id);
+    }
+
 
     @ApiOperation(value = "获取专业标签", notes = "获取专业标签")
     @GetMapping("/tech/broker/getLabels")
@@ -90,12 +96,12 @@ public class TechEconomicManController extends BaseController {
             throw new BizException(BusinessErrorCode.MOBILE_IS_EXIST);
         }
 
-        techEconomicManFeignApi.add(techEconomicManDTO);
+        Long id = techEconomicManFeignApi.add(techEconomicManDTO);
 
         // 经纪人匹配榜单
-        String key = RedisKeys.ECONOMIC_RELATED_RECOMMEND_TASK + techEconomicManDTO.getId();
+        String key = RedisKeys.ECONOMIC_RELATED_RECOMMEND_TASK + id;
         // 过期时间
-        stringRedisTemplate.opsForValue().set(key, String.valueOf(techEconomicManDTO.getId()), 1, TimeUnit.MINUTES);
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(id), 1, TimeUnit.MINUTES);
 
         /**
          * 分配一个账号

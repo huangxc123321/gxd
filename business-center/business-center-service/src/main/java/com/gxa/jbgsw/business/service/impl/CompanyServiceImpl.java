@@ -1,6 +1,7 @@
 package com.gxa.jbgsw.business.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -81,5 +82,14 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
         }
 
         return null;
+    }
+
+    @Override
+    public void updateUnitName(String oldUnitName, String unitName) {
+        LambdaUpdateWrapper<Company> lambdaUpdateWrapper = new LambdaUpdateWrapper<>();
+        lambdaUpdateWrapper.set(Company::getName, unitName)
+                .eq(Company::getName, oldUnitName);
+
+        companyMapper.update(null, lambdaUpdateWrapper);
     }
 }

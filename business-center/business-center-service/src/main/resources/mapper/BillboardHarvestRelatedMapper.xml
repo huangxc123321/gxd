@@ -93,6 +93,7 @@
    <select id="getRelatedHavestByBillboardId" resultType="com.gxa.jbgsw.business.protocol.dto.RelateHavestDTO">
             SELECT
                 b.id,
+                a.billboard_id AS billboardId,
                 b.`name`,
                 b.guide_picture AS guidePicture,
                 b.appy_domain AS techDomain

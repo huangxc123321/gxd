@@ -2,6 +2,7 @@ package com.gxa.jbgsw.business.controller;
 
 
 import cn.hutool.core.util.CharUtil;
+import cn.hutool.core.util.StrUtil;
 import com.gxa.jbgsw.basis.client.TechnicalFieldClassifyApi;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
 import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
@@ -188,6 +189,10 @@ public class HarvestController implements HarvestApi {
 
         harvestService.updateHarvest(harvest, havestDTO.getPatents());
 
+        // 发布成果： 匹配榜单
+        String key = RedisKeys.HARVEST_RELATED_RECOMMEND_TASK + harvest.getId();
+        // 过期时间
+        stringRedisTemplate.opsForValue().set(key, String.valueOf(harvest.getId()), 1, TimeUnit.MINUTES);
     }
 
     @Override
@@ -246,24 +251,30 @@ public class HarvestController implements HarvestApi {
         HavestPO havestPO = mapperFacade.map(harvest, HavestPO.class);
 
         // 技术领域
-        if(havestPO.getTechDomain() != null){
-            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain());
-            if(tfc != null){
-                havestPO.setTechDomainName(tfc.getName());
-            }
-        }
+        StringBuffer sb = new StringBuffer();
         if(havestPO.getTechDomain1() != null){
             TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain1());
             if(tfc1 != null){
                 havestPO.setTechDomain1Name(tfc1.getName());
+                sb.append(tfc1.getName()).append(CharUtil.COMMA);
             }
         }
         if(havestPO.getTechDomain2() != null){
             TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain2());
             if(tfc2 != null){
                 havestPO.setTechDomain2Name(tfc2.getName());
+                sb.append(tfc2.getName()).append(CharUtil.COMMA);
             }
         }
+        if(havestPO.getTechDomain() != null){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(havestPO.getTechDomain());
+            if(tfc != null){
+                havestPO.setTechDomainName(tfc.getName());
+                sb.append(tfc.getName()).append(CharUtil.COMMA);
+            }
+        }
+        String temp = sb.substring(0, sb.toString().length()-1);
+        havestPO.setTechDomainName(temp);
 
         if(harvest.getIsPatent() != null && harvest.getIsPatent().equals(Integer.valueOf(1))){
             List<PatentDTO> patents = patentService.getPatentByPid(id);

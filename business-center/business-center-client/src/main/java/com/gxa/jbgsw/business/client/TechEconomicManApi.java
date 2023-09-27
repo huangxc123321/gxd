@@ -24,7 +24,7 @@ public interface TechEconomicManApi {
     void deleteBatchIds(@RequestBody Long[] ids);
 
     @PostMapping("/tech/broker/add")
-    void add(@RequestBody TechEconomicManDTO techEconomicManDTO);
+    Long add(@RequestBody TechEconomicManDTO techEconomicManDTO);
 
     @PostMapping("/tech/broker/update")
     void update(@RequestBody TechEconomicManDTO techEconomicManDTO);
@@ -49,4 +49,7 @@ public interface TechEconomicManApi {
 
     @GetMapping("/tech/economic/deleteAgreements")
     void deleteAgreements(@RequestParam("id") Long id);
+
+    @GetMapping("/tech/broker/pipei")
+    void pipei(@RequestParam("id") Long id);
 }

@@ -15,6 +15,9 @@ import com.gxa.jbgsw.business.feignapi.UserFeignApi;
 import com.gxa.jbgsw.business.mapper.BillboardEconomicRelatedMapper;
 import com.gxa.jbgsw.business.protocol.dto.AppRequiresAccepptDTO;
 import com.gxa.jbgsw.business.protocol.dto.BillboardEconomicRelatedResponse;
+import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardEconomicRelatedStatusEnum;
+import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -22,6 +25,8 @@ import com.gxa.jbgsw.business.service.BillboardService;
 import com.gxa.jbgsw.business.service.TechEconomicManService;
 import com.gxa.jbgsw.common.utils.ComputeSimilarityRatio;
 import com.gxa.jbgsw.common.utils.RedisKeys;
+import com.gxa.jbgsw.common.utils.StrCommon;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -49,10 +54,6 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
     @Resource
     BillboardEconomicRelatedMapper billboardEconomicRelatedMapper;
     @Resource
-    UserFeignApi userFeignApi;
-    @Resource
-    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
-    @Resource
     StringRedisTemplate stringRedisTemplate;
 
     @Override
@@ -75,7 +76,12 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
 
                 // 榜单名称 === 专业标签
                 String sameWords = "";
-                sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, s.getLabel());
+                String label = s.getLabel();
+                label =  StrCommon.clear(label);
+
+                sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, label);
+                sameWords = StrCommon.getResult(sameWords);
+
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=3 && sameWords.length() <4){
@@ -90,40 +96,58 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 String techKeys = billboard.getTechKeys();
                 StringBuffer sb = new StringBuffer();
                 // 技术领域
-                if(s.getTechDomain() != null){
-                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(s.getTechDomain());
-                    if(tfc != null){
-                        sb.append(tfc.getName());
-                        sb.append(CharUtil.COMMA);
-                    }
-                }
+                TechnicalFieldClassifyDTO tfc1 = null;
                 if(s.getTechDomain1() != null){
-                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(s.getTechDomain1());
-                    if(tfc1 != null){
-                        sb.append(tfc1.getName());
-                        sb.append(CharUtil.COMMA);
+                    try{
+                        tfc1 = getOneById(s.getTechDomain1());
+                        if(tfc1 != null){
+                            sb.append(tfc1.getName());
+                        }
+                    }catch (Exception ex){
+                        System.out.println("techEconomicMan.getTechDomain1() error");
                     }
                 }
+
+                TechnicalFieldClassifyDTO tfc2 = null;
                 if(s.getTechDomain2() != null){
-                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(s.getTechDomain2());
-                    if(tfc2 != null){
-                        sb.append(tfc2.getName());
-                        sb.append(CharUtil.COMMA);
+                    try{
+                        tfc2 = getByPid(tfc1, s.getTechDomain2());
+                        if(tfc2 != null){
+                            sb.append(tfc2.getName());
+                        }
+                    }catch (Exception ex){
+                        System.out.println("techEconomicMan.getTechDomain2() error");
+                    }
+                }
+                if(s.getTechDomain() != null){
+                    try{
+                        TechnicalFieldClassifyDTO tfc = getByPid(tfc2, s.getTechDomain());
+                        if(tfc != null){
+                            sb.append(tfc.getName());
+                        }
+                    }catch (Exception ex){
+                        System.out.println("techEconomicMan.getTechDomain() error");
                     }
                 }
 
                 // 加上标签
                 sb.append(s.getLabel());
 
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sb.toString());
-                double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getLabel());
+                String sbStr = sb.toString();
+                sbStr = StrCommon.clear(sbStr);
+
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sbStr);
+                techWords = StrCommon.getResult(techWords);
                 if(StrUtil.isNotBlank(techWords)){
+                    double num = ComputeSimilarityRatio.SimilarDegree(techKeys,s.getLabel());
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(techWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=6){
                         sorce = sorce +5;
-                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=5){
                         sorce = sorce +4;
-                    }else if(techWords.length()>=2){
+                    }else if(techWords.length()>=4){
+                        sorce = sorce +3;
+                    }else if(techWords.length()>=3){
                         sorce = sorce +2;
                     }
                 }
@@ -133,29 +157,34 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 Integer categories = billboard.getCategories();
                 // 行业名称
                 DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
-                String mwords = "";
+                String techSameWorkds = "";
                 if(dictionaryDTO != null){
                     String categoriesName = dictionaryDTO.getDicValue();
-                    mwords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, sb.toString());
-                    // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                    if(mwords.length()>=2 && mwords.length() <3){
+                    techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, sbStr);
+                    techSameWorkds = StrCommon.getResult(techSameWorkds);
+                    // 如果匹配2个字以下 0 分，匹配3~4个字给1分， 匹配4个字以上给2分
+                    if(techSameWorkds.length()>=3 && techSameWorkds.length() <=4){
                         sorce = sorce +1;
-                    }else if(mwords.length()>=3){
+                    }else if(techSameWorkds.length()>4){
                         sorce = sorce +2;
                     }
                 }
 
 
                 // 榜单发布地区
+                boolean isAddress = false;
                 String billboradAddress = billboard.getProvinceName()+billboard.getCityName()+billboard.getAreaName();
                 // 帅才地区
                 String address = s.getProvinceName()+s.getCityName()+s.getAreaName();
                 // 匹配地区
                 String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                addressWorkds = StrCommon.getAddress(addressWorkds);
+
                 if(StrUtil.isNotBlank(addressWorkds)){
                     // 如果匹配4个字以下 0 分，匹配4个字给1分
-                    if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
+                    if(addressWorkds.length()>=4){
                         sorce = sorce +1;
+                        isAddress = true;
                     }
                 }
 
@@ -165,15 +194,15 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 related.setEconomicId(s.getId());
                 related.setCreateAt(new Date());
 
-                if(related.getSStar().intValue() > 0){
-                    finalRelateds.add(related);
+                if(related.getSStar().intValue() > 2){
+                    // 把只是匹配地区的排除，因为有些只是地区匹配，行业风牛马不相及
+                    if(isAddress && related.getSStar() != 1){
+                        relateds.add(related);
+                    }else if(related.getSStar() >2){
+                        relateds.add(related);
+                    }
                 }
             }
-
-
-
-
-
 
             // 排序，选出分最多的十条
             relateds.stream().sorted(Comparator.comparing(BillboardEconomicRelated::getSStar).reversed());
@@ -197,7 +226,10 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
     public BillboardEconomicRelated getMyEconomicMan(Long billboardId) {
         LambdaQueryWrapper<BillboardEconomicRelated> lambdaQueryWrapper = new LambdaQueryWrapper<>();
         lambdaQueryWrapper.eq(BillboardEconomicRelated::getBillboardId, billboardId);
-        lambdaQueryWrapper.ge(BillboardEconomicRelated::getHStart, 0);
+        List<Integer> list = new ArrayList<>();
+        list.add(BillboardEconomicRelatedStatusEnum.RECOMMEND.getCode());
+        list.add(BillboardEconomicRelatedStatusEnum.ACCEPT.getCode());
+        lambdaQueryWrapper.in(BillboardEconomicRelated::getStatus, list);
         lambdaQueryWrapper.last("limit 1");
 
         List<BillboardEconomicRelated> relateds = billboardEconomicRelatedMapper.selectList(lambdaQueryWrapper);
@@ -250,12 +282,17 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
         lambdaQueryWrapper.in(BillboardEconomicRelated::getStatus, status);
         billboardEconomicRelatedMapper.delete(lambdaQueryWrapper);
 
-        // TODO: 2023/7/20 0020 还有一些条件，后期加上
-        List<Billboard> billboards = billboardService.list();
+        // 获取一百条
+        LambdaQueryWrapper<Billboard> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Billboard::getAuditStatus, AuditingStatusEnum.PASS.getCode())
+                .eq(Billboard::getStatus, BillboardStatusEnum.WAIT.getCode())
+                .orderByDesc(Billboard::getCreateAt)
+                .last("LIMIT 100");
+        List<Billboard> billboards = billboardService.list(queryWrapper);
+
+
         if(billboards != null && billboards.size()>0){
             List<BillboardEconomicRelated> relateds = new ArrayList<>();
-            List<BillboardEconomicRelated> finalRelateds = relateds;
-
             for(int i=0; i<billboards.size(); i++){
                 // 分数
                 int sorce = 0;
@@ -264,7 +301,13 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
 
                 // 榜单名称 === 专业标签
                 String sameWords = "";
-                sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, techEconomicMan.getLabel());
+
+                String label = techEconomicMan.getLabel();
+                label = StrCommon.clear(label);
+
+                sameWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(title, label);
+                sameWords = StrCommon.getResult(sameWords);
+
                 if(StrUtil.isNotBlank(sameWords)){
                     // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
                     if(sameWords.length()>=3 && sameWords.length() <4){
@@ -279,52 +322,59 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 String techKeys = s.getTechKeys();
                 StringBuffer sb = new StringBuffer();
                 // 技术领域
-                if(techEconomicMan.getTechDomain() != null){
-                    try{
-                        TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(techEconomicMan.getTechDomain());
-                        if(tfc != null){
-                            sb.append(tfc.getName());
-                            sb.append(CharUtil.COMMA);
-                        }
-                    }catch (Exception ex){
-                        System.out.println("techEconomicMan.getTechDomain() error");
-                    }
-                }
+                TechnicalFieldClassifyDTO tfc1 = null;
                 if(techEconomicMan.getTechDomain1() != null){
                     try{
-                        TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(techEconomicMan.getTechDomain1());
+                        tfc1 = getOneById(techEconomicMan.getTechDomain1());
                         if(tfc1 != null){
                             sb.append(tfc1.getName());
-                            sb.append(CharUtil.COMMA);
                         }
                     }catch (Exception ex){
                         System.out.println("techEconomicMan.getTechDomain1() error");
                     }
                 }
+
+                TechnicalFieldClassifyDTO tfc2 = null;
                 if(techEconomicMan.getTechDomain2() != null){
                     try{
-                        TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(techEconomicMan.getTechDomain2());
+                        tfc2 = getByPid(tfc1, techEconomicMan.getTechDomain2());
                         if(tfc2 != null){
                             sb.append(tfc2.getName());
-                            sb.append(CharUtil.COMMA);
                         }
                     }catch (Exception ex){
                         System.out.println("techEconomicMan.getTechDomain2() error");
                     }
                 }
+                if(techEconomicMan.getTechDomain() != null){
+                    try{
+                        TechnicalFieldClassifyDTO tfc = getByPid(tfc2, techEconomicMan.getTechDomain());
+                        if(tfc != null){
+                            sb.append(tfc.getName());
+                        }
+                    }catch (Exception ex){
+                        System.out.println("techEconomicMan.getTechDomain() error");
+                    }
+                }
+
 
                 // 加上标签
                 sb.append(techEconomicMan.getLabel());
 
-                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sb.toString());
+                String sbStr = sb.toString();
+                sbStr =  StrCommon.clear(sbStr);
+
+                String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys,sbStr);
+                techWords = StrCommon.getResult(techWords);
                 if(StrUtil.isNotBlank(techWords)){
                     double num = ComputeSimilarityRatio.SimilarDegree(techKeys, sb.toString());
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
-                    if(techWords.length()>=3 && num > 0.15){
+                    if(techWords.length()>=6){
                         sorce = sorce +5;
-                    }else if(techWords.length()>=3 && num < 0.15 && num >= 0.1){
+                    }else if(techWords.length()>=5){
                         sorce = sorce +4;
-                    }else if(techWords.length()>=2){
+                    }else if(techWords.length()>=4){
+                        sorce = sorce +3;
+                    }else if(techWords.length()>=3){
                         sorce = sorce +2;
                     }
                 }
@@ -335,15 +385,17 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 if(categories != null){
                     // 行业名称
                     DictionaryDTO dictionaryDTO = getByCache(String.valueOf(DictionaryTypeCodeEnum.categories), categories.toString());
-                    String mwords = "";
+                    String techSameWorkds = "";
                     if(dictionaryDTO != null){
                         String categoriesName = dictionaryDTO.getDicValue();
-                        if(StrUtil.isNotBlank(categoriesName) && StrUtil.isNotBlank(sb.toString())){
-                            mwords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, sb.toString());
-                            // 如果匹配2个字以下 0 分，匹配2个字给1分， 匹配3个字以上给2分
-                            if(mwords.length()>=2 && mwords.length() <3){
+                        if(StrUtil.isNotBlank(categoriesName) && StrUtil.isNotBlank(sbStr)){
+                            techSameWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(categoriesName, sbStr);
+                            techSameWorkds = StrCommon.getResult(techSameWorkds);
+
+                            // 如果匹配2个字以下 0 分，匹配3~4个字给1分， 匹配4个字以上给2分
+                            if(techSameWorkds.length()>=3 && techSameWorkds.length() <=4){
                                 sorce = sorce +1;
-                            }else if(mwords.length()>=3){
+                            }else if(techSameWorkds.length()>4){
                                 sorce = sorce +2;
                             }
                         }
@@ -351,15 +403,19 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                 }
 
                 // 榜单发布地区
+                boolean isAddress = false;
                 String billboradAddress = s.getProvinceName()+s.getCityName()+s.getAreaName();
                 // 帅才地区
                 String address = techEconomicMan.getProvinceName()+techEconomicMan.getCityName()+techEconomicMan.getAreaName();
                 // 匹配地区
                 String addressWorkds = ComputeSimilarityRatio.longestCommonSubstringNoOrder(billboradAddress, address);
+                addressWorkds = StrCommon.getAddress(addressWorkds);
+
                 if(StrUtil.isNotBlank(addressWorkds)){
-                    // 如果匹配4个字以下 0 分，匹配4个字给1分
-                    if(addressWorkds.length()>=4 && !"市辖区".equals(addressWorkds) && !"地区".equals(addressWorkds) ){
+                    // 如果匹配2个字以下 0 分，匹配2个字给1分
+                    if(addressWorkds.length()>=4){
                         sorce = sorce +1;
+                        isAddress = true;
                     }
                 }
 
@@ -370,7 +426,14 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
                     related.setEconomicId(techEconomicMan.getId());
                     related.setCreateAt(new Date());
 
-                    finalRelateds.add(related);
+                    if(related.getSStar() >2 ){
+                        // 把只是匹配地区的排除，因为有些只是地区匹配，行业风牛马不相及
+                        if(isAddress && related.getSStar() != 1){
+                            relateds.add(related);
+                        }else if(related.getSStar() >2){
+                            relateds.add(related);
+                        }
+                    }
                 }
             }
 
@@ -381,8 +444,39 @@ public class BillboardEconomicRelatedServiceImpl extends ServiceImpl<BillboardEc
             }
 
             // 批量保存
-            this.saveBatch(relateds);
+            if(CollectionUtils.isNotEmpty(relateds)){
+                this.saveBatch(relateds);
+            }
         }
+    }
+
+    public TechnicalFieldClassifyDTO getOneById(Long id){
+        String json = stringRedisTemplate.opsForValue().get(RedisKeys.TECH_DOMAIN_VALUE);
+        List<TechnicalFieldClassifyDTO> responress = JSONArray.parseArray(json, TechnicalFieldClassifyDTO.class);
+        List<TechnicalFieldClassifyDTO> one = responress.get(0).getChildren();
+
+        for(int i=0; i<one.size(); i++){
+            TechnicalFieldClassifyDTO dto = one.get(i);
+            if(dto.getId().equals(id)){
+                return dto;
+            }
+        }
+
+        return null;
+    }
+
+    public TechnicalFieldClassifyDTO getByPid(TechnicalFieldClassifyDTO tfc, Long id){
+
+        List<TechnicalFieldClassifyDTO> v = tfc.getChildren();
+
+        for(int i=0; i<v.size(); i++){
+            TechnicalFieldClassifyDTO dto = v.get(i);
+            if(dto.getId().equals(id)){
+                return dto;
+            }
+        }
+
+        return null;
     }
 
 

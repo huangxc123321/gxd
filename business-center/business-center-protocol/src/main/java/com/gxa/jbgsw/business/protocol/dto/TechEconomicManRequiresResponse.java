@@ -6,6 +6,7 @@ import lombok.Data;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -20,7 +21,10 @@ public class TechEconomicManRequiresResponse  implements Serializable {
     @ApiModelProperty(value = "榜单ID")
     private Long billboardId;
 
-    @ApiModelProperty(value = "状态： 0 待派单， 1推荐，2 已接受 , 3 已拒绝")
+    @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜")
+    private Integer type;
+
+    @ApiModelProperty(value = "状态： 0 待派单， 1待接单，2 已接受 , 3 已拒绝")
     private  Integer status;
 
     @ApiModelProperty(value = "状态名称")
@@ -44,6 +48,9 @@ public class TechEconomicManRequiresResponse  implements Serializable {
     @ApiModelProperty(value = "有效结束时间")
     private Date endAt;
 
+    @ApiModelProperty(value = "系统推荐匹配度")
+    private Double star;
+
     @ApiModelProperty(value = "人工手动推荐匹配度")
     private Double hstar;
 
@@ -51,9 +58,13 @@ public class TechEconomicManRequiresResponse  implements Serializable {
     private String remark;
 
     @ApiModelProperty(value = "相关成果: 名称用逗号分隔")
-    private String havests;
+    private List<HavestVO> havests;
 
-    @ApiModelProperty(value = "相关帅才： 名称用逗号分隔")
-    private String talents;
+
+    @ApiModelProperty(value = "相关成果: 名称用逗号分隔")
+    private List<HavestVO> talents;
+
+    // @ApiModelProperty(value = "相关帅才： 名称用逗号分隔")
+    // private String talents;
 
 }

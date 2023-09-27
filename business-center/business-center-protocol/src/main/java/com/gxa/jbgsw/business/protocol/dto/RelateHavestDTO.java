@@ -10,6 +10,9 @@ public class RelateHavestDTO implements Serializable {
     @ApiModelProperty(value = "成果ID")
     private Long id;
 
+    @ApiModelProperty(value = "成果ID")
+    private Long billboardId;
+
     @ApiModelProperty(value = "成果名称")
     private String name;
 

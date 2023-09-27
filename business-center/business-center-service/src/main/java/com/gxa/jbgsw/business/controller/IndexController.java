@@ -216,6 +216,33 @@ public class IndexController implements IndexApi {
             harvests = harvestService.list(lambdaUpdateWrapper);
         }
         List<RelateHavestDTO> havestList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
+        if(havestList != null && havestList.size() >0){
+            havestList.stream().forEach(s->{
+                StringBuffer sb = new StringBuffer();
+
+                if(s.getTechDomain1() != null && !"".equals(s.getTechDomain1())){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                    if(tfc1 != null){
+                        sb.append(tfc1.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain2() != null  && !"".equals(s.getTechDomain2())){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain() != null  && !"".equals(s.getTechDomain())){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
+                        sb.append(tfc.getName());
+                    }
+                }
+                s.setTechDomainName(sb.toString());
+            });
+        }
+
         relateDTO.setHavests(havestList);
 
         // 相关帅才推荐（一条）
@@ -268,13 +295,7 @@ public class IndexController implements IndexApi {
         // 获取相关成果
         // 获取相关成果 (三条)
         String key = "";
-        if(talentPool.getTechDomain() != null){
-            Long techDomainId = Long.valueOf(talentPool.getTechDomain());
-            TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
-            if(technicalFieldClassifyDTO != null){
-                key = technicalFieldClassifyDTO.getName();
-            }
-        }else if(talentPool.getTechDomain2() != null){
+        if(talentPool.getTechDomain2() != null){
             Long techDomainId = Long.valueOf(talentPool.getTechDomain2());
             TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
             if(technicalFieldClassifyDTO != null){
@@ -282,6 +303,14 @@ public class IndexController implements IndexApi {
             }
         }else{
             Long techDomainId = Long.valueOf(talentPool.getTechDomain1());
+            TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
+            if(technicalFieldClassifyDTO != null){
+                key = technicalFieldClassifyDTO.getName();
+            }
+        }
+
+        if(talentPool.getTechDomain() != null){
+            Long techDomainId = Long.valueOf(talentPool.getTechDomain());
             TechnicalFieldClassifyDTO technicalFieldClassifyDTO = technicalFieldClassifyFeignApi.getById(techDomainId);
             if(technicalFieldClassifyDTO != null){
                 key = technicalFieldClassifyDTO.getName();
@@ -296,8 +325,32 @@ public class IndexController implements IndexApi {
             harvests = harvestService.list(lambdaUpdateWrapper);
         }
         List<RelateHavestDTO> havestList = mapperFacade.mapAsList(harvests, RelateHavestDTO.class);
-        relateDTO.setHavests(havestList);
+        if(CollectionUtils.isNotEmpty(havestList)){
+            havestList.stream().forEach(s->{
+                StringBuffer sb = new StringBuffer();
+                if(s.getTechDomain1() != null && !"".equals(s.getTechDomain1())){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                    if(tfc1 != null){
+                        sb.append(tfc1.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain2() != null  && !"".equals(s.getTechDomain2())){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                    if(tfc2 != null){
+                        sb.append(tfc2.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain() != null  && !"".equals(s.getTechDomain())){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc != null){
+                        sb.append(tfc.getName());
+                    }
+                }
+                s.setTechDomainName(sb.toString());
+            });
+        }
 
+        relateDTO.setHavests(havestList);
 
         // 相关帅才推荐（一条）
         List<BillboardTalentRelatedResponse> talents = billboardTalentRelatedService.getTalentRecommend(id);

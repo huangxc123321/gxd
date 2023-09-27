@@ -8,9 +8,9 @@ package com.gxa.jbgsw.business.protocol.enums;
 public enum BillboardEconomicRelatedStatusEnum {
 
 
-    // 状态： 0 不推荐 1推荐(派单)  2 接受  3 不接受
-    NOT_RECOMMEND(0, "不推荐"),
-    RECOMMEND(1, "推荐"),
+    // 状态： 0 待派单 1待接单  2 接受  3 不接受
+    NOT_RECOMMEND(0, "待派单"),
+    RECOMMEND(1, "待接单"),
     ACCEPT(2, "已接受"),
     NOT_ACCEPT(3, "已拒绝"),
     ;

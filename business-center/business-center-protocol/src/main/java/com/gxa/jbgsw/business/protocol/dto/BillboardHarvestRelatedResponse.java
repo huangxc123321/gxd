@@ -16,7 +16,7 @@ public class BillboardHarvestRelatedResponse implements Serializable {
     @ApiModelProperty(value = "榜单成果推荐ID： 推荐的时候使用这个ID")
     private Long recommendId;
 
-    @ApiModelProperty(value = "榜单")
+    @ApiModelProperty(value = "成果名称")
     private String name;
 
     @ApiModelProperty(value = "榜单类型： 0 政府榜 1 企业榜")
@@ -27,6 +27,9 @@ public class BillboardHarvestRelatedResponse implements Serializable {
 
     @ApiModelProperty(value = "工信大类名称")
     private String categoriesName;
+
+    @ApiModelProperty(value = "技术关键词")
+    private String techKeys;
 
     @ApiModelProperty(value = "技术领域：字典中获取")
     private String techDomain;

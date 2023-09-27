@@ -125,24 +125,32 @@ public class TalentPoolController implements TalentPoolApi {
             }
         }
         // 技术领域
-        if(talentPool.getTechDomain() != null){
-            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain());
-            if(tfc != null){
-                talentPoolDTO.setTechDomainName(tfc.getName());
-            }
-        }
-        if(talentPool.getTechDomain1() != null){
-            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain1());
+        StringBuffer sb = new StringBuffer();
+        if(talentPool.getTechDomain1() != null && !"".equals(talentPool.getTechDomain1())){
+            TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(talentPool.getTechDomain1()));
             if(tfc1 != null){
+                sb.append(tfc1.getName()).append(CharUtil.COMMA);
                 talentPoolDTO.setTechDomain1Name(tfc1.getName());
             }
         }
-        if(talentPool.getTechDomain2() != null){
-            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(talentPool.getTechDomain2());
+        if(talentPool.getTechDomain2() != null  && !"".equals(talentPool.getTechDomain2())){
+            TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(talentPool.getTechDomain2()));
             if(tfc2 != null){
+                sb.append(tfc2.getName()).append(CharUtil.COMMA);
                 talentPoolDTO.setTechDomain2Name(tfc2.getName());
             }
         }
+        if(talentPool.getTechDomain() != null  && !"".equals(talentPool.getTechDomain())){
+            TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(talentPool.getTechDomain()));
+            if(tfc != null){
+                sb.append(tfc.getName()).append(CharUtil.COMMA);
+                talentPoolDTO.setTechDomainName(tfc.getName());
+            }
+        }
+
+        String temp = sb.toString().substring(0, sb.toString().length()-1);
+        talentPoolDTO.setTechDomainName(temp);
+
         return talentPoolDTO;
     }
 

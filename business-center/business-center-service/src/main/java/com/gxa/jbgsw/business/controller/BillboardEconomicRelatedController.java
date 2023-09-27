@@ -4,10 +4,12 @@ package com.gxa.jbgsw.business.controller;
 import com.gxa.jbgsw.business.client.BillboardEconomicRelatedApi;
 import com.gxa.jbgsw.business.entity.Billboard;
 import com.gxa.jbgsw.business.entity.BillboardEconomicRelated;
+import com.gxa.jbgsw.business.entity.TechEconomicMan;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
 import com.gxa.jbgsw.business.service.BillboardEconomicRelatedService;
 import com.gxa.jbgsw.business.service.BillboardService;
+import com.gxa.jbgsw.business.service.TechEconomicManService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import ma.glasnost.orika.MapperFacade;
@@ -29,6 +31,8 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     BillboardEconomicRelatedService billboardEconomicRelatedService;
     @Resource
     BillboardService billboardService;
+    @Resource
+    TechEconomicManService techEconomicManService;
     @Resource
     MapperFacade mapperFacade;
 
@@ -67,7 +71,8 @@ public class BillboardEconomicRelatedController implements BillboardEconomicRela
     public MyBillboardEconomicManDTO getMyEconomicMan(Long billboardId) {
         BillboardEconomicRelated billboardEconomicRelated = billboardEconomicRelatedService.getMyEconomicMan(billboardId);
         if(billboardEconomicRelated != null){
-            MyBillboardEconomicManDTO myBillboardEconomicManDTO = mapperFacade.map(billboardEconomicRelated, MyBillboardEconomicManDTO.class);
+            TechEconomicMan techEconomicMan = techEconomicManService.getById(billboardEconomicRelated.getEconomicId());
+            MyBillboardEconomicManDTO myBillboardEconomicManDTO = mapperFacade.map(techEconomicMan, MyBillboardEconomicManDTO.class);
             return myBillboardEconomicManDTO;
         }
 

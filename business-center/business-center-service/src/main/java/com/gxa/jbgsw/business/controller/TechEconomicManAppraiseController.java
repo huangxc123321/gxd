@@ -26,6 +26,7 @@ public class TechEconomicManAppraiseController implements TechEconomicManApprais
     @Resource
     MapperFacade mapperFacade;
 
+
     @Override
     public void add(TechEconomicManAppraiseDTO techEconomicManAppraiseDTO) {
         TechEconomicManAppraise techEconomicManAppraise = mapperFacade.map(techEconomicManAppraiseDTO, TechEconomicManAppraise.class);
@@ -41,5 +42,6 @@ public class TechEconomicManAppraiseController implements TechEconomicManApprais
     public void delete(Long id) {
         techEconomicManAppraiseService.removeById(id);
     }
+
 
 }

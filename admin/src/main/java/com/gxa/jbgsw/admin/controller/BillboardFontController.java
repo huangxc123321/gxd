@@ -7,6 +7,7 @@ import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
 import com.gxa.jbgsw.admin.feignapi.*;
 import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
+import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
 import com.gxa.jbgsw.business.protocol.dto.*;
 import com.gxa.jbgsw.business.protocol.enums.AuditingStatusEnum;
 import com.gxa.jbgsw.business.protocol.enums.BillboardStatusEnum;
@@ -62,6 +63,8 @@ public class BillboardFontController extends BaseController {
     StringRedisTemplate stringRedisTemplate;
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
+    @Resource
+    TechnicalFieldClassifyFeignApi technicalFieldClassifyFeignApi;
 
     @ApiOperation(value = "测试匹配", notes = "测试匹配")
     @ApiImplicitParams({
@@ -127,6 +130,30 @@ public class BillboardFontController extends BaseController {
                 if(edu != null){
                     s.setHighestEduName(edu.getDicValue());
                 }
+
+                StringBuffer sb = new StringBuffer();
+                if(s.getTechDomain1() != null && !"".equals(s.getTechDomain1())){
+                    TechnicalFieldClassifyDTO tfc1 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain1()));
+                    if(tfc1 != null){
+                        s.setTechDomain1Name(tfc1.getName());
+                        sb.append(tfc1.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain2() != null  && !"".equals(s.getTechDomain2())){
+                    TechnicalFieldClassifyDTO tfc2 = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain2()));
+                    if(tfc2 != null){
+                        s.setTechDomain2Name(tfc2.getName());
+                        sb.append(tfc2.getName()).append(";");
+                    }
+                }
+                if(s.getTechDomain() != null  && !"".equals(s.getTechDomain())){
+                    TechnicalFieldClassifyDTO tfc = technicalFieldClassifyFeignApi.getById(Long.valueOf(s.getTechDomain()));
+                    if(tfc != null){
+                        s.setTechDomainName(tfc.getName());
+                        sb.append(tfc.getName());
+                    }
+                }
+                s.setTechDomainName(sb.toString());
             });
         }
         detailInfo.setTalentRecommends(talentRecommends);

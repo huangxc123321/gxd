@@ -10,6 +10,7 @@ import com.gxa.jbgsw.business.entity.BillboardHarvestRelated;
 import com.gxa.jbgsw.business.feignapi.DictionaryFeignApi;
 import com.gxa.jbgsw.business.feignapi.TechnicalFieldClassifyFeignApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
+import com.gxa.jbgsw.business.protocol.enums.DictionaryTypeCodeEnum;
 import com.gxa.jbgsw.business.service.BillboardHarvestRelatedService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -108,7 +109,6 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
         List<BillboardResponse> responses =  billboardHarvestRelatedService.getHarvestByHarvestId(harvestId);
         if(responses != null){
             List<RelateBillboardDTO> billboards = mapperFacade.mapAsList(responses, RelateBillboardDTO.class);
-
             return billboards;
         }
 
@@ -118,6 +118,16 @@ public class BillboardHarvestRelatedController implements BillboardHarvestRelate
     @Override
     public List<BillboardHarvestRelatedResponse> getBillboardstByHarvestId(Long harvestId) {
         List<BillboardHarvestRelatedResponse> responses =  billboardHarvestRelatedService.getBillboardstByHarvestId(harvestId);
+        if( CollectionUtils.isNotEmpty(responses) ){
+            responses.stream().forEach(s->{
+                DictionaryDTO dictionaryDTO = dictionaryFeignApi.getByCache(DictionaryTypeCodeEnum.categories.name(), String.valueOf(s.getCategories()));
+                if(dictionaryDTO != null){
+                    // 工信大类名称
+                    s.setCategoriesName(dictionaryDTO.getDicValue());
+                }
+            });
+        }
+
         return responses;
     }
 }

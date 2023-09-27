@@ -5,10 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.CharUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.fastjson.JSONObject;
-import com.gxa.jbgsw.basis.protocol.dto.BannerResponse;
-import com.gxa.jbgsw.basis.protocol.dto.DictionaryDTO;
-import com.gxa.jbgsw.basis.protocol.dto.TechnicalFieldClassifyDTO;
-import com.gxa.jbgsw.basis.protocol.dto.WebsiteBottomDTO;
+import com.gxa.jbgsw.basis.protocol.dto.*;
 import com.gxa.jbgsw.basis.protocol.enums.BannerTypeEnum;
 import com.gxa.jbgsw.business.client.CollaborateApi;
 import com.gxa.jbgsw.business.protocol.dto.*;
@@ -60,6 +57,8 @@ public class IndexController extends BaseController {
     @Resource
     DictionaryFeignApi dictionaryFeignApi;
     @Resource
+    DictionaryTypeFeignApi dictionaryTypeFeignApi;
+    @Resource
     CollectionFeignApi collectionFeignApi;
     @Resource
     AttentionFeignApi attentionFeignApi;
@@ -79,7 +78,33 @@ public class IndexController extends BaseController {
     @ApiOperation("获取热搜词")
     @GetMapping("/hot/getHotSearchWords")
     public List<HotSearchWordResponse> getHotSearchWords() {
-        return hotSearchWordsFeignApi.getHotSearchWords();
+        List<HotSearchWordResponse> responses = hotSearchWordsFeignApi.getHotSearchWords();
+
+        // hot_words
+        List<DictionaryResponse> dics = dictionaryTypeFeignApi.getByCode(DictionaryTypeCodeEnum.hot_words.name());
+        boolean f = false;
+        if(dics != null){
+            for(int i=0; i< dics.size(); i++){
+                f = false;
+                HotSearchWordResponse h = new HotSearchWordResponse();
+                DictionaryResponse dictionaryResponse = dics.get(i);
+                for(int n=0; n<responses.size(); n++){
+                    HotSearchWordResponse r = responses.get(n);
+                    if(r.getName().equals(dictionaryResponse.getDicValue())){
+                        f = true;
+                        break;
+                    }
+                }
+                if(!f){
+                    HotSearchWordResponse t = new HotSearchWordResponse();
+                    t.setName(dictionaryResponse.getDicValue());
+                    t.setTotal("8");
+                }
+            }
+        }
+
+
+        return responses;
     }
 
     @ApiOperation("获取最新的榜单信息")

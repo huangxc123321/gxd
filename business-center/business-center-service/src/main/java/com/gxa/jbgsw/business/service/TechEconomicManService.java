@@ -32,4 +32,8 @@ public interface TechEconomicManService extends IService<TechEconomicMan> {
     TechEconomicManDTO getTechEconomicManByMobile(String mobile);
 
     void deleteAgreements(Long id);
+
+    void pipei(Long id);
+
+    void insert(TechEconomicMan techEconomicMan);
 }

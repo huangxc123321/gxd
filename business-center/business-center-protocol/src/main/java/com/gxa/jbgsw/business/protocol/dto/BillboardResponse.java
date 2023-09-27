@@ -29,6 +29,9 @@ public class BillboardResponse implements Serializable {
     @ApiModelProperty(value = "发榜单位")
     private String unitName;
 
+    @ApiModelProperty(value = "榜单发布单位图标")
+    private String unitLogo;
+
     @ApiModelProperty(value = "意向金额：0 面议， 其它为具体金额")
     private BigDecimal amount;
 
@@ -119,4 +122,6 @@ public class BillboardResponse implements Serializable {
 
     @ApiModelProperty(value = "pv")
     private Integer pv;
+
+
 }
