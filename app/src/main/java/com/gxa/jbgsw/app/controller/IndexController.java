@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
@@ -69,6 +70,22 @@ public class IndexController extends BaseController {
     HotSearchWordsFeignApi hotSearchWordsFeignApi;
 
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+    @Value("${site.areaId}")
+    String siteArea;
+
+
+    @ApiOperation("获取热搜词")
+    @GetMapping("/index/getSiteArea")
+    public ApiResult getSiteArea() {
+        ApiResult apiResult = new ApiResult();
+
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("areaId", siteArea);
+        apiResult.setData(jsonObject);
+
+        return apiResult;
+    }
+
 
     @ApiOperation("获取热搜词")
     @GetMapping("/hot/getHotSearchWords")
@@ -130,7 +147,7 @@ public class IndexController extends BaseController {
     @ApiOperation("获取首页轮播图")
     @GetMapping("/index/getIndexBanners")
     ApiResult<BannerResponse> getIndexBanners() {
-        List<BannerResponse> bannerResponses = bannerFeignApi.getIndexBanners(BannerTypeEnum.PC.getCode());
+        List<BannerResponse> bannerResponses = bannerFeignApi.getIndexBanners(BannerTypeEnum.APP.getCode());
         ApiResult apiResult = new ApiResult<BannerResponse>();
         apiResult.setData(bannerResponses);
 

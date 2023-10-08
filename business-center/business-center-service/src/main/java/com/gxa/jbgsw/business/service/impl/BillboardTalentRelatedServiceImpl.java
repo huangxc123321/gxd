@@ -104,10 +104,10 @@ public class BillboardTalentRelatedServiceImpl extends ServiceImpl<BillboardTale
                 resultFiled = StrCommon.clear(resultFiled);
 
                 String techWords = ComputeSimilarityRatio.longestCommonSubstringNoOrder(techKeys, resultFiled);
-                techWords = StrCommon.getResult(techKeys);
+                techWords = StrCommon.getResult(techWords);
 
                 if(StrUtil.isNotBlank(techWords)){
-                    double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getResearchDirection());
+                    //double num = ComputeSimilarityRatio.SimilarDegree(techKeys, s.getResearchDirection());
                     // 如果匹配1个字以下 0 分，匹配1个字给1分， 匹配2个字以上给2分
                     if(techWords.length()>=6){
                         sorce = sorce +5;

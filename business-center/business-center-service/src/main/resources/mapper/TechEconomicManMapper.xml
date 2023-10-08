@@ -130,7 +130,7 @@
         FROM
         t_billboard_economic_related AS a
         LEFT JOIN t_billboard AS b ON a.billboard_id = b.id
-        WHERE 1 = 1 and b.id is not null
+        WHERE b.audit_status = 1 and b.id is not NULL and a.`status` != 0
         <if test="economicId != null">
             AND a.economic_id = #{economicId}
         </if>

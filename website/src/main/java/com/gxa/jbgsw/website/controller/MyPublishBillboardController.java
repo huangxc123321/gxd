@@ -19,6 +19,7 @@ import com.gxa.jbgsw.common.utils.MessageLogInfo;
 import com.gxa.jbgsw.common.utils.PageResult;
 import com.gxa.jbgsw.common.utils.RedisKeys;
 import com.gxa.jbgsw.user.protocol.dto.UserResponse;
+import com.gxa.jbgsw.user.protocol.enums.UserTypeEnum;
 import com.gxa.jbgsw.user.protocol.errcode.UserErrorCode;
 import com.gxa.jbgsw.website.feignapi.*;
 import io.swagger.annotations.Api;
@@ -192,17 +193,39 @@ public class MyPublishBillboardController extends BaseController {
             throw new BizException(UserErrorCode.LOGIN_SESSION_EXPIRE);
         }
 
+
+        // 判断是否政府发布政府榜单
+        UserResponse userResponse = getUser();
+        // 如果榜单是政府榜单，但用户又不是政府部门，那么抛出异常
+        if(!"admin".equalsIgnoreCase(userResponse.getMobile())){
+            if(billboardDTO.getType().equals(BillboardTypeEnum.GOV_BILLBOARD.getCode()) && !userResponse.getUnitNature().equals(UserTypeEnum.GOV.getCode())){
+                throw new BizException(BusinessErrorCode.GOV_BILLBOARD_PUBLISH_ERROR);
+            }else if(billboardDTO.getType().equals(BillboardTypeEnum.BUS_BILLBOARD.getCode())){
+                boolean flag = false;
+                if(userResponse.getUnitNature().equals(UserTypeEnum.BUZ.getCode())
+                        || userResponse.getUnitNature().equals(UserTypeEnum.TEAM.getCode())
+                        || userResponse.getUnitNature().equals(UserTypeEnum.EDU.getCode()) ){
+                    flag = true;
+                }
+                if(!flag){
+                    throw new BizException(BusinessErrorCode.NO_QL_PUBLISH_ERROR);
+                }
+            }
+        }
+
         billboardDTO.setCreateBy(userId);
         billboardDTO.setCreateAt(new Date());
         // 设置默认的待揭榜
         billboardDTO.setStatus(BillboardStatusEnum.WAIT.getCode());
-        if(billboardDTO.getUnitName() == null){
-            billboardDTO.setUnitName(this.getUnitName());
+
+        if(StrUtil.isNotEmpty(billboardDTO.getPublishPerson())){
+            billboardDTO.setUnitName(billboardDTO.getPublishPerson());
+        }else if(userResponse != null){
+            billboardDTO.setUnitName(userResponse.getUnitName());
         }
 
         // 如果是企业榜，还要有logo
         if(BillboardTypeEnum.BUS_BILLBOARD.getCode().equals(billboardDTO.getType())){
-            UserResponse userResponse = this.getUser();
             if(userResponse != null){
                 billboardDTO.setUnitName(userResponse.getUnitName());
                 billboardDTO.setUnitLogo(userResponse.getUnitLogo());
